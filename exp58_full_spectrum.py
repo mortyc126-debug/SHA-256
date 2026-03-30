@@ -101,12 +101,13 @@ def test_full_spectrum(N=2):
 
     # Pipe pair structure: check if eigenvalues pair up
     print(f"\nPipe pair structure test:")
-    print(f"  Eigenvalue gaps (λ_{2k} - λ_{2k+1}) for k=0..15:")
+    print(f"  Eigenvalue gaps for consecutive pairs:")
     for k in range(16):
-        gap = avg[2*k] - avg[2*k+1]
-        pipe_pair = gap < 0.3 * avg[2*k]  # Small gap = pair
-        print(f"    k={k:>2}: λ={avg[2*k]:+.4f}, {avg[2*k+1]:+.4f}  "
-              f"gap={gap:.4f} {'← PAIR' if pipe_pair else ''}")
+        i1 = 2*k; i2 = 2*k+1
+        gap = avg[i1] - avg[i2]
+        pipe_pair = gap < 0.3 * abs(avg[i1]) if avg[i1] != 0 else False
+        print(f"    k={k:>2}: l={avg[i1]:+.4f}, {avg[i2]:+.4f}  "
+              f"gap={gap:.4f} {'<- PAIR' if pipe_pair else ''}")
 
     return avg
 
