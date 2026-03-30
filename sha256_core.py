@@ -155,6 +155,21 @@ def carry(a, b):
     """Carry operator: C(a,b) = (a+b - a^b) / 2"""
     return (((a + b) & MASK) ^ (a ^ b)) >> 1
 
+def carry_gkp_classification(a, b, n=32):
+    """Classify each bit position as G(generate), K(kill), P(propagate).
+    G: a_i=1, b_i=1; K: a_i=0, b_i=0; P: a_i ≠ b_i."""
+    classes = []
+    for i in range(n):
+        ai = (a >> i) & 1
+        bi = (b >> i) & 1
+        if ai == 1 and bi == 1:
+            classes.append('G')
+        elif ai == 0 and bi == 0:
+            classes.append('K')
+        else:
+            classes.append('P')
+    return classes
+
 def raw_T1(state, W_r, K_r):
     """Raw T1 value (before mod 2^32 reduction)."""
     a, b, c, d, e, f, g, h = state
