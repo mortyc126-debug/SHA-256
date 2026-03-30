@@ -102,6 +102,7 @@ def cggd_v2(total_budget=50000, population_size=20, local_steps=10):
                 else:
                     tw0 = w0; tw1 = w1
                     tdw0 = dw0 ^ (1 << random.randint(0, 31))
+                    if tdw0 == 0: tdw0 = 1  # Prevent trivial zero differential
 
                 result = fast_metrics(tw0, tw1, tdw0)
                 if result:
