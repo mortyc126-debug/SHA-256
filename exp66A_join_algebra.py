@@ -74,7 +74,8 @@ def test_join_rank(N=50):
                     s_p = sha256_rounds(W_p, R)
                     pert_hash = [(IV[i]+s_p[R][i])&MASK for i in range(8)]
 
-                pert_xor = [IV[i]^(sha256_rounds(W_p,R)[R][i] if R<64 else 0) for i in range(8)]
+                s_p_full = sha256_rounds(W_p, R)
+                pert_xor = [IV[i]^s_p_full[R][i] for i in range(8)]
                 pert_carry = [pert_hash[i]^pert_xor[i] for i in range(8)]
 
                 for i in range(256):
