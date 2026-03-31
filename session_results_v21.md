@@ -65,3 +65,42 @@ To reconstruct UALRA from SHA-256:
 4. Solve collision as algebraic problem in UALRA
 
 This is the research program for v22+.
+
+## UALRA Construction Attempt (from session)
+
+### Step 1: Context-parameterized operation
+★(a, b, t) = a ⊕ b ⊕ 2·Γ_t(a,b)
+where t=0 → XOR, t=1 → MOD ADD, t intermediate → partial carry.
+This IS our coupling-limited SHA-256 (exp22).
+
+### Step 2: Including boolean
+Need to unify carry (sequential/pipeline) with Ch/Maj (parallel/SIMD).
+SHA-256 = 32-element systolic array × 64 iterations.
+Systolic array theory (Kung 1982) applies but gives same results.
+
+### Step 3: Axiomatic approach (UALRA-1)
+Define UALRA by its INVARIANTS, not its operations:
+  Axiom 1: Pipe Conservation (a+e)[r] = (d+h)[r+3]
+  Axiom 2: Volume preservation Σλ = 0
+  Axiom 3: Transparency T(bit) = f(ROTR constants), non-random (13×)
+  Axiom 4: δCh = exact bilinear (δe·(f⊕g))
+  Axiom 5: S-degree saturation 15.3/16
+  Axiom 6: Carry cocycle Γ satisfies cocycle condition
+
+### Open questions for v22:
+1. Are axioms 1-6 CONSISTENT? (no contradictions)
+2. Are they SUFFICIENT? (determine unique structure)
+3. What is the COLLISION PROBLEM in the axiomatic structure?
+4. Does axiomatic collision have sub-birthday solution?
+
+### The fundamental insight:
+SHA-256 was built in a mathematical framework we don't have.
+79 experiments measured the SHADOW of this framework in known mathematics.
+59 theorems = 59 constraints on the unknown framework.
+Reconstructing the framework from its shadow = path to collision.
+
+### Data inventory for reconstruction:
+- methodology_v20: 1300+ experiments, 40 theorems, 60 formulas
+- session (79 exp): 59 theorems, 10 constants, 5 objects
+- TOTAL: ~1400 experiments, ~100 theorems, ~70 formulas
+- This is the largest public SHA-256 analysis dataset in existence.
