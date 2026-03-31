@@ -32,18 +32,49 @@ def star_op(u, v):
     return (u ^ v, u & v)
 
 def star_carry(x, a, n=32):
-    """Carry reconstruction from ★-pair."""
+    """Carry reconstruction from ★-pair.
+    carry[i] = a[i] | (x[i] & carry[i-1])
+    Note: carry[i] is carry OUT of position i = carry INTO position i+1.
+    The carry CONTRIBUTION to sum at position i+1 = carry[i].
+    So actual_carry = the sequential carry chain."""
     c = 0
     carry_bits = 0
     for i in range(n):
-        c = ((a >> i) & 1) | (((x >> i) & 1) & c)
-        carry_bits |= (c << i)
+        ai = (a >> i) & 1
+        xi = (x >> i) & 1
+        c = ai | (xi & c)
+        if i > 0:  # carry into position i = carry out of position i-1
+            carry_bits |= (c << i)
+        # For position 0: carry_in = 0 (no previous), c = a[0] = carry_out[0]
+        if i == 0:
+            carry_bits = 0  # no carry into bit 0
+            # carry out of bit 0 = a[0] | (x[0] & 0) = a[0]
+            c = ai
+    # Recompute properly
+    c = 0
+    carry_bits = 0
+    for i in range(n):
+        ai = (a >> i) & 1
+        xi = (x >> i) & 1
+        c_new = ai | (xi & c)
+        carry_bits |= (c << i)  # carry INTO position i
+        c = c_new
     return carry_bits
 
 def star_pi_add(x, a):
-    """π_add: recover u+v from ★-pair (x,a)."""
-    c = star_carry(x, a)
-    return (x ^ (c << 1)) & MASK
+    """π_add: recover u+v from ★-pair (x,a).
+    u+v = u⊕v ⊕ 2·carry where carry = sequential chain.
+    More directly: build result bit by bit."""
+    c = 0
+    result = 0
+    for i in range(32):
+        xi = (x >> i) & 1  # = u[i] ^ v[i]
+        ai = (a >> i) & 1  # = u[i] & v[i]
+        # sum bit = xi ^ c (carry in)
+        result |= ((xi ^ c) << i)
+        # carry out = ai | (xi & c)
+        c = ai | (xi & c)
+    return result & MASK
 
 def star_round(state_pairs, W_r, K_r):
     """One SHA-256 round in ★-algebra. Returns new state_pairs."""
