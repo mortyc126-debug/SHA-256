@@ -601,13 +601,19 @@ if __name__ == "__main__":
   that can push bits either way.
 
   Key findings:
-  - Each bit individually has strong attraction (~95% correct)
-  - Interactions add noise: sometimes help, sometimes hurt
-  - The frustration field can be partially estimated from clause
-    structure (conflict count, S/C ratio)
-  - Iterative frustration removal can improve convergence by
-    dampening frustrated interactions while amplifying supported ones
-  - But the 28/27 balance means frustration is nearly UNIVERSAL:
-    almost every bit experiences it, making perfect cancellation
-    impossible without global information
+  - Pure attraction (no context) is weak (~62%) — the bit's OWN
+    clauses give only a noisy signal
+  - Interactions are OVERWHELMINGLY helpful (~95% push toward correct)
+    lifting accuracy to ~92% when true context is available
+  - The problem is NOT that interactions create frustration — it's that
+    ESTIMATING the interaction field without the solution is hard
+  - Self-organization (using approximate context) DEGRADES accuracy
+    because errors in neighbor estimates cascade
+  - Clause structure estimators (conflict count, S/C ratio) show near-
+    zero correlation with true frustration (r < 0.04)
+  - Iterative frustration removal peaks early (iter 1: 17.7% solve rate)
+    then oscillates — the 28/27 S/C balance creates a frustration
+    landscape with no clean gradient to follow
+  - Plain soft relaxation still beats frustration removal (25% vs 18%
+    solve rate) — the cure is worse than the disease
 """)
