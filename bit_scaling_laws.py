@@ -1,5 +1,5 @@
 """
-BIT SCALING LAWS — Do the constants of Bit Mechanics hold at larger n?
+BIT SCALING LAWS -- Do the constants of Bit Mechanics hold at larger n?
 
 Tests four key constants at n = 10, 14, 20, 30, 50 (ratio=4.27):
   1. epsilon (sign-solution correlation) -- expected ~0.072
@@ -20,18 +20,6 @@ from bit_catalog_static import random_3sat, find_solutions
 # ============================================================
 # INLINE HELPERS
 # ============================================================
-
-def evaluate(clauses, assignment):
-    """Count how many clauses are satisfied."""
-    sat = 0
-    for clause in clauses:
-        for var, sign in clause:
-            if (sign == 1 and assignment[var] == 1) or \
-               (sign == -1 and assignment[var] == 0):
-                sat += 1
-                break
-    return sat
-
 
 def bit_tension(clauses, n, var, fixed=None):
     """Weighted tension: how strongly clauses push var toward 1 vs 0."""
@@ -61,48 +49,81 @@ def bit_tension(clauses, n, var, fixed=None):
     return (p1 - p0) / total if total > 0 else 0.0
 
 
-def walksat(clauses, n, max_flips=None):
-    """WalkSAT local search solver."""
+def walksat_fast(clauses, n, max_flips=None):
+    """WalkSAT with occurrence-list optimization for speed."""
     if max_flips is None:
-        max_flips = 100 * n
-    assignment = [random.randint(0, 1) for _ in range(n)]
+        max_flips = 200 * n
     m = len(clauses)
+
+    # Build occurrence lists: var_in_clause[v] = list of clause indices containing v
+    var_in_clause = [[] for _ in range(n)]
+    for ci, clause in enumerate(clauses):
+        for v, s in clause:
+            var_in_clause[v].append(ci)
+
+    assignment = [random.randint(0, 1) for _ in range(n)]
+
+    # Compute initial unsat set
+    unsat_set = set()
+    for ci in range(m):
+        satisfied = False
+        for v, s in clauses[ci]:
+            if (s == 1 and assignment[v] == 1) or (s == -1 and assignment[v] == 0):
+                satisfied = True
+                break
+        if not satisfied:
+            unsat_set.add(ci)
+
     for flip in range(max_flips):
-        unsat = []
-        for ci in range(m):
-            satisfied = False
-            for v, s in clauses[ci]:
-                if (s == 1 and assignment[v] == 1) or (s == -1 and assignment[v] == 0):
-                    satisfied = True
-                    break
-            if not satisfied:
-                unsat.append(ci)
-        if not unsat:
+        if not unsat_set:
             return list(assignment), True
-        ci = random.choice(unsat)
+
+        ci = random.choice(list(unsat_set))
+
         if random.random() < 0.3:
+            # Random walk
             v, s = random.choice(clauses[ci])
-            assignment[v] = 1 - assignment[v]
+            flip_var = v
         else:
+            # Greedy: pick var that breaks fewest clauses
             best_var = None
             best_break = float('inf')
             for v, s in clauses[ci]:
-                assignment[v] = 1 - assignment[v]
+                # Count how many currently-sat clauses would become unsat
+                new_val = 1 - assignment[v]
                 breaks = 0
-                for cj in range(m):
-                    sat = False
+                for cj in var_in_clause[v]:
+                    if cj in unsat_set:
+                        continue  # already unsat
+                    # Check if flipping v breaks clause cj
+                    # Clause cj is currently sat. After flip, is it still sat?
+                    still_sat = False
                     for vv, ss in clauses[cj]:
-                        if (ss == 1 and assignment[vv] == 1) or (ss == -1 and assignment[vv] == 0):
-                            sat = True
+                        val = new_val if vv == v else assignment[vv]
+                        if (ss == 1 and val == 1) or (ss == -1 and val == 0):
+                            still_sat = True
                             break
-                    if not sat:
+                    if not still_sat:
                         breaks += 1
-                assignment[v] = 1 - assignment[v]
                 if breaks < best_break:
                     best_break = breaks
                     best_var = v
-            if best_var is not None:
-                assignment[best_var] = 1 - assignment[best_var]
+            flip_var = best_var if best_var is not None else clauses[ci][0][0]
+
+        # Flip the variable and update unsat_set
+        new_val = 1 - assignment[flip_var]
+        assignment[flip_var] = new_val
+        for cj in var_in_clause[flip_var]:
+            satisfied = False
+            for v, s in clauses[cj]:
+                if (s == 1 and assignment[v] == 1) or (s == -1 and assignment[v] == 0):
+                    satisfied = True
+                    break
+            if satisfied:
+                unsat_set.discard(cj)
+            else:
+                unsat_set.add(cj)
+
     return list(assignment), False
 
 
@@ -113,9 +134,8 @@ def get_solutions(clauses, n, n_walksat=200):
     else:
         seen = set()
         solutions = []
-        max_flips = max(200 * n, 5000)
         for _ in range(n_walksat):
-            assignment, found = walksat(clauses, n, max_flips)
+            assignment, found = walksat_fast(clauses, n)
             if found:
                 key = tuple(assignment)
                 if key not in seen:
@@ -163,6 +183,8 @@ def run_scaling_test():
     test_sizes = [10, 14, 20, 30, 50]
     ratio = 4.27
     instances_per_n = {10: 50, 14: 50, 20: 40, 30: 35, 50: 30}
+    # For flip triggers, sample fewer vars at large n to keep runtime sane
+    ft_vars_per_instance = {10: 10, 14: 14, 20: 12, 30: 10, 50: 8}
 
     print("=" * 80)
     print("BIT SCALING LAWS -- Do constants hold at larger n?")
@@ -174,11 +196,12 @@ def run_scaling_test():
     for n in test_sizes:
         n_instances = instances_per_n[n]
         n_clauses = int(ratio * n)
+        n_ft_vars = ft_vars_per_instance[n]
         t0 = time.time()
 
         print(f"\n{'='*60}")
         print(f"  n = {n}  (clauses = {n_clauses}, instances = {n_instances})")
-        print(f"{'='*60}")
+        print(f"{'='*60}", flush=True)
 
         # Accumulators
         epsilons = []
@@ -190,7 +213,7 @@ def run_scaling_test():
         instances_with_solutions = 0
         total_solutions_found = 0
 
-        for seed in range(n_instances * 5):  # try more seeds to get enough SAT instances
+        for seed in range(n_instances * 5):
             if instances_with_solutions >= n_instances:
                 break
 
@@ -227,11 +250,8 @@ def run_scaling_test():
                     tension_correct += 1
                 tension_total += 1
 
-            # --- 3. Flip trigger ratio (sample a subset for large n) ---
-            vars_to_test = list(range(n))
-            if n > 20:
-                vars_to_test = random.sample(range(n), min(n, 12))
-
+            # --- 3. Flip trigger ratio (sample subset of vars) ---
+            vars_to_test = random.sample(range(n), min(n, n_ft_vars))
             for var in vars_to_test:
                 ft = compute_flip_triggers(clauses, n, var)
                 sigma = bit_tension(clauses, n, var)
@@ -252,6 +272,10 @@ def run_scaling_test():
                 avg_d = sum(dists) / len(dists)
                 clustering = 1.0 - avg_d / (n / 2)
                 clustering_vals.append(clustering)
+
+            if instances_with_solutions % 10 == 0:
+                print(f"    ... {instances_with_solutions}/{n_instances} instances done "
+                      f"({time.time()-t0:.0f}s)", flush=True)
 
         elapsed = time.time() - t0
 
@@ -316,7 +340,10 @@ def run_scaling_test():
     if epsilons_all:
         eps_mean = sum(epsilons_all) / len(epsilons_all)
         eps_std = math.sqrt(sum((e - eps_mean) ** 2 for e in epsilons_all) / len(epsilons_all))
-        print(f"  Epsilon:  mean={eps_mean:.4f}, std={eps_std:.4f}, CV={eps_std/eps_mean:.2f}" if eps_mean > 0 else "  Epsilon: no data")
+        if eps_mean > 0:
+            print(f"  Epsilon:  mean={eps_mean:.4f}, std={eps_std:.4f}, CV={eps_std/eps_mean:.2f}")
+        else:
+            print("  Epsilon: no data")
 
     if accs_all:
         acc_mean = sum(accs_all) / len(accs_all)
