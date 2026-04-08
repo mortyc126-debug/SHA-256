@@ -142,48 +142,109 @@ static int evaluate_discrete(const int *assignment) {
 static double x[MAX_N];       /* positions */
 static double vel[MAX_N];     /* velocities */
 static double force[MAX_N];   /* accumulated forces */
+static double clause_weight[MAX_CLAUSES]; /* dynamic clause weighting */
+
+/* ---- Innovation 1: Tension-guided initialization ---- */
+static void tension_init(void) {
+    int n = n_vars;
+    double p1[MAX_N], p0[MAX_N];
+    memset(p1, 0, sizeof(double) * n);
+    memset(p0, 0, sizeof(double) * n);
+
+    for (int ci = 0; ci < n_clauses; ci++) {
+        double w = 1.0 / MAX_K;
+        for (int j = 0; j < MAX_K; j++) {
+            int v = clause_var[ci][j];
+            int s = clause_sign[ci][j];
+            if (s == 1) p1[v] += w; else p0[v] += w;
+        }
+    }
+    for (int v = 0; v < n; v++) {
+        double total = p1[v] + p0[v];
+        if (total > 0) {
+            /* Map tension to [0.15, 0.85]: bias toward predicted value */
+            double tension = (p1[v] - p0[v]) / total; /* in [-1, 1] */
+            x[v] = 0.5 + 0.35 * tension;
+        } else {
+            x[v] = 0.5;
+        }
+        vel[v] = 0.0;
+    }
+}
 
 static int physics_solve(int max_steps, int restart_id) {
     int n = n_vars;
     int m = n_clauses;
 
-    /* Initialize positions: uniform in [0.3, 0.7] with diversity */
-    for (int v = 0; v < n; v++) {
-        x[v] = 0.3 + 0.4 * rng_double();
-        vel[v] = 0.0;
+    /* ---- Initialization ---- */
+    if (restart_id == 0) {
+        tension_init();  /* First try: start from tension (94% sat) */
+    } else {
+        /* Subsequent restarts: tension + random perturbation */
+        tension_init();
+        double perturb = 0.1 + 0.05 * restart_id;
+        for (int v = 0; v < n; v++) {
+            x[v] += rng_normal(0.0, perturb);
+            if (x[v] < 0.05) x[v] = 0.05;
+            if (x[v] > 0.95) x[v] = 0.95;
+            vel[v] = 0.0;
+        }
     }
 
-    /* Physics parameters — tuned from Bit Mechanics theory */
-    double dt = 0.05;          /* smaller step → more stable */
-    double damping = 0.95;     /* less friction → more exploration */
-    double T_init = 0.35;      /* start hotter (T=0.75 at threshold) */
-    double T_final = 0.0001;   /* cool to very cold */
+    /* ---- Innovation 2: Clause weighting ---- */
+    for (int ci = 0; ci < m; ci++) {
+        clause_weight[ci] = 1.0;
+    }
 
-    /* Adaptive: more steps for larger n */
+    /* ---- Physics parameters ---- */
     if (max_steps <= 0) {
-        max_steps = 1000 + n * 20;
+        max_steps = 2000 + n * 20;
     }
 
     int best_discrete_sat = 0;
+    double best_x[MAX_N];
+
+    /* ---- Innovation 3: Three-stage cooling ----
+     * Stage 1 (0-30%):   HOT — exploration, high noise, low crystal
+     * Stage 2 (30-70%):  WARM — settling, moderate noise, growing crystal
+     * Stage 3 (70-100%): COLD — freezing, low noise, strong crystal
+     */
 
     for (int step = 0; step < max_steps; step++) {
         double progress = (double)step / max_steps;
 
-        /* Slower exponential cooling for better exploration */
-        double T = T_init * exp(-4.0 * progress) + T_final;
-
-        /* Crystallization strength: grows as T drops */
-        double crystal = 3.0 * (1.0 - T / T_init);
-        if (crystal < 0) crystal = 0;
+        /* Three-stage temperature and parameters */
+        double T, dt, damping, crystal;
+        if (progress < 0.3) {
+            /* HOT: explore */
+            double p = progress / 0.3;
+            T = 0.30 * (1.0 - 0.5 * p);  /* 0.30 → 0.15 */
+            dt = 0.06;
+            damping = 0.90;
+            crystal = 0.5 * p;  /* 0 → 0.5 */
+        } else if (progress < 0.7) {
+            /* WARM: settle */
+            double p = (progress - 0.3) / 0.4;
+            T = 0.15 * (1.0 - 0.8 * p);  /* 0.15 → 0.03 */
+            dt = 0.05;
+            damping = 0.93;
+            crystal = 0.5 + 2.5 * p;  /* 0.5 → 3.0 */
+        } else {
+            /* COLD: freeze */
+            double p = (progress - 0.7) / 0.3;
+            T = 0.03 * (1.0 - 0.95 * p) + 0.0001; /* 0.03 → ~0 */
+            dt = 0.04;
+            damping = 0.85;
+            crystal = 3.0 + 5.0 * p;  /* 3.0 → 8.0 */
+        }
 
         /* Reset forces */
         memset(force, 0, sizeof(double) * n);
 
-        /* Compute clause forces (the HOT LOOP) */
+        /* ---- Clause forces with dynamic weighting ---- */
         for (int ci = 0; ci < m; ci++) {
-            /* Compute literal values and product */
             double lit[MAX_K];
-            double prod = 1.0;  /* ∏(1 - lit_j) */
+            double prod = 1.0;
 
             for (int j = 0; j < MAX_K; j++) {
                 int v = clause_var[ci][j];
@@ -194,11 +255,12 @@ static int physics_solve(int max_steps, int restart_id) {
                 prod *= term;
             }
 
-            /* Clause satisfaction = 1 - prod */
-            double unsat_weight = sqrt(prod);  /* = sqrt(1 - satisfaction) */
-            if (unsat_weight < 0.01) continue; /* nearly satisfied → skip */
+            /* Skip nearly satisfied clauses */
+            if (prod < 0.0001) continue;
 
-            /* Force: d(sat)/d(x_v) = sign_v × ∏_{j≠v}(1 - lit_j) */
+            /* Force with clause weight */
+            double w = clause_weight[ci] * sqrt(prod);
+
             for (int j = 0; j < MAX_K; j++) {
                 int v = clause_var[ci][j];
                 int s = clause_sign[ci][j];
@@ -209,49 +271,76 @@ static int physics_solve(int max_steps, int restart_id) {
                 } else {
                     prod_others = 0.0;
                 }
-                force[v] += s * unsat_weight * prod_others;
+                force[v] += s * w * prod_others;
             }
         }
 
-        /* Add crystallization force + thermal noise + update */
+        /* ---- Innovation 4: Adaptive clause weight update ---- */
+        /* Every 100 steps: increase weight of still-unsatisfied clauses */
+        if (step % 100 == 99 && progress > 0.3) {
+            for (int ci = 0; ci < m; ci++) {
+                double lit_prod = 1.0;
+                for (int j = 0; j < MAX_K; j++) {
+                    int v = clause_var[ci][j];
+                    int s = clause_sign[ci][j];
+                    double lv = (s == 1) ? x[v] : (1.0 - x[v]);
+                    lit_prod *= (1.0 - lv);
+                }
+                if (lit_prod > 0.1) {
+                    /* Still substantially unsatisfied → increase weight */
+                    clause_weight[ci] *= 1.1;
+                    if (clause_weight[ci] > 20.0) clause_weight[ci] = 20.0;
+                } else {
+                    /* Satisfied → decay weight back toward 1 */
+                    clause_weight[ci] = 1.0 + (clause_weight[ci] - 1.0) * 0.95;
+                }
+            }
+        }
+
+        /* ---- Crystallization + noise + velocity update ---- */
         for (int v = 0; v < n; v++) {
             /* Crystallization: push toward 0 or 1 */
-            if (x[v] > 0.5) {
-                force[v] += crystal * (1.0 - x[v]);
-            } else {
-                force[v] -= crystal * x[v];
-            }
+            double dist_to_01 = (x[v] > 0.5) ? (1.0 - x[v]) : x[v];
+            double crystal_force = crystal * (2.0 * (x[v] > 0.5 ? 1.0 : 0.0) - 1.0)
+                                   * dist_to_01;
+            force[v] += crystal_force;
 
             /* Thermal noise */
             double noise = rng_normal(0.0, T);
 
-            /* Velocity update (with damping) */
-            vel[v] = damping * vel[v] + (force[v] + noise) * dt;
+            /* ---- Innovation 5: Adaptive dt per variable ---- */
+            double f_mag = fabs(force[v]);
+            double local_dt = dt;
+            if (f_mag > 5.0) local_dt = dt * 5.0 / f_mag; /* cap step */
+
+            /* Velocity update */
+            vel[v] = damping * vel[v] + (force[v] + noise) * local_dt;
 
             /* Position update */
-            x[v] += vel[v] * dt;
+            x[v] += vel[v] * local_dt;
 
-            /* Clamp */
-            if (x[v] < 0.0) { x[v] = 0.0; vel[v] = 0.0; }
-            if (x[v] > 1.0) { x[v] = 1.0; vel[v] = 0.0; }
+            /* Clamp with elastic bounce */
+            if (x[v] < 0.0) { x[v] = 0.01; vel[v] = fabs(vel[v]) * 0.3; }
+            if (x[v] > 1.0) { x[v] = 0.99; vel[v] = -fabs(vel[v]) * 0.3; }
         }
 
-        /* Periodic check: are we solved? (every 50 steps) */
+        /* Periodic check */
         if (step % 50 == 49 || step == max_steps - 1) {
-            int assignment[MAX_N];
-            for (int v = 0; v < n; v++) {
-                assignment[v] = (x[v] > 0.5) ? 1 : 0;
-            }
-            int sat = evaluate_discrete(assignment);
+            int tmp[MAX_N];
+            for (int v = 0; v < n; v++) tmp[v] = (x[v] > 0.5) ? 1 : 0;
+            int sat = evaluate_discrete(tmp);
             if (sat > best_discrete_sat) {
                 best_discrete_sat = sat;
+                memcpy(best_x, x, sizeof(double) * n);
             }
             if (sat == m) {
-                return sat; /* SOLVED by pure physics! */
+                return sat;
             }
         }
     }
 
+    /* Restore best position found */
+    memcpy(x, best_x, sizeof(double) * n);
     return best_discrete_sat;
 }
 
@@ -540,12 +629,12 @@ int main(int argc, char **argv) {
         if (nn > 200) {
             max_restarts = 15;
             physics_steps = 1500 + nn * 15;
-            walk_flips = nn * 300;
+            walk_flips = nn * 500;
         }
         if (nn > 500) {
             max_restarts = 10;
             physics_steps = 1000 + nn * 10;
-            walk_flips = nn * 200;
+            walk_flips = nn * 500;
         }
         if (nn > 2000) {
             max_restarts = 5;
