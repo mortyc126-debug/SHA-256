@@ -535,20 +535,22 @@ int main(int argc, char **argv) {
         /* Scale parameters with n */
         int m_approx = (int)(4.27 * nn);
         int physics_steps = 2000 + nn * 20;
-        int walk_flips = nn * m_approx;  /* n*m flips — standard WalkSAT budget */
+        int walk_flips = nn * 500;  /* WalkSAT budget: 500n flips */
         int max_restarts = 20;
         if (nn > 200) {
             max_restarts = 15;
             physics_steps = 1500 + nn * 15;
+            walk_flips = nn * 300;
         }
         if (nn > 500) {
             max_restarts = 10;
             physics_steps = 1000 + nn * 10;
+            walk_flips = nn * 200;
         }
         if (nn > 2000) {
             max_restarts = 5;
             physics_steps = nn * 5;
-            walk_flips = nn * 500; /* cap flips for huge n */
+            walk_flips = nn * 100;
         }
 
         for (int seed = 0; seed < inst; seed++) {
