@@ -2,3 +2,6 @@ __pycache__/
 dpll_scaling
 physicsat_c
 walksat_scaling
+composite_solver
+ensemble_solver
+walksat_scaling
