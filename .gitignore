@@ -54,3 +54,4 @@ pure_grad
 scbug
 grad_long
 newton
+adam_inc
