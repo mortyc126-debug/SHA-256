@@ -42,3 +42,4 @@ recalc
 overfit
 tension_oracle
 lt_split
+crit_dyn
