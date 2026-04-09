@@ -6,3 +6,4 @@ composite_solver
 ensemble_solver
 walksat_scaling
 new_paradigm
+decimation_solver
