@@ -4,16 +4,15 @@
  *
  * CRITICAL FIX: 3-state cavity normalization.
  * Uses P_u/(P_u+P_s+P_0) excluding contradiction state P_c.
+ * This converges to the NONTRIVIAL fixed point (avg_eta~0.15, 80-90% biased).
+ * The original sp_correct.c used 4-state (all surveys -> 0, no useful info).
  *
- * Algorithm (one-shot SP + WalkSAT):
- *   1. Run 3-state SP to convergence (one time, ~100 iters)
- *   2. Compute biases, fix all vars with |bias| > threshold
- *   3. Unit propagation
- *   4. WalkSAT to complete the assignment
- *   5. Try multiple thresholds and seeds
- *
- * This is fast (single SP convergence, O(n * m * degree)) and
- * the SP biases give WalkSAT a huge head start.
+ * Algorithm:
+ *   1. Run 3-state SP once to convergence (~100 iters)
+ *   2. Compute biases: fix all variables with |bias| > threshold
+ *   3. Unit propagation cascade
+ *   4. WalkSAT to finish (with SP-biased initial assignment)
+ *   5. Try multiple thresholds and SP seeds
  *
  * Compile: gcc -O3 -march=native -o sp_v2 sp_v2.c -lm
  */
@@ -158,8 +157,8 @@ static double sp_iterate(double rho) {
     return max_change;
 }
 
-/* Converge SP once */
-static int sp_converge(unsigned long long seed) {
+/* Run SP to convergence from a given seed */
+static int sp_run(unsigned long long seed) {
     rng_seed(seed);
     for(int ci=0; ci<n_clauses; ci++)
         for(int j=0; j<MAX_K; j++)
@@ -180,7 +179,7 @@ static int sp_converge(unsigned long long seed) {
     return 0;
 }
 
-/* Compute biases */
+/* Compute biases from current surveys */
 static void sp_compute_bias(void) {
     for(int i = 0; i < n_vars; i++) {
         W_plus[i] = W_minus[i] = 0; W_zero[i] = 1;
@@ -237,7 +236,7 @@ static int unit_propagate(void) {
     return 0;
 }
 
-/* WalkSAT */
+/* WalkSAT with optional bias-guided initialization */
 static int walksat(int max_flips, int use_bias) {
     int a[MAX_N], n = n_vars, m = n_clauses;
     for(int v=0; v<n; v++) {
@@ -293,7 +292,7 @@ static int walksat(int max_flips, int use_bias) {
 }
 
 /* ============================================================
- * SOLVER: multiple strategies
+ * SOLVER
  * ============================================================ */
 static int init_cl_active[MAX_CLAUSES];
 static int init_var_fixed[MAX_N];
@@ -313,31 +312,32 @@ static int sp_solve(int nn) {
     if(unit_propagate()) return 0;
     save_init();
 
-    /* Strategy 1: One-shot SP + threshold fixing + WalkSAT
-     * Try multiple bias thresholds */
-    double thresholds[] = {0.9, 0.8, 0.7, 0.5, 0.3};
+    /* Try multiple SP seeds and bias thresholds */
+    unsigned long long sp_seeds[] = {42, 10042, 20042, 30042};
+    double thresholds[] = {0.9, 0.7, 0.5, 0.3, 0.1};
+    int n_seeds = 4;
     int n_thresh = 5;
 
-    for(int t = 0; t < n_thresh; t++) {
-        for(int sp_seed = 0; sp_seed < 2; sp_seed++) {
+    for(int si = 0; si < n_seeds; si++) {
+        /* Run SP once with this seed */
+        restore_init();
+        int conv = sp_run(sp_seeds[si] + (unsigned long long)n * 13);
+        if(!conv) continue;
+
+        sp_compute_bias();
+
+        /* Try each threshold */
+        for(int ti = 0; ti < n_thresh; ti++) {
             restore_init();
-
-            int conv = sp_converge(42ULL + sp_seed * 9973ULL + (unsigned long long)n * 13);
-            if(!conv) continue;
-
-            sp_compute_bias();
-
-            double thresh = thresholds[t];
+            double thresh = thresholds[ti];
 
             /* Fix all variables with |bias| > threshold */
-            int fixed_this_round = 0;
             for(int v = 0; v < n; v++) {
                 if(var_fixed[v] >= 0) continue;
                 double bias = fabs(W_plus[v] - W_minus[v]);
                 if(bias > thresh) {
                     int val = (W_plus[v] > W_minus[v]) ? 1 : 0;
                     var_fixed[v] = val;
-                    fixed_this_round++;
                     for(int d=0; d<vdeg[v]; d++) {
                         int ci = vlist[v][d], p = vpos[v][d];
                         if(!cl_active[ci]) continue;
@@ -348,108 +348,24 @@ static int sp_solve(int nn) {
                 }
             }
 
-            /* Unit propagation (may cause contradiction) */
-            int conflict = unit_propagate();
+            unit_propagate(); /* may conflict, that's ok */
 
-            /* WalkSAT (even after conflict, try to recover) */
             int flips = n * 2000;
             if(flips > 5000000) flips = 5000000;
 
-            for(int ws = 0; ws < 3; ws++) {
-                rng_seed(t * 10000ULL + sp_seed * 77777ULL + ws * 12345ULL);
-                int sat = walksat(flips, ws == 0 && !conflict);
+            /* Try WalkSAT with bias and without */
+            for(int ws = 0; ws < 2; ws++) {
+                rng_seed(si * 10000ULL + ti * 100ULL + ws * 12345ULL);
+                int sat = walksat(flips, ws == 0);
                 if(sat == m) return sat;
             }
         }
     }
 
-    /* Strategy 2: Iterative decimation with limited rounds */
-    for(int restart = 0; restart < 2; restart++) {
-        restore_init();
-
-        rng_seed(100ULL + restart * 9973ULL + (unsigned long long)n * 7);
-        for(int ci=0; ci<m; ci++)
-            for(int j=0; j<MAX_K; j++)
-                eta[ci][j] = rng_double();
-
-        int n_fixed = 0;
-        for(int v=0; v<n; v++) if(var_fixed[v]>=0) n_fixed++;
-
-        for(int round = 0; round < 15; round++) {
-            /* SP convergence */
-            double rho = 0.2;
-            int stall = 0;
-            double prev = 1e10;
-            int conv = 0;
-            for(int iter = 0; iter < 200; iter++) {
-                double ch = sp_iterate(rho);
-                if(ch < 1e-4) { conv = 1; break; }
-                if(ch > 0.9 * prev) {
-                    stall++;
-                    if(stall >= 10) { rho = fmin(rho + 0.1, 0.9); stall = 0; }
-                } else { stall = 0; }
-                prev = ch;
-            }
-            if(!conv) break;
-
-            double max_eta = 0;
-            for(int ci=0; ci<m; ci++) {
-                if(!cl_active[ci]) continue;
-                for(int j=0; j<MAX_K; j++) {
-                    if(var_fixed[cl_var[ci][j]] >= 0) continue;
-                    if(eta[ci][j] > max_eta) max_eta = eta[ci][j];
-                }
-            }
-            if(max_eta < 0.01) break;
-
-            sp_compute_bias();
-
-            /* Fix top 5% */
-            int nf = n - n_fixed;
-            if(nf == 0) break;
-            int to_fix = nf / 20;
-            if(to_fix < 1) to_fix = 1;
-
-            /* Simple selection: find best to_fix */
-            for(int f = 0; f < to_fix; f++) {
-                double bb = -1;
-                int bv = -1, bval = 0;
-                for(int v=0; v<n; v++) {
-                    if(var_fixed[v] >= 0) continue;
-                    double b = fabs(W_plus[v] - W_minus[v]);
-                    if(b > bb) { bb = b; bv = v; bval = (W_plus[v] > W_minus[v]) ? 1 : 0; }
-                }
-                if(bv < 0 || bb < 0.01) break;
-                var_fixed[bv] = bval;
-                n_fixed++;
-                for(int d=0; d<vdeg[bv]; d++) {
-                    int ci = vlist[bv][d], p = vpos[bv][d];
-                    if(!cl_active[ci]) continue;
-                    int s = cl_sign[ci][p];
-                    if((s==1 && bval==1) || (s==-1 && bval==0))
-                        cl_active[ci] = 0;
-                }
-            }
-
-            if(unit_propagate()) break;
-            n_fixed = 0;
-            for(int v=0; v<n; v++) if(var_fixed[v]>=0) n_fixed++;
-        }
-
-        sp_compute_bias();
-        int flips = n * 2000;
-        if(flips > 5000000) flips = 5000000;
-
-        for(int ws = 0; ws < 3; ws++) {
-            rng_seed(restart * 55555ULL + ws * 12345ULL + 500);
-            int sat = walksat(flips, ws < 2);
-            if(sat == m) return sat;
-        }
-    }
-
-    /* Final fallback */
+    /* Final fallback: pure WalkSAT (no SP) */
+    for(int v=0; v<n; v++) if(var_fixed[v] < 0) var_fixed[v] = 0;
     rng_seed(999999);
-    return walksat(n_vars * 5000, 0);
+    return walksat(n * 5000, 0);
 }
 
 /* ============================================================
@@ -457,11 +373,10 @@ static int sp_solve(int nn) {
  * ============================================================ */
 int main(void) {
     printf("====================================================\n");
-    printf("SP v2: 3-state SP + multi-strategy + WalkSAT\n");
+    printf("SP v2: 3-state SP + threshold decimation + WalkSAT\n");
     printf("====================================================\n");
     printf("Key fix: 3-state normalization (P_c excluded)\n");
-    printf("Strategy 1: one-shot SP + threshold fixing\n");
-    printf("Strategy 2: iterative 5%% decimation (15 rounds max)\n\n");
+    printf("One-shot SP, try 5 thresholds x 4 seeds x 2 WalkSAT\n\n");
 
     int test_n[] = {100, 200, 300, 500, 750, 1000, 2000};
     int sizes = 7;
