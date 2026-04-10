@@ -69,3 +69,16 @@ sp_diag4
 sp_diag5
 sp_diag6
 sp_diagnostic
+
+# Compiled binaries
+probsat
+sp_hybrid
+sp_probsat
+sp_reinforced
+sp_v2
+sp_v2_new
+sp_v3
+sp_v4
+sp_below
+sp_scale
+sp_diagnostic
