@@ -53,6 +53,7 @@
 35. Scipy C-level correction: §34 win был Python artefact (honest update)
 36. Apples-to-apples BF: **187× speedup** vs scipy Bellman-Ford (real C-level win)
 37. Parametric chaos-configurable bit — bottom-up discovery, 21-я ось кандидат
+38. Stochastic resonance bit — второе bottom-up discovery, 22-я ось кандидат
 
 ---
 
@@ -9026,18 +9027,258 @@ D1-D5 axioms, показан **irreducible** к 20 существующим
 - ✓ Not reducible to 20 existing axes
 - ✓ Connects to Sinha-Ditto chaos computing literature
 
-**Candidate status**: **21-я нативно независимая ось** программы,
-первая найденная через bottom-up exploration. Pending full
-formalization и integration в hierarchy v6.
+**LUT self-check update**: при углубленной проверке против LUT
+baseline, §37 даёт **modest реальные advantages**:
+- n=2, 3: 100% coverage, но LUT компактнее в bits
+- n=4: 80% coverage (8/10 random functions, 50k trials)
+- Crossover в пользу chaos: n ≥ 16 (parameters linear, LUT exponential)
+- Non-linearly-separable functions работают on single cell
+- Parameter space **irregular** — interpolation НЕ smooth
+- **Verdict**: compressed representation for structured functions,
+  не universal LUT replacement
 
-**Meta-win**: подтверждает methodological критику пользователя
-— top-down taxonomy упускала bottom-up discoveries. Exploratory
-mode действительно добавляет primitives, которые top-down не
-видит.
+**Candidate status**: **21-я нативно независимая ось** программы,
+первая найденная через bottom-up exploration. Honest modest
+practical advantages.
 
 ---
 
-## Конец методички v3 (после §37 — first bottom-up discovery)
+## 38. Stochastic resonance bit — второе bottom-up discovery
+
+### 38.1 Мотивация
+
+После §37 продолжил exploration других physical substrates.
+Среди probed (memristors, reservoirs, metastable), наткнулся
+на **stochastic resonance** (SR) — counterintuitive
+phenomenon, где noise **помогает** signal detection вместо
+того чтобы мешать.
+
+Классическая SR (Benzi-Parisi-Sutera-Vulpiani 1981, для
+ice age modeling): bistable system + weak subthreshold signal
++ calibrated noise = signal detected with high correlation.
+Без noise signal undetectable; with right noise detected
+reliably.
+
+**Gap observation (Feynman-style)**: classical bit models
+treat noise exclusively as **damage** (errors, decoherence).
+Real physical systems (neurons, SQUIDs, climate oscillators)
+**use noise as fuel**. Nothing в нашей taxonomy ловит
+«noise as resource».
+
+### 38.2 Определение
+
+**Stochastic resonance bit** = bistable dynamical system
+with noise:
+
+$$\frac{dx}{dt} = x - x^3 + A \sin(\omega t) + \sigma \eta(t)$$
+
+где:
+- $V(x) = -x^2/2 + x^4/4$ — double-well potential с минимумами в $x = \pm 1$
+- $A$ — amplitude of input signal (could be subthreshold)
+- $\omega$ — frequency of input
+- $\sigma$ — noise standard deviation
+- $\eta(t)$ — white noise
+
+**Output**: $\text{sign}(x)$ — binary left/right well indicator.
+
+**Characteristic property**: at **subthreshold** $A$, output
+correlation with input goes **non-monotonically** with $\sigma$:
+- $\sigma = 0$: no switching, correlation = 0
+- $\sigma$ moderate: optimal switching, correlation peaks
+- $\sigma$ large: noise overwhelms signal, correlation drops
+
+### 38.3 EXP: correlation peak at intermediate noise
+
+Subthreshold signal $A = 0.25$, frequency $\omega = 0.1$:
+
+| $\sigma$ (noise std) | correlation |
+|---|---|
+| 0.00 | **0.00** (signal invisible) |
+| 0.10 | 0.00 |
+| 0.30 | 0.05 |
+| 0.50 | 0.32 |
+| **0.70** | **0.40 — peak** |
+| 1.00 | 0.22 |
+| 1.50 | 0.15 |
+
+**Non-monotonic curve**, classical SR signature confirmed
+numerically.
+
+### 38.4 EXP: practical subthreshold classification
+
+Task: classify direction (+ or −) of subthreshold signal
+$A = 0.2$ via observed switching pattern over 100 time units.
+Classical would need $A$ above threshold; subthreshold gives
+50% random.
+
+| $\sigma$ | accuracy |
+|---|---|
+| 0.00 | **50% (random, undetectable)** |
+| 0.10 | 40% |
+| 0.30 | 58% |
+| 0.50 | 74% |
+| 0.70 | **92%** |
+| **1.00** | **94% (peak)** |
+| 1.50 | 86% |
+
+**50% → 94% via calibrated noise**. Это real computational
+effect: noise transforms undetectable signal into detectable.
+
+### 38.5 D1-D5 check
+
+**D1 (Bit grounding)**: output $\in \{-1, +1\}$ via
+$\text{sign}(x)$. Maps to binary. ✓
+
+**D2 (Bool compatibility)**: at $\sigma = 0$ and strong $A$,
+behaves as classical threshold. ✓
+
+**D3 (New primitive)**: **noise injection as required
+operation**. Classical bits don't have noise as first-class
+input. ✓
+
+**D4 (Witness)**: correlation peak at intermediate noise is
+computer-checkable. ✓
+
+**D5 (Non-degeneracy)**: state $x \in \mathbb{R}$, not only
+$\{-1, +1\}$. Continuous bistable dynamics. ✓
+
+**All 5 pass**.
+
+### 38.6 Irreducibility к 21 существующей оси
+
+| ось | почему не реализует SR bit |
+|---|---|
+| probability (§6.4) | noise = output randomness, не input resource |
+| neurobit (§18) | linear accumulator, нет bistable potential |
+| phase (§5.2) | static signed, no dynamics, no noise |
+| cost (§11.2) | static optimization, no noise |
+| fuzzy (§21) | continuous lattice, no stochastic |
+| hybrid automata (§24) | piecewise-linear, no noise as resource |
+| timed (§23) | continuous time, no noise |
+| **§37 parametric chaos** | deterministic dynamics, noise would break it |
+
+**Ключевое**: §37 chaos cell — **deterministic**, SR bit —
+**stochastic**. Это противоположные по философии. Оба
+используют nonlinear dynamics, но chaos избегает noise,
+SR требует noise.
+
+Ни одна из 21 осей не имеет **«noise as enabling resource»**
+как primitive.
+
+### 38.7 Почему это работает
+
+Bistable system имеет energy barrier между двумя wells.
+Subthreshold signal не может сам перекинуть state через
+barrier. Но **thermal noise** (или искусственный белый шум)
+stochastically помогает crossings, и subthreshold signal
+**biases** direction crossings.
+
+Average crossing rate $\sim \exp(-\Delta V / \sigma^2)$
+(Kramers formula). Для moderate $\sigma$, rate matches
+signal frequency $\omega$ — это **resonance**. Носит
+название «stochastic resonance» именно из-за этого
+resonance-like behavior.
+
+**Результат**: noise-biased crossings correlate с signal,
+SNR at subthreshold эффективно **возрастает** с noise до
+peak, затем падает.
+
+### 38.8 Literature
+
+Classical references:
+- **Benzi, Parisi, Sutera, Vulpiani 1981**: original SR в
+  climate modeling (ice age periodicity ~100k years)
+- **McNamara, Wiesenfeld 1989**: theory framework
+- **Wiesenfeld, Moss 1995**: Nature review, experimental
+  confirmations
+- **Gammaitoni, Hänggi, Jung, Marchesoni 1998**: Rev Mod
+  Phys comprehensive review
+- **Douglass, Wilkens, Pantazelou, Moss 1993**: SR в neurons
+  (crayfish mechanoreceptors)
+
+Физическая реализация:
+- Neurons (sensory processing at sub-threshold stimuli)
+- SQUID detectors (weak magnetic signal detection)
+- Ice age oscillations (weak solar forcing + internal noise)
+- Laser output near threshold
+- Auditory hair cells
+
+Все on **ordinary physical substrates**, никакой специальной
+quantum tech.
+
+### 38.9 Классификация и вывод
+
+**22-я ось кандидат**: stochastic resonance bit
+
+**Metagroup**: не очевидная. Кандидаты:
+- OPERATION (noise injection как operation)
+- VALUE (bistable state с continuous x)
+- New group **DYNAMICAL** (вместе с §37)
+
+**Framework** (§29): не chrust'ит в existing 6. Вероятно
+**parametric dynamical** (потенциальный 7-й framework),
+возможно с §37.
+
+**Practical value**:
+- Neural sensor processing at sub-threshold stimuli
+- Weak signal detection in noisy environments
+- Biologically-inspired computing
+- Adaptive threshold systems
+
+**Meta-win**: **второе bottom-up discovery** за сессию
+подтверждает methodological корrection — top-down classification
+from logic/algebra literature упускала целые области физики
+(chaos computing, stochastic resonance). Bottom-up exploration
+from substrates reveals what classification missed.
+
+### 38.10 Cumulative bottom-up findings
+
+После §37 и §38 программа имеет **два новых axis кандидата**,
+найденных **только через exploration**:
+
+| # | axis | substrate | literature origin | год |
+|---|---|---|---|---|
+| **21** | **Parametric chaos-configurable** | Chua/logistic map | Sinha-Ditto | 2001 |
+| **22** | **Stochastic resonance** | Bistable + noise | Benzi et al | 1981 |
+
+Обе found bottom-up, обе pass D1-D5, обе irreducible к старым
+20 осям, обе **pre-existing** в physics literature но **не**
+были в нашей top-down taxonomy из mathematical logic /
+category theory.
+
+Это подтверждает гипотезу: наша part I-II taxonomy читала
+logic/algebra corpus, не physics corpus. Целая новая
+метагруппа (DYNAMICAL / PHYSICAL) может скрываться в
+physical substrates.
+
+**Potential 5-я метагруппа**: **DYNAMICAL** (содержит
+parametric chaos, stochastic resonance, возможно другие).
+Если подтвердится, мета-структура становится 6/5/5/5/2 или
+больше, и гипотеза «4 метагруппы» (§13.3) может быть
+опровергнута.
+
+### 38.11 Статус раздела 38
+
+**Clean positive bottom-up result.** Stochastic resonance
+numerical verified (non-monotonic SR curve, subthreshold
+classification 50% → 94%). Axioms D1-D5 pass. Irreducible к
+21 существующей оси (включая §37).
+
+**22-я ось кандидат**, second bottom-up discovery.
+
+**Meta-implication**: method of bottom-up substrate probe is
+**productive** for discovering missing axes. Top-down
+literature search from logic/category theory missed entire
+classes (chaos computing, stochastic resonance) because
+these aren't in typical CS theory corpus.
+
+**Открытый вопрос**: сколько ещё physical phenomena bypass
+current taxonomy? Memristor dynamics? Spintronics? Optical
+computing? Each potentially hiding new axis.
+
+---
+
+## Конец методички v3 (после §38 — second bottom-up discovery)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
