@@ -54,6 +54,7 @@
 36. Apples-to-apples BF: **187× speedup** vs scipy Bellman-Ford (real C-level win)
 37. Parametric chaos-configurable bit — bottom-up discovery, 21-я ось кандидат
 38. Stochastic resonance bit — второе bottom-up discovery, 22-я ось кандидат
+39. Reaction-diffusion field bit — tentative 23-я ось, + memristor honest negative
 
 ---
 
@@ -9266,19 +9267,246 @@ classification 50% → 94%). Axioms D1-D5 pass. Irreducible к
 
 **22-я ось кандидат**, second bottom-up discovery.
 
-**Meta-implication**: method of bottom-up substrate probe is
-**productive** for discovering missing axes. Top-down
-literature search from logic/category theory missed entire
-classes (chaos computing, stochastic resonance) because
-these aren't in typical CS theory corpus.
+---
 
-**Открытый вопрос**: сколько ещё physical phenomena bypass
-current taxonomy? Memristor dynamics? Spintronics? Optical
-computing? Each potentially hiding new axis.
+## 39. Третий round exploration: field bits + honest negative
+
+### 39.1 Мотивация
+
+После §37 (chaos) и §38 (SR) продолжил exploration других
+physical substrates: **memristor hysteresis** и
+**reaction-diffusion** systems. Этот раздел — честный report
+двух probes, один негативный, один tentative positive.
+
+### 39.2 Memristor probe — honest negative
+
+**Memristor** (Chua 1971, Strukov et al 2008): passive
+element с resistance dependent on history of current.
+
+**Симулированная модель**: $R \in [R_{\min}, R_{\max}]$ с
+non-linear window function $w(R) = 1 - ((2R - R_{\max} -
+R_{\min})/(R_{\max} - R_{\min}))^2$, drift $dR/dt = V \cdot
+w(R)$.
+
+**Tested properties**:
+- ✓ **Non-volatility**: state retained without power
+- ✓ **Bounded state**: $R \in [1, 10]$
+- ✓ **Non-commutative sequences**: ordering matters
+
+**BUT**: linear-with-clipping model has **same** properties:
+- Non-volatile без leak
+- Bounded
+- Non-commutative due to clipping at boundaries
+
+**Correlation memristor vs linear-clipped over 100 random
+sequences**: 0.77. Similar enough that nonlinear window
+function is **quantitative refinement**, not **structural
+novelty**.
+
+**Verdict**: Memristor ≈ specialization of **hybrid automata
+with bounded state and nonlinear drift**. Probably a **new
+cell**, not a new axis. Modest discovery.
+
+**Honest negative**: не третья bottom-up ось.
+
+### 39.3 Reaction-diffusion probe — tentative positive
+
+**Gray-Scott model** (1984):
+$$\frac{\partial u}{\partial t} = D_u \nabla^2 u - uv^2 + F(1 - u)$$
+$$\frac{\partial v}{\partial t} = D_v \nabla^2 v + uv^2 - (F + k)v$$
+
+Produces spots, stripes, labyrinths, waves в зависимости от
+$(F, k)$ параметров.
+
+**EXP 1** — Pattern classification:
+
+| $(F, k)$ | name | mean $u$ | std | dominant $k$ |
+|---|---|---|---|---|
+| $(0.04, 0.06)$ | waves | 0.54 | 0.17 | 4 |
+| $(0.055, 0.062)$ | labyrinth | 0.77 | 0.25 | 1 |
+| $(0.025, 0.055)$ | self-replicating | 0.51 | 0.15 | 5 |
+| $(0.042, 0.061)$ | stripes | 0.57 | 0.18 | 4 |
+
+Distinct pattern classes через FFT signature.
+
+**EXP 2** — Seed independence:
+
+| seed | mean $u$ | std | dominant $k$ |
+|---|---|---|---|
+| 0 | 0.525 | 0.154 | 4 |
+| 1 | 0.548 | 0.180 | 3 |
+| 2 | 0.528 | 0.163 | 4 |
+| 3 | 0.527 | 0.158 | 4 |
+| 4 | 0.530 | 0.161 | 3 |
+
+**Pattern CLASS converges** across seeds, **exact positions
+vary**. Computation is в "phase", not в positions.
+
+### 39.4 Does RD fit existing axes?
+
+| ось | почему не captures RD |
+|---|---|
+| spatial-holonomy (§22) | group labels на edges, не continuous field |
+| hybrid automata (§24) | finite modes, не infinite-dim field |
+| fuzzy (§21) | continuous values, нет spatial coupling |
+| timed (§23) | continuous time, нет пространства |
+| §37 chaos | single cell, не field |
+| §38 SR | bistable single, не field |
+
+**Reaction-diffusion имеет continuous field over continuous
+space** — этого нет ни в одной из наших 22 осей (включая
+§37, §38).
+
+### 39.5 D1-D5 check
+
+- **D1**: $u \in [0, 1]$ contains $\{0, 1\}$ ✓
+- **D2**: uniform $u \equiv 0$ or $u \equiv 1$ reduces to constant bit ✓
+- **D3**: new primitive = **spatial Laplacian coupling + local
+  nonlinear reaction**. Not in existing 22. ✓
+- **D4**: pattern class computable via FFT features ✓
+- **D5**: state $u : \mathbb{R}^2 \to [0, 1]$ — infinite-dimensional
+  continuous field ✓
+
+Passes D1-D5.
+
+### 39.6 Tentative classification — 23-я ось?
+
+**Field bit** (alternative names: reaction-diffusion bit, PDE bit,
+pattern-forming bit):
+
+- **Carrier**: continuous field $u : \Omega \to \mathbb{R}$ где
+  $\Omega \subset \mathbb{R}^d$
+- **Dynamics**: nonlinear PDE (e.g., Gray-Scott, Gierer-Meinhardt)
+- **Output**: pattern class (via FFT, topological data analysis, or
+  pattern recognition)
+- **Framework**: совершенно новая — **spatially-extended
+  dynamical**
+
+**Literature**:
+- **Turing 1952**: "The chemical basis of morphogenesis" (первая
+  работа по pattern formation)
+- **Gray, Scott 1984**: the Gray-Scott model
+- **Gierer, Meinhardt 1972**: biological pattern formation
+- **Swinney, Ouchi 1990s**: experimental verification в chemical
+  reactors
+
+**Physical realizations**: BZ reaction, CIMA reaction, Min
+oscillations в E. coli, actin waves, reaction-diffusion
+hardware prototypes (ARM Morphogen, FPGA-based).
+
+### 39.7 Caveats — why это tentative, not solid
+
+1. **Is it a primitive or a computation paradigm?** PDE simulation
+   requires $O(N^d)$ storage for discretization. Is this bit-level
+   or computing substrate level?
+
+2. **Irreducible?** Closest cell: hybrid automata (§24) with
+   **continuous spatial coupling**. Not explicitly in §24, but
+   conceptually possible.
+
+3. **Witness?** Pattern class is a fuzzy concept — requires
+   specific metric (FFT, TDA, etc). Less clean than §37 (16/16
+   gates) or §38 (50% → 94% classification).
+
+4. **Practical advantage?** What does RD bit do that hybrid
+   automata с non-trivial coupling не can't? Need explicit gap.
+
+### 39.8 Cumulative discoveries after §37-§39
+
+| # | axis | status | source | literature |
+|---|---|---|---|---|
+| 21 | parametric chaos | **solid** (§37) | logistic map probe | Sinha-Ditto 2001 |
+| 22 | stochastic resonance | **solid** (§38) | bistable + noise probe | Benzi 1981 |
+| — | memristor | **negative** (§39.2) | similar to linear-clip | Strukov 2008 |
+| 23? | reaction-diffusion field | **tentative** (§39.3-6) | Gray-Scott probe | Turing 1952 |
+
+**Four probes**: 2 solid positives, 1 tentative, 1 negative.
+Это realistic rate для exploration mode: not every probe wins,
+но substantial разрewards.
+
+### 39.9 Potential 5-я метагруппа — DYNAMICAL
+
+После §37, §38 и §39 tentative, вырисовывается **новая
+метагруппа**, которая не была в первоначальной 4-structure:
+
+**DYNAMICAL / PHYSICAL**:
+- §37 parametric chaos (deterministic dynamics)
+- §38 stochastic resonance (noise-assisted dynamics)
+- §39 reaction-diffusion (spatially-extended dynamics)
+- Possibly future: memristor, spintronics, optical solitons, etc.
+
+Все три **не хрустят** в 4 существующих метагруппы (VALUE,
+OPERATION, RELATION, TIME). Они описывают **physical
+substrates** с continuous nonlinear dynamics.
+
+**Possible meta-structure update** (requires more verification):
+- VALUE (6)
+- OPERATION (5)
+- RELATION (5)
+- TIME (5)
+- **DYNAMICAL (2-3)** — новая
+
+Итого 23-24 оси в **5 метагруппах** вместо 20 в 4.
+
+Это **serious revision** для §13.3 гипотезы о 4 метагруппах.
+Не хочу преждевременно подтверждать — нужно ещё bottom-up
+probes для confirmation DYNAMICAL как complete metagroup.
+
+### 39.10 Methodology lesson
+
+**Exploration mode дает разные типы results**:
+
+| type | example | rate |
+|---|---|---|
+| **Solid positive** | §37, §38 | ~50% |
+| **Tentative positive** | §39 RD | ~25% |
+| **Honest negative** | §39 memristor | ~25% |
+
+Это reasonable research productivity. Не every probe finds a
+new axis; honest negatives также valuable как confirmations
+того, что discovery bar is real.
+
+**Критический insight**: probes fall into one of three
+categories:
+1. **Really novel** — passes all checks
+2. **Reducible variant** — feels new but reduces to existing
+3. **Fundamentally different** — neither new nor reducible;
+   simply a different way to think about known
+
+Memristor fell into (2). RD falls between (1) and (3) —
+pending clarification.
+
+### 39.11 Статус раздела 39
+
+**Mixed bag, honest**:
+
+- **§37 parametric chaos**: solid 21-я axis candidate
+- **§38 stochastic resonance**: solid 22-я axis candidate
+- **§39 memristor**: honest negative, modest cell not new axis
+- **§39 reaction-diffusion**: tentative 23-я axis candidate
+- **Potential metagroup**: DYNAMICAL / PHYSICAL emerging
+
+**Bottom-up exploration**: productive. После 4 probes в этом
+direction, накопили 2 solid + 1 tentative + 1 negative.
+
+**Методология работает**: bottom-up discoveries which top-down
+taxonomy was missing. Classical physics (chaos computing,
+stochastic resonance, reaction-diffusion) was invisible to
+our top-down search because it's in physics literature, не
+logic/algebra literature.
+
+**Honest tiredness**: после 39 разделов и 4 bottom-up probes в
+одной сессии, diminishing returns могут наступить. Каждый
+next probe будет либо confirming существующее или finding
+rare new genuine axis. Discovery rate likely decreasing.
+
+**Вопрос к пользователю**: продолжать exploration (wide
+survey), консолидировать (formalize 21-22-23 в hierarchy v6),
+или остановиться и review?
 
 ---
 
-## Конец методички v3 (после §38 — second bottom-up discovery)
+## Конец методички v3 (после §39)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
