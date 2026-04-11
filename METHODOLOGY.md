@@ -44,6 +44,7 @@
 26. Dependency matrix 21×21: структурная математика, а не таксономия
 27. Category of axes: DAG, Hasse diagram, poset structure
 28. Axiomatization: 5 аксиом «расширения бита» (Д4)
+29. Plurality theorem: no universal framework, 6-framework decomposition (Д3)
 
 ---
 
@@ -6615,7 +6616,372 @@ allowing future candidates to be tested against fixed axioms.
 
 ---
 
-## Конец методички v3 (после §28)
+## 29. Plurality theorem: нет universal framework для bit-math (Д3)
+
+### 29.1 Мотивация
+
+§28 дал аксиомы (D1-D5), определяющие «расширение бита», но
+не единый **объект**, содержащий все расширения одновременно.
+Д3 из §25.6 спрашивает: существует ли один категориальный
+**framework** (структура), в которую все 13 structurally
+primitive axes вложены как sub-objects?
+
+Аналогия из классической алгебры: группы, кольца, поля — все
+можно поместить в одну категорию (например, Sets с морфизмами,
+сохраняющими структуру). Тогда «теория групп» — это не отдельная
+теория, а sub-theory of set theory. Есть ли такой object для
+bit extensions?
+
+§29 — прямая атака на Д3.
+
+### 29.2 Что значит «universal structure»
+
+Формально: $\mathcal{U}$ — универсальная структура для
+расширений бита, если для каждого axis $X$ существует
+естественное вложение $i_X: X \hookrightarrow \mathcal{U}$,
+сохраняющее характеристические операции $X$.
+
+Типичные кандидаты из category theory:
+
+| framework | кратко | кто живёт там |
+|---|---|---|
+| Symmetric monoidal cat (SMC) | tensor ⊗, unit, симметрия | ebit, linear, reversible, braided |
+| Elementary topos | subobject classifier, CCC | quotient, higher-order, modal |
+| Lawvere theory | алгебраические теории над signature | semigroups, rings, lattices |
+| 2-category | morphisms + 2-morphisms | spatial, higher stacks |
+| Coalgebra | T-coalgebras для функтора | selfref, stream, modal |
+| Hybrid automaton | discrete + continuous | timed, control systems |
+
+Я проверил каждую против 13 primitives.
+
+### 29.3 Framework coverage — шесть проверок
+
+**F1. Symmetric monoidal category (SMC)**
+
+Natural fit: ebit (compact closed SMC, Abramsky-Coecke 2004),
+rev (dagger SMC, Selinger 2007), lin (monoidal closed, Girard
+1987), braid (braided SMC, Joyal-Street 1993).
+
+**Покрывает 4/13**.
+
+Не покрывает: quot (нет subobject classifier), church (CCC
+≠ SMC), fuzzy (латтис), cost (оптимизация), selfref (coalgebra),
+causal (directed), spatial (2-cat / bundle), branching
+(coalgebra), timed (hybrid).
+
+**F2. Elementary topos**
+
+Natural fit: quot (subobject classifier, Lawvere 1964), church
+(Cartesian closed, Lambek-Scott 1986).
+
+Marginal: modal (via sheaf topos), branching (via coalgebraic
+semantics within topos).
+
+**Покрывает 2-3/13** native.
+
+Не покрывает: ebit, rev, lin, braid (SMC, не topos), fuzzy
+(латтис), cost, selfref, causal, spatial, branching (если не
+coalgebra), timed.
+
+**F3. Lawvere theory / algebraic theory**
+
+Natural fit: fuzzy (residuated lattice, Hájek 1998), cost
+(semiring module / Lawvere theory над $\mathbb{R}$).
+
+**Покрывает 2/13**.
+
+Не покрывает: ebit (tensor — монадальное), church (λ —
+higher-order), причинные структуры, continuous time.
+
+**F4. 2-category / higher category**
+
+Natural fit: spatial (gauge theory на lattice, 2-groupoid),
+causal (directed preorder category, Sorkin 1987).
+
+**Покрывает 2/13**.
+
+Ограничение: 2-cat слишком абстрактна, теряет computational
+structure.
+
+**F5. Coalgebra / fixed-point theory**
+
+Natural fit: selfref (coalgebra для fixed-point функтора,
+Barr 1993), branching (coalgebra для powerset функтора,
+Rutten 2000).
+
+**Покрывает 2/13**.
+
+Ограничение: coalgebra — dual категория к алгебре; работает
+для state-based computations, но не для values и не для
+process-based.
+
+**F6. Hybrid automaton**
+
+Natural fit: timed (Alur-Dill 1994 = специфически hybrid).
+
+**Покрывает 1/13**.
+
+Узкоспециализированная структура, не обобщает.
+
+### 29.4 Negative result: нет единого framework
+
+Сводная таблица покрытия:
+
+| framework | coverage | примитивы |
+|---|---|---|
+| SMC | 4/13 | ebit, rev, lin, braid |
+| topos | 2-3/13 | quot, church, (modal) |
+| lattice/Lawvere | 2/13 | fuzzy, cost |
+| 2-cat | 2/13 | causal, spatial |
+| coalgebra | 2/13 | selfref, branching |
+| hybrid | 1/13 | timed |
+
+**Максимальное single-framework покрытие: 4 из 13**.
+
+Никакой single concrete categorical framework не содержит
+все 13 primitives как natural sub-objects. Д3 в сильном смысле
+(«один объект») **отрицательный результат**.
+
+### 29.5 Weak candidates — слабые кандидаты
+
+Можно спросить: существует ли **абстрактная** структура,
+содержащая все, ценой потери конкретности?
+
+**W1. Higher topos / ∞-topos** (Lurie 2009).
+Идея: ∞-categorical обобщение topos. Формально содержит
+обычные topos, SMC в определённых случаях, coalgebras.
+**Проблема**: слишком абстрактна для вычислений; не включает
+cost (непрерывная оптимизация) или timed (hybrid) нативно.
+
+**W2. Enriched category** над большой базой $\mathcal{V}$.
+Идея: hom(X, Y) принимает значения в произвольной $\mathcal{V}$.
+Если $\mathcal{V}$ содержит достаточно структуры, каждый
+primitive может быть enriched-cat над $\mathcal{V}$.
+**Проблема**: **циркулярно** — $\mathcal{V}$ сама должна
+содержать 13 primitives, что и есть исходная задача.
+
+**W3. Lawvere category of theories.**
+Идея: objects = algebraic theories, morphisms = interpretations.
+**Проблема**: не работает для non-algebraic primitives (fuzzy
+с бесконечной мощью, timed continuous, spatial gauge).
+
+**W4. Operad of all operations.**
+Идея: универсальная operad, содержащая операции всех axes.
+**Проблема**: tривиальная disjoint union, не unification —
+просто собрание.
+
+**Вывод**: слабые кандидаты либо не покрывают всё, либо
+слишком абстрактны для вычислительно-осмысленной работы.
+
+### 29.6 Positive result: six-framework decomposition
+
+Отрицательный результат на Д3 **не** означает, что ничего не
+получено. Положительный результат: **13 primitives декомпозируются
+в ровно 6 disjoint категориальных framework'ов**.
+
+| framework | # | primitives |
+|---|---|---|
+| **SMC** | 4 | ebit, rev, lin, braid |
+| **topos** | 2 | quot, church |
+| **lattice** | 2 | fuzzy, cost |
+| **2-cat** | 2 | causal, spatial |
+| **coalgebra** | 2 | selfref, branching |
+| **hybrid** | 1 | timed |
+| **всего** | **13** | ✓ |
+
+Каждый framework — **стандартная ветвь** категориальной /
+алгебраической математики, десятилетиями разрабатываемая.
+
+### 29.7 Framework × Metagroup cross-classification
+
+Сравниваем **6 frameworks** с **4 metagroups** из §25:
+
+| primitive | metagroup | framework |
+|---|---|---|
+| ebit | VAL | SMC |
+| quot | VAL | topos |
+| fuzzy | VAL | lattice |
+| rev | OP | SMC |
+| lin | OP | SMC |
+| selfref | OP | coalgebra |
+| church | OP | topos |
+| cost | OP | lattice |
+| braid | REL | SMC |
+| causal | REL | 2-cat |
+| spatial | REL | 2-cat |
+| branching | TIME | coalgebra |
+| timed | TIME | hybrid |
+
+**Занято 11 cells в 4×6 сетке** (возможно 24). Sparsity 54%.
+
+**Framework spans multiple metagroups** (4 из 6):
+- **SMC**: VAL (ebit), OP (rev, lin), REL (braid) — **3** metagroups
+- **topos**: VAL (quot), OP (church) — **2** metagroups
+- **lattice**: VAL (fuzzy), OP (cost) — **2** metagroups
+- **coalgebra**: OP (selfref), TIME (branching) — **2** metagroups
+
+**Framework confined to one metagroup** (2 из 6):
+- **2-cat**: REL (causal, spatial) только
+- **hybrid**: TIME (timed) только
+
+**Ключевое наблюдение**: **framework classification orthogonal
+к metagroup classification**. Они не align. SMC покрывает 3
+из 4 метагрупп; lattice объединяет VAL и OP; coalgebra
+объединяет OP и TIME.
+
+Это означает, что **у программы есть ДВА независимых способа
+классифицировать axes**: функциональный (VAL/OP/REL/TIME) и
+категориальный (SMC/topos/lattice/2-cat/coalgebra/hybrid).
+Оба осмысленны, но они **не редуцируются** друг к другу.
+
+### 29.8 Плюральная теорема (informal)
+
+После §29 формулируем **Plurality Theorem** (неформально):
+
+> Математика битов — **inherently plural**. Она требует
+> минимум **6 различных категориальных framework'ов** для
+> формализации 13 structurally primitive axes. Единая
+> структура, содержащая все, существует только в
+> trivial sense (disjoint union) или в too-abstract sense
+> (∞-topos), но не в computationally meaningful смысле.
+
+Это **не** неудача программы. Это **структурный факт**
+самой мат-дисциплины: bit extensions живут в нескольких
+разных районах математики, и ни одна отдельная ветвь не
+полна для их описания.
+
+### 29.9 Импликации для программы
+
+**I29.1. Нет единого base объекта.** Программа не может
+свести всё к одной категориальной структуре. Любое
+продвижение должно быть **параллельным** по 6 frameworks,
+не последовательным через один.
+
+**I29.2. Метагруппы ≠ frameworks.** Раньше думал, что
+metagroup classification (VAL/OP/REL/TIME) — это
+фундаментальная структура. Теперь видно, что это **один
+из двух** способов классификации, не единственный.
+Framework classification — дополнительный.
+
+**I29.3. Мост между frameworks.** Поскольку primitives из
+разных metagroups могут жить в одном framework (SMC
+содержит VAL ebit + OP rev, lin + REL braid), **есть
+мосты между метагруппами** через общие frameworks. Это
+открывает новые clean моtivated клетки: например, ebit ×
+rev — оба в SMC, их комбинация natural в dagger compact
+closed SMC.
+
+**I29.4. Cross-framework cells.** Комбинационные клетки
+имеют два типа:
+- **Intra-framework**: обе оси в одном framework (легко
+  формализуется внутри framework)
+- **Cross-framework**: оси в разных frameworks (требует
+  interaction между frameworks)
+
+Все 8 существующих клеток можно классифицировать по этому
+признаку в будущем разделе.
+
+**I29.5. 2-cat и hybrid — специализированные.** Эти два
+frameworks ограничены одной метагруппой каждый. 2-cat —
+только REL, hybrid — только TIME. Это делает их structurally
+сингулярными: их роль — конкретные классы, не общие
+шаблоны.
+
+### 29.10 Что даёт §29 для исходного вопроса
+
+Пользователь хочет «выжать максимум информации из математики
+битов». После §29:
+
+1. **Мы знаем, что нет one-size-fits-all**. Не ищем единую
+   теорию — ищем координированные действия в 6 направлениях.
+
+2. **6 frameworks дают roadmap**. Каждый framework —
+   направление research:
+   - SMC: квантово-подобные структуры (Abramsky-Coecke lineage)
+   - topos: logic + higher-order
+   - lattice: continuous / soft computing
+   - 2-cat: geometric / gauge
+   - coalgebra: state-based / reactive
+   - hybrid: control / real-time
+
+3. **Плюральность — это feature, не bug**. Для построения
+   «битов мощнее обычных» нужны **комбинации** frameworks,
+   а не one universal. Комбинация SMC + coalgebra даёт
+   quantum-like reactive systems. SMC + lattice даёт
+   fuzzy quantum-like. И т.д.
+
+4. **Следующий уровень research**: вместо поиска 21-й оси,
+   искать **комбинации frameworks**. Это структурно новый
+   путь, открытый §29.
+
+### 29.11 Открытые направления
+
+**Q29.1. Intra-framework coproducts.** В SMC четыре
+primitives: ebit, rev, lin, braid. Существует ли их **meet**
+(coproduct) внутри SMC? Это даст самую мощную SMC-структуру,
+содержащую все четыре. Кандидат: **compact closed braided
+dagger SMC с linear types** — стандартный объект в
+Abramsky-Coecke framework. Если это работает, у нас есть
+**reduced SMC framework**, представляющий 4 примитива.
+
+**Q29.2. Functors between frameworks.** Существуют ли
+функторы $F: \text{SMC} \to \text{topos}$, $G: \text{SMC}
+\to \text{lattice}$? Если да, это **формализует** связи
+между frameworks.
+
+**Q29.3. Framework интеракции для клеток.** Для каждой
+комбинационной клетки определить, какие frameworks
+пересекаются. Классифицировать 8 cells (6 pair + 2 triple)
+по этому признаку.
+
+**Q29.4. Non-obvious frameworks.** Возможны ли frameworks,
+которые я пропустил? Кандидаты:
+- **Fibrational structures** (Grothendieck fibrations)
+- **Proarrow equipments** (для formal category theory)
+- **Double categories**
+
+Если есть, они могут дать alternative decomposition в
+5 или 7 frameworks вместо 6.
+
+**Q29.5. Minimal universal object?** Возможно ли, что
+существует **один** объект в higher-category, который
+содержит все 6 frameworks как подструктуры? ∞-topos был
+отвергнут как too abstract. Есть ли более concrete
+higher-categorical структура?
+
+### 29.12 Статус раздела 29
+
+**Negative result (strong): Д3 в сильном смысле невыполним.**
+Не существует single concrete categorical framework,
+содержащего все 13 structurally primitive axes nativno.
+
+**Positive result (concrete)**: 13 primitives декомпозируются
+в **ровно 6 disjoint frameworks**: SMC, topos, lattice, 2-cat,
+coalgebra, hybrid.
+
+**Plurality Theorem** (informal): bit extensions
+categorically plural, требуют 6+ frameworks для полной
+формализации.
+
+**Orthogonality**: 6 frameworks не align с 4 metagroups.
+Программа имеет **два** классификационных axes над axes
+— функциональный и категориальный.
+
+**После §29** программа уже имеет:
+- Д1 ✓ (simulation matrix, §26)
+- Д2 ✓ частично (antisymmetry, §27)
+- Д3 ✓ honest negative + 6-framework decomposition (§29)
+- Д4 ✓ (axioms D1-D5, §28)
+- Д5 ? (upper bound theorem — не сделано)
+- Д6 ? (minimal substrate — не сделано)
+
+**4 из 6** глубинных уровней сделаны или начаты. Осталось
+Д5 (теорема о границе) и Д6 (минимальный субстрат). Оба —
+продолжение структурной математики.
+
+---
+
+## Конец методички v3 (после §29)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
