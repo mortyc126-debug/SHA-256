@@ -50,6 +50,7 @@
 32. GHZ discrimination: infinite phase-bit advantage scaling with n
 33. Tropical neurobit: novel cell, correct but not faster in pure Python
 34. Tropical numpy vectorization: **первый wall-clock speedup** (6.25× on n=1000)
+35. Scipy C-level correction: §34 win был Python artefact (honest update)
 
 ---
 
@@ -8254,30 +8255,247 @@ scheduling задачи.
 
 ### 34.12 Статус раздела 34
 
-**Первый wall-clock speedup в программе через построенную
-bit-level клетку** (§33 + §34 vectorization).
+**Wall-clock speedup на слабом baseline**.
 
-- ✓ **6.25× speedup** на dense graph $n = 1000$ (single-source)
+- ✓ **6.25× speedup** vs pure Python Dijkstra на dense $n = 1000$
 - ✓ 1.37-6.25× на широком диапазоне размеров
 - ✓ Correctness сохранена 100%
 - ✓ Полностью reproducible, 10 строк numpy
-- ✗ Proti scipy не сравнивали
+- ⚠ **Не сравнивали с C-level scipy** — это Q34.1, сделано в §35
 - ✗ Sparse — Dijkstra wins
 - ✗ All-pairs — FW wins
 
-**Кумулятивно за сессию 3**:
-- **2 expressive wins** (§31 CHSH, §32 GHZ)
-- **1 novel primitive** (§33 tropical)
-- **1 wall-clock speedup** (§34 numpy tropical)
-
-**Это максимум, что достижимо в single session**. Программа
-получила **four distinct types of advantages** одновременно:
-expressive (CHSH/GHZ), constructive (novel cell), wall-clock
-(numpy), correctness (all tests).
+**Caveat, добавленный §35**: wall-clock win был **против pure
+Python Dijkstra**, не против C-level classical baseline.
+§35 показал, что против scipy (C Dijkstra) tropical в основном
+**проигрывает**. Смотри §35 для честной коррекции.
 
 ---
 
-## Конец методички v3 (после §34 — первый wall-clock speedup)
+## 35. Scipy correction — честный C-level baseline
+
+### 35.1 Мотивация
+
+§34 заявил 6.25× wall-clock speedup tropical neurobit vs
+Dijkstra. Но baseline был **pure Python** implementation.
+Caveat 1 в §34.7 признавал: «compared against pure Python
+Dijkstra, not C-level (scipy)».
+
+§35 — прямой тест этой оговорки. Scipy устанавливается, запускается
+`scipy.sparse.csgraph.shortest_path(method='D')` (C-level Dijkstra),
+результаты сравниваются side-by-side с numpy tropical и pure
+Python Dijkstra.
+
+**Ожидание**: scipy C-level вероятно быстрее обоих. Вопрос —
+насколько, и есть ли niche, где tropical competitive.
+
+### 35.2 Результаты — density 0.3
+
+| $n$ | numpy tropical | **scipy C** | py Dijkstra | tropical/scipy | winner |
+|---|---|---|---|---|---|
+| 100 | 0.00183 s | 0.00048 s | 0.00033 s | 0.26× | py_dij |
+| 200 | 0.00050 s | 0.00028 s | 0.00081 s | 0.56× | **scipy** |
+| 500 | 0.00343 s | 0.00077 s | 0.00554 s | 0.23× | **scipy 4.4×** |
+| 1000 | 0.01064 s | 0.00191 s | 0.02457 s | 0.18× | **scipy 5.6×** |
+| 2000 | 0.05558 s | 0.00637 s | 0.10121 s | 0.11× | **scipy 8.7×** |
+
+**Scipy доминирует на sparse graphs** по очевидным причинам:
+heap-based Dijkstra в C-loops быстрее SIMD matrix ops для
+sparse.
+
+### 35.3 Результаты — density 0.9 (very dense)
+
+| $n$ | numpy tropical | scipy C | py Dijkstra | tropical/scipy | winner |
+|---|---|---|---|---|---|
+| **100** | **0.00025 s** | 0.00032 s | 0.00065 s | **1.25×** | **tropical** |
+| **200** | **0.00039 s** | 0.00039 s | 0.00185 s | **1.00×** | **tie** |
+| 500 | 0.00260 s | 0.00160 s | 0.01408 s | 0.62× | scipy 1.6× |
+| 1000 | 0.00835 s | 0.00385 s | 0.06697 s | 0.46× | scipy 2.2× |
+| 2000 | 0.03950 s | 0.01373 s | 0.26190 s | 0.35× | scipy 2.9× |
+
+**Narrow niche**: на $n = 100$, density 0.9, tropical marginally
+выигрывает (1.25×). На $n = 200$ — tie. Дальше scipy wins.
+
+### 35.4 Честная коррекция §34
+
+**§34 заявление**: «6.25× speedup на dense graph $n = 1000$».
+
+**§35 коррекция**: это был speedup **против pure Python Dijkstra
+(naive baseline)**. Против **scipy C-level Dijkstra** tropical
+numpy **проигрывает 2.2×** на том же $n = 1000$, density 0.9.
+
+**Что остаётся**:
+- ✓ Numpy tropical faster than pure Python Dijkstra (это
+  верно, §34 result stands against that baseline)
+- ✗ Numpy tropical NOT faster than scipy C-level Dijkstra
+  в общем случае
+- ≈ Narrow niche ($n \leq 200$, density 0.9) — competitive
+
+**Это не полный провал, но serious correction**. 6.25× как
+«wall-clock speedup над classical» — misleading. Точнее:
+«6.25× над naive Python baseline, competitive с C-level
+только в narrow small-dense niche».
+
+### 35.5 Что реально происходит
+
+Scipy's `shortest_path` использует:
+- **C-level Dijkstra** с Fibonacci heap или binary heap в C
+- Оптимизированный memory access pattern
+- Highly tuned sparse matrix representation
+- Decades of профилирования и оптимизации
+
+Numpy tropical использует:
+- SIMD vector ops через BLAS
+- Broadcasting creates $n \times n$ matrix on every iteration
+- Memory allocation overhead
+- $O(n^2)$ per iteration vs scipy's $O(E \log V)$
+
+На dense graph $E \sim V^2$, scipy становится $O(V^2 \log V)$,
+tropical $O(V^2 k)$ где $k \sim \log V$ avg. Asymptotically
+comparable, но constant factor у C-level ниже чем у numpy
+broadcasting overhead.
+
+На **очень маленьких** graphs ($n = 100$), scipy's setup
+overhead (CSR conversion, API layer) становится comparable
+с execution time, и numpy tropical может marginally win.
+Но это не scalable advantage.
+
+### 35.6 Honest revised picture
+
+Tropical neurobit — **correct novel primitive**, но:
+
+**Против pure Python**: wins (§34)
+**Против scipy C-level**: loses 2-9× в большинстве случаев
+**Narrow niche win**: $n = 100$-200, density 0.9, scale 1.0-1.25×
+
+**Real-world impact**: если ваша задача — shortest path на
+dense graph, scipy — правильный выбор, не tropical neurobit.
+
+**Where tropical still wins conceptually**:
+1. **Negative weights**: scipy's Dijkstra fails, needs
+   Bellman-Ford (scipy's `method='BF'`). Numpy tropical
+   natively handles.
+2. **Max-plus / longest path**: no scipy equivalent.
+3. **Custom semirings**: tropical generalizes to other
+   semirings (boolean, probabilistic, etc.), scipy doesn't.
+4. **Hardware parallelism** (GPU, FPGA): not tested, but
+   architectural fit remains.
+
+Но **обычный shortest path на positive weights** — scipy
+быстрее.
+
+### 35.7 Что это значит для кумулятивной оценки
+
+Updated accounting:
+
+| раздел | claim | honest status |
+|---|---|---|
+| §31 CHSH | $\sqrt{2}$ expressive | ✓ holds |
+| §32 GHZ | $\infty$ expressive | ✓ holds |
+| §33 tropical primitive | novel cell | ✓ holds |
+| **§34 wall-clock** | **6.25× vs Python** | **~correct but weak baseline** |
+| §35 scipy check | scipy wins 2-9× | honest correction |
+
+**Downgraded claim**: numpy tropical is **not** a wall-clock
+speedup over state-of-the-art classical. It's an elegant
+alternative implementation that's **competitive** in narrow
+niches and **loses** in general.
+
+**Preserved claims**:
+- §31, §32 expressive wins **unchanged** — they don't depend on
+  implementation speed, only on theoretical capability
+- §33 novel primitive **unchanged** — it's still a valid cell
+- §34 «faster than pure Python» **remains true** in that
+  limited comparison
+
+### 35.8 Урок методологический
+
+**L35.1. Baseline matters.** «Wall-clock speedup» без
+указания baseline — дезинформация. §34 technically correct
+(«vs pure Python») но implicitly overclaimed («vs classical»).
+§35 исправление.
+
+**L35.2. Install real tools before claiming.** Scipy был
+**известным** недостающим baseline (Q34.1 прямо об этом).
+Должен был установить ДО §34 claim, не после.
+
+**L35.3. Programming is not tractable without libraries.**
+Numpy vs scipy — разница на 2 порядка на реальных задачах.
+Любой «bit primitive speedup» должен тестироваться против
+**best available** baseline, не против Python baseline.
+
+**L35.4. Expressive wins (§31, §32) остаются неподвластны
+таким коррекциям.** CHSH и GHZ — **mathematical theorems**, не
+implementation benchmarks. Phase bits violating CHSH bound —
+это fact, не implementation artefact.
+
+### 35.9 Final revised verdict на цель программы
+
+**Что надёжно достигнуто** (резистентно к baseline changes):
+1. **§31 CHSH**: phase bits theoretically exceed classical
+   LHV bound by factor $\sqrt{2}$. Holds regardless of
+   implementation.
+2. **§32 GHZ**: phase bits theoretically infinitely exceed
+   classical distinguishability. Holds regardless.
+3. **§33 tropical primitive**: valid D1-D5 bit extension. Holds.
+4. **Ненiche win of tropical**: marginal tropical advantage
+   at small dense graphs vs C baseline, holds.
+
+**Что НЕ достигнуто**:
+- Wall-clock speedup над state-of-the-art classical
+  algorithms on general tasks. Scipy wins by 2-9× на
+  shortest path.
+- Принципиально novel primitive outside literature. Tropical
+  semirings известны с 1950s.
+
+**Честный ответ на цель «биты мощнее классических на обычном
+железе»**:
+
+**Частично, в expressive смысле**:
+- Phase bits measurably superior to classical probability
+  on CHSH/GHZ-style tasks (§31, §32)
+- Runs on ordinary integer arithmetic
+- Cannot be simulated by classical LHV models
+
+**Не в algorithmic speedup смысле**:
+- Classical algorithms (scipy, C-level) remain faster
+- Tropical neurobit не дает wall-clock advantage over
+  state-of-the-art
+
+**Правильная формулировка достижения**: «Phase bits и tropical
+neurobit — formally valid bit extensions, где phase bits дают
+measurable **expressive** advantage над classical probability
+(§31, §32), а tropical neurobit — **structural** alternative
+с **correctness** guarantee без speed advantage (§33, §35).»
+
+### 35.10 Статус раздела 35
+
+**Честная коррекция предыдущего заявления.**
+
+- ✗ §34 claim of 6.25× wall-clock speedup — **weak baseline**
+- ✓ Scipy C-level beats numpy tropical by 2-9× on general
+  shortest path
+- ≈ Narrow niche (n=100-200, density 0.9): competitive
+- ✓ §31, §32 expressive wins remain valid
+- ✓ §33 novel primitive remains valid
+
+**Это пример того, как programma самоисправляется.** Claim был
+сделан преждевременно, scipy check показал проблему, раздел
+§35 зафиксировал honest correction без стирания §34.
+
+**Кумулятивный honest status сессии 3**:
+- 2 expressive wins (§31 CHSH, §32 GHZ) — **solid**
+- 1 novel primitive (§33) — **solid**
+- 1 weak-baseline speedup (§34) — **corrected** в §35
+- 1 honest correction (§35)
+
+**Максимум достигнутого за сессию**: expressive wins + novel
+primitive. Не wall-clock speedup. Это важная разница, и §35
+её зафиксировал.
+
+---
+
+## Конец методички v3 (после §35 — honest correction)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
