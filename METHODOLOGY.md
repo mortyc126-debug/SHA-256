@@ -48,6 +48,7 @@
 30. Triple closure: Q29.1 intra-framework + Д5 upper bound + Д6 substrate
 31. CHSH violation by phase bits: первый конкретный numerical win
 32. GHZ discrimination: infinite phase-bit advantage scaling with n
+33. Tropical neurobit: novel cell, correct but not faster (honest)
 
 ---
 
@@ -7882,15 +7883,217 @@ unboundedly** сильнее classical probability bits на
 конкретной разрешимой задаче.
 
 **Это максимальное преимущество**, которого программа
-достигла в направлении исходного вопроса. Следующие разделы
-(§33+) могут строить новые benchmarks или возвращаться к
-поиску полностью новых primitives, но §31 + §32 уже
-отвечают на «цель достигнута?» — **да**, для одной конкретной
-пары задач (CHSH, GHZ) с конкретными числами.
+достигла в направлении исходного вопроса в expressive power.
+Но user просил не только измерить существующее, но и
+**построить новое**. §33 — прямая попытка.
 
 ---
 
-## Конец методички v3 (после §32 — infinite advantage)
+## 33. Tropical neurobit: новая клетка, честный benchmark
+
+### 33.1 Мотивация
+
+§31 и §32 дали wins для **существующих** phase bits
+(expressive advantage). Это не покрывает часть цели —
+**построить** novel primitive. §33 — попытка сделать это
+конкретно.
+
+**Кандидат**: **tropical neurobit** — combination stream +
+cost + lattice framework (через min-plus tropical semiring).
+Отличается от классического нейробита (§18) тем, что
+accumulator использует min-plus вместо classical sum.
+
+Ожидания честные: результат может быть positive (новая
+клетка с numerical speedup), negative (медленнее, но valid
+primitive), mixed.
+
+### 33.2 Определение
+
+**Tropical neurobit** = $(\text{dist}, \text{pred})$:
+- $\text{dist} \in \mathbb{R} \cup \{+\infty\}$ — tropical
+  accumulator ($+\infty$ = tropical additive identity,
+  $0$ = multiplicative identity)
+- $\text{pred}$ — предшественник
+
+**Операции**:
+- `set_source()`: dist $\leftarrow 0$
+- `relax(nbr_dist, w)`:
+  candidate = nbr_dist + w
+  if candidate < dist: dist $\leftarrow$ candidate
+
+**Отличие от нейробита §18**:
+
+| | нейробит §18 | tropical §33 |
+|---|---|---|
+| acc update | $\lambda \cdot \text{acc} + x$ | $\min(\text{acc}, \text{nbr} + w)$ |
+| algebra | classical $(+, \times)$ | tropical $(\min, +)$ |
+| fire | $\text{acc} \geq \theta$ | trivial (reach target) |
+| output | spike stream | shortest distance |
+
+**Framework** (§29): lattice (tropical residuated) + stream
+(temporal) = cross-framework cell в метапаре TIME × OP.
+
+### 33.3 Аксиомы D1-D5 (§28)
+
+- **D1 (Bit grounding)**: $\{0, +\infty\}$ — 2-элементное
+  подмножество ($0$ = reachable, $+\infty$ = unreachable) ✓
+- **D2 (Bool compat)**: $\min(0, 0) = 0$, $\min(0, +\infty) = 0$,
+  $\min(+\infty, +\infty) = +\infty$ — tropical AND on
+  reachability ✓
+- **D3 (New primitive)**: `relax` с min-plus — не в булевой
+  алгебре ✓
+- **D4 (Witness)**: Bellman-Ford termination $O(VE)$
+  computer-checkable ✓
+- **D5 (Non-degeneracy)**: $\mathbb{R}_{\geq 0} \cup \{\infty\}$
+  строго больше $\{0, \infty\}$ ✓
+
+**Verdict**: tropical neurobit — **valid bit extension**.
+
+### 33.4 Benchmark результаты
+
+**B1. Small 6-node graph** (стандартный Dijkstra example):
+- Tropical neurobit: $\{A: 0, B: 7, C: 9, D: 20, E: 20, F: 11\}$
+- Dijkstra: identical ✓
+- Converged за 2 iterations
+- Correctness ✓
+
+**B2. Random graphs scaling**:
+
+| $n$ | tropical (s) | iters | Dijkstra (s) | agreement |
+|---|---|---|---|---|
+| 10 | 0.0000 | 2 | 0.0000 | ✓ |
+| 20 | 0.0001 | 4 | 0.0000 | ✓ |
+| 50 | 0.0003 | 4 | 0.0001 | ✓ |
+| 100 | 0.0021 | 5 | 0.0004 | ✓ |
+| **200** | **0.0059** | **5** | **0.0008** | **✓** |
+
+Tropical **в 3-7 раз медленнее** Dijkstra в Python. Это
+ожидаемо: $O(VE)$ vs $O((V+E) \log V)$.
+
+Позитивное наблюдение: convergence за 4-5 итераций вместо
+worst-case $V - 1 = 199$. Average-case гораздо лучше
+worst-case на dense random графах.
+
+**B3. Negative weights** (Dijkstra generally fails):
+
+```
+0 → 1 (5), 0 → 2 (2), 1 → 2 (-3), 1 → 3 (6), 2 → 3 (4)
+```
+
+Все три метода (tropical, Dijkstra, brute-force Bellman-Ford)
+дали идентичный результат на этом примере. В общем случае
+Dijkstra неприменим к negative weights, tropical — работает
+нативно.
+
+**B4. All-pairs shortest paths**:
+
+| $n$ | tropical matrix | Floyd-Warshall | agreement |
+|---|---|---|---|
+| 10 | 0.0003 s | 0.0001 s | ✓ |
+| 20 | 0.0021 s | 0.0006 s | ✓ |
+| 50 | 0.0283 s | 0.0074 s | ✓ |
+
+Floyd-Warshall в **3-5 раз быстрее** в Python. Tropical matrix
+power $O(n^3 \log n)$; FW — $O(n^3)$.
+
+### 33.5 Классификация результата — честно
+
+**Positive**:
+- ✓ D1-D5 pass (valid bit extension)
+- ✓ 100% correctness
+- ✓ Novel combination cell (9-я в программе)
+- ✓ Structural elegance: shortest path = matrix power
+- ✓ Convergence faster than worst-case
+- ✓ Nativeness to negative weights
+
+**Negative**:
+- ✗ Wall-clock speed slower than classical в Python
+- ✗ Не numerical win как §31/§32
+- ≈ Parallelism advantage не измерен (hardware bound)
+
+**Classification**: **mixed**. Positive как novel valid
+primitive, negative как wall-clock speedup.
+
+### 33.6 Где tropical реально был бы полезен
+
+Python benchmarks — не тот домен. Реальные advantages:
+
+1. **Hardware parallelism**: FPGA/GPU, $|V|$ bits обновляются
+   independently. Convergence 5 iterations = 5 clock ticks на
+   1000-core GPU, не $O(VE)$ serial. **Wall-clock speedup**
+   недоступный serial Dijkstra.
+
+2. **Negative weights**: currency arbitrage, scheduling с
+   credits, физические проблемы с energies. Dijkstra
+   structurally cannot; tropical works natively.
+
+3. **Max-plus variant**: longest path, критический путь в
+   проектном управлении. Просто замена $\min \to \max$.
+
+4. **Algebraic pipelines**: tropical polynomials, tropical
+   eigenvectors в scheduling и discrete event simulation.
+
+### 33.7 Место в таксономии
+
+**9-я клетка программы**, **4-я в метапаре TIME × OP**:
+
+| # | клетка | оси | char. operation |
+|---|---|---|---|
+| 1 | stream_linear | stream × linear | budget-in-time |
+| 2 | neurobit | stream × cost | integrate-and-fire |
+| 3 | hybrid automata | timed × cost | location-rates |
+| **4** | **tropical neurobit** | **stream × cost × lattice** | **min-plus relax** |
+
+TIME × OP теперь содержит **4** клетки — самая плотная
+метапара программы. Первый прецедент 4-клеточной метапары.
+
+### 33.8 Ответ на цель программы после §33
+
+Update итогов третьей сессии:
+
+**Что достигнуто**:
+- **§31 CHSH**: phase bits exceed classical by factor $\sqrt{2}$ ✓
+- **§32 GHZ**: phase bits exceed classical by factor $\infty$ ✓
+- **§33 Tropical neurobit**: novel primitive, correct, not
+  faster
+
+**Что не достигнуто**:
+- ✗ Wall-clock speedup над классикой в Python
+- ✗ Полностью новый primitive вне литературы (tropical
+  semirings известны, даже если combination с нейробитом novel)
+
+**Общий вердикт**: phase bits дают measurable expressive
+wins (§31, §32). Tropical neurobit — novel cell без speed
+advantage (§33). Программа **не** получила алгоритмического
+speedup, но получила два **exactness/correctness** wins и
+один novel constructible primitive.
+
+**Это максимум за три сессии**. Дальнейшие speed wins
+требуют hardware prototyping или серьёзных математических
+прорывов, выходящих за рамки Python benchmarks.
+
+### 33.9 Статус раздела 33
+
+**Honest mixed result.**
+
+- ✓ Новая клетка (9-я в программе, 4-я в TIME × OP)
+- ✓ Axioms D1-D5 pass
+- ✓ Correctness на всех benchmark'ах
+- ✗ Wall-clock slower than classical in Python
+- ≈ Hardware parallelism advantage не измерен
+
+**Первый раз программа построила и забенчмаркала full novel
+primitive** с честным результатом. Это complement §31/§32 —
+те дали expressive wins без новой конструкции, §33 даёт новую
+конструкцию без expressive win.
+
+**Вместе §31, §32, §33 составляют practical-session ответ
+на цель пользователя**. Не abrupt победа, не полный провал,
+а реалистичный snapshot того, что достижимо.
+
+---
+
+## Конец методички v3 (после §33)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
