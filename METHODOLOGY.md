@@ -12937,9 +12937,54 @@ hardness random SAT instances. Не доказательство P≠NP,
 
 ---
 
-## Конец методички v15 (после §68 — P/NP boundary)
+## §69. SuperBit v2: σ-feedback и native-σ WalkSAT
 
-**Общее количество разделов**: **68** (§1-§68)
+### Два развития:
+
+**1. Per-variable adaptive temperature:**
+  T_i = T_global / (1 + κ·σ_i)
+  High σ → cold (exploitation), low σ → hot (exploration).
+  Результат: +1.7% vs s-bit на Frustrated, но SA всё ещё лидирует.
+  Оптимальный κ ≈ 5.0 на Frustrated-100.
+
+**2. Native-σ WalkSAT:**
+  σ_i = 1 - flip_count_i / max(flip_count)
+  Переменные, которые WalkSAT РЕДКО flip'ает = backbone.
+  Bias random walk toward low-σ (flexible) variables.
+
+### Результаты σ-guided WalkSAT:
+
+| n   | α   | Plain WS | σ-WS    | Speedup |
+|-----|-----|----------|---------|---------|
+| 50  | 3.5 | 251      | **63**  | **4.0×** |
+| 50  | 4.0 | 148      | **88**  | **1.7×** |
+| 100 | 3.5 | 788      | **304** | **2.6×** |
+| 200 | 4.0 | 12,650   | **3,090** | **4.1×** |
+| 200 | 4.2 | 6,343    | **3,736** | **1.7×** |
+| 50  | 4.2 | 449      | 1,333   | 0.3× (worse) |
+
+### Паттерн:
+
+σ-guidance помогает при **средней сложности**:
+  α ∈ [3.5, 4.0]: speedup 2-4×
+  α < 3.0: задача тривиальна, guidance не нужна
+  α > 4.2: σ estimates unreliable, guidance вредит
+
+### Два типа σ:
+
+| Type | Source | Overhead | Best at |
+|------|--------|----------|---------|
+| Native-σ | flip frequency | ZERO | small n, α≈3.5 |
+| Ising-σ | s-bit autocorr | O(n²×sweeps) | large n, α≈4.0 |
+
+Native-σ бесплатный но менее точный.
+Ising-σ дорогой но мощнее при n≥200.
+
+---
+
+## Конец методички v16 (после §69 — σ-feedback)
+
+**Общее количество разделов**: **69** (§1-§69)
 
 **Общее число нативно независимых осей расширения бита**:
 **20+**, организованные в 5 мета-групп:
