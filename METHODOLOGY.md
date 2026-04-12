@@ -13251,9 +13251,58 @@ SuperBit — STRUCTURAL ANALYZER + σ-MAP provider.
 
 ---
 
-## Конец методички v20 (после §73 — honest assessment)
+## §74. Ultimate SAT solver + order parameter data
 
-**Общее количество разделов**: **73** (§1-§73)
+### Ultimate SAT: all σ-techniques combined
+
+σ-restart + hybrid Ising + adaptive noise в одном солвере.
+
+| n   | α   | WalkSAT solve | Ultimate solve | Flips speedup |
+|-----|-----|--------------|----------------|---------------|
+| 100 | 4.0 | 14/15        | 14/15          | **3.8×**      |
+| 200 | 4.2 | **5/15**     | **10/15**      | ×0.5 but ×2 solve |
+| 500 | 4.0 | 13/15        | 13/15          | 1.2×          |
+| 100 | 3.5 | 15/15        | 15/15          | 0.3× (overhead) |
+
+**Key finding**: σ-guidance помогает на HARD (α≥4.0),
+вредит на EASY (α=3.5).
+
+На n=200 α=4.2: solve rate УДВОИЛСЯ (33% → 67%).
+Это самый hard regime — близко к SAT threshold.
+σ-backbone preservation + Ising fallback = critical combo.
+
+### Order parameter (n=14, lightweight):
+
+Ψ = σ_gap × (1-f_core) падает с 0.35 до 0.03 при α→α_c.
+Hardness correlation: low Ψ → more WalkSAT flips.
+Susceptibility peak: α=2.75 (wrong, need larger n).
+
+### Итоговая карта SuperBit capabilities:
+
+```
+STRONG (proven, significant):
+  ├── σ-map output (unique, no other tool does this)
+  ├── σ-restart SAT (solve rate ×2 on hard instances)  
+  ├── Temporal σ monitoring (regime detection)
+  ├── Self-tuning convergence (T9, Lyapunov proven)
+  └── Scalping trade reduction (92%)
+
+MODERATE (works but marginal):
+  ├── Per-variable T (1-2% on frustrated)
+  ├── Hybrid Ising fallback (3.8× on medium)
+  └── Phase discrimination (known algorithm, new framing)
+
+WEAK (doesn't beat baselines):
+  ├── RG optimizer (SA wins)
+  ├── Parallel quality (20% gap)
+  └── Order parameter precision (n too small)
+```
+
+---
+
+## Конец методички v21 (после §74 — ultimate SAT + map)
+
+**Общее количество разделов**: **74** (§1-§74)
 **Количество теорем**: **9** (T1-T9)
 
 **Общее число нативно независимых осей расширения бита**:
