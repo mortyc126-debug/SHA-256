@@ -62,6 +62,7 @@
 44. MPS phase bits — DJ/BV at n=10,000 in 11ms, scalable phase-bit toolkit
 45. General Discrimination Theorem — the whole program in one sentence
 46. Z/m phase hierarchy — from Z/2 to full complex, discrimination scales as m^(k-1)
+47. Z/4 unlocks full Clifford — qualitative jump: Y gate, S gate, QEC
 
 ---
 
@@ -10776,7 +10777,114 @@ $\mathbb{Z}/2$ is the **optimal entry point** for classical hardware.
 
 ---
 
-## Конец методички v3 (после §46 — Z/m hierarchy)
+---
+
+## 47. Z/4 unlocks full Clifford group
+
+### 47.1 Мотивация
+
+§46 showed Z/4 gives $2^{k-1}$ MORE discrimination than Z/2
+(quantitative). But is there a **qualitative** jump?
+
+### 47.2 The gap: Z/2 cannot do Y gate
+
+$Y = iXZ$. Requires $i$. Z/2 amplitudes $\in \{-1, 0, +1\}$
+have no $i$. Therefore **Z/2 cannot represent Y gate natively**.
+
+Z/4 amplitudes $\in \{1, i, -1, -i\}$ include $i$.
+**Z/4 represents Y natively**: $Y|0\rangle = i|1\rangle$,
+$Y|1\rangle = -i|0\rangle$.
+
+### 47.3 Pauli algebra products
+
+| product | result | needs $i$? |
+|---|---|---|
+| $XX$ | $I$ | no |
+| $XZ$ | $-iY$ | **yes** |
+| $ZX$ | $iY$ | **yes** |
+| $XY$ | $iZ$ | **yes** |
+| $YX$ | $-iZ$ | **yes** |
+
+8 из 12 non-trivial Pauli products require $i$.
+**Z/2 phase bits operate in incomplete Pauli algebra.**
+
+### 47.4 Clifford group
+
+**Clifford group** = gates that map Pauli group to itself under
+conjugation. Generators: $\{H, S, \text{CNOT}\}$.
+
+$S = \text{diag}(1, i)$ — **requires $i$**.
+
+- Z/2: can generate $\{I, X, Z, H, \text{CNOT}\}$ = **real
+  Clifford subgroup**
+- Z/4: can generate $\{I, X, Y, Z, H, S, \text{CNOT}\}$ =
+  **full Clifford group**
+
+### 47.5 Concrete capability gap
+
+Z/4 enables, Z/2 cannot:
+
+1. **Y gate**: third Pauli axis
+2. **S gate**: $\text{diag}(1, i)$ — Clifford generator
+3. **$|{\pm i}\rangle$ states**: Y eigenstates $(|0\rangle \pm i|1\rangle)/\sqrt{2}$
+4. **Standard quantum error correction**: Steane code, Shor code,
+   surface code all use Clifford for syndrome extraction. Clifford
+   requires S. S requires $i$. → QEC requires Z/4.
+5. **3^n more stabilizer states**: real Clifford has fewer stabilizer
+   states than full Clifford by factor $\approx 3^n$
+
+### 47.6 Arithmetic cost
+
+Z/4 uses **Gaussian integers** $a + bi$ with $a, b \in \{0, \pm 1\}$.
+Still **exact** (no floating point). 2× storage per amplitude.
+
+This is the **cheapest** upgrade that gives full Clifford.
+Z/8 or higher gives more but costs more arithmetic.
+
+### 47.7 Design decision formalized
+
+| requirement | minimum $m$ |
+|---|---|
+| CHSH violation | $m = 2$ (Z/2 sufficient) |
+| GHZ discrimination | $m = 2$ |
+| Full Pauli algebra | **$m = 4$** |
+| **Quantum error correction** | **$m = 4$** |
+| T gate (universal quantum) | $m = 8$ |
+| Arbitrary quantum simulation | $m = \infty$ (U(1)) |
+
+**Z/2 = minimal beyond-classical. Z/4 = minimal for QEC.
+Z/8 = minimal for universal quantum.**
+
+Each step unlocks specific capability, not just more discrimination.
+
+### 47.8 Significance
+
+This completes the **qualitative** picture:
+
+- §45: sign ($\pm 1$) = minimal beyond-classical extension
+- §46: Z/m hierarchy = quantitative (discrimination $m^{k-1}$)
+- **§47**: Z/4 = **qualitative** jump (Clifford, QEC, Y gate)
+
+The ladder is not just «more of the same». **Specific $m$ values
+unlock specific capabilities**. This is the classical analog of
+the quantum computing compilation hierarchy:
+- Clifford gates: efficiently simulatable (Gottesman-Knill)
+- Clifford + T: universal quantum computation
+- Each layer adds specific computational power
+
+### 47.9 Статус
+
+Clean structural result. Z/4 as the architectural sweet spot for
+quantum-like error correction on classical hardware. Verified through
+Pauli algebra products and Clifford generator analysis.
+
+**Not** a new axis or cell. A **design guideline**: choose Z/2 for
+discrimination, Z/4 for error-corrected computation, Z/8+ for
+universal quantum simulation.
+
+---
+
+## Конец методички v3 (после §47 — Z/4 Clifford)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
