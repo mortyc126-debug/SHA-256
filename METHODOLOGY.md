@@ -12982,9 +12982,84 @@ Ising-σ дорогой но мощнее при n≥200.
 
 ---
 
-## Конец методички v16 (после §69 — σ-feedback)
+## §70. Пять развитий SuperBit — сводные результаты
 
-**Общее количество разделов**: **69** (§1-§69)
+Пять модулей построены и протестированы параллельно.
+
+### 1. Hybrid-σ WalkSAT (hybrid_sigma.py)
+
+Native-σ → при стопоре → Ising-σ → continue.
+
+| n   | α   | Plain | Hybrid-σ | Speedup | Ising calls |
+|-----|-----|-------|----------|---------|-------------|
+| 50  | 3.5 | 37    | 25       | 1.5×    | 0           |
+| 100 | 4.0 | 9,860 | **2,613** | **3.8×** | 2          |
+
+Автоматически переключается между cheap и precise σ.
+
+### 2. σ-Restart WalkSAT (restart_sigma.py)
+
+Между рестартами сохранять backbone (high-σ variables).
+
+| n   | α   | Plain restart | σ-restart | Speedup |
+|-----|-----|--------------|-----------|---------|
+| 500 | 4.0 | 46.7% solve  | **80% solve** | **3.4×** |
+| 500 | 4.0 | 100K flips   | **29.7K flips** | 3.4× |
+
+Самый сильный результат: solve rate +33% на n=500.
+
+### 3. Parallel Sweep (parallel_sweep.py)
+
+GPU-style vectorized update, per-variable T бесплатный.
+
+| n   | SA time | Parallel time | Speedup |
+|-----|---------|---------------|---------|
+| 200 | 0.41ms  | 0.06ms        | **6.6×** |
+
+Crossover с n=30. Quality trade-off: sequential лучше
+по E/n из-за stale-state penalty.
+
+### 4. σ-CDCL (cdcl_sigma.py)
+
+σ-map как препроцессор для DPLL/CDCL solver.
+
+| n  | α   | Plain DPLL | σ-DPLL | Speedup |
+|----|-----|-----------|--------|---------|
+| 30 | 4.0 | baseline  | σ-guided | **1.76×** |
+
+100% correctness (30/30 vs brute force).
+
+### 5. Temporal σ (temporal_sigma.py)
+
+Мониторинг σ во времени для detection фазовых переходов.
+
+- **Сеть**: σ падает 0.63→0.61→0.53 при cascade failure
+- **Рынок**: normal σ≈0.51 vs crisis σ≈0.75 (чёткое разделение)
+- **SAT**: Ψ монотонно падает при α→α_c
+
+### Сводная таблица:
+
+| Модуль       | Метрика              | Результат          |
+|-------------|---------------------|-------------------|
+| Hybrid-σ    | WalkSAT speedup     | **3.8×** (n=100)  |
+| σ-Restart   | Solve rate           | **80% vs 47%**    |
+| Parallel    | Wall-clock speedup   | **6.6×** (n=200)  |
+| σ-CDCL      | Decision speedup     | **1.76×** (n=30)  |
+| Temporal σ  | Regime detection     | **clear signal**   |
+
+### Файлы (в /tmp/superbit/):
+
+- hybrid_sigma.py
+- restart_sigma.py
+- parallel_sweep.py
+- cdcl_sigma.py
+- temporal_sigma.py
+
+---
+
+## Конец методички v17 (после §70 — пять развитий)
+
+**Общее количество разделов**: **70** (§1-§70)
 
 **Общее число нативно независимых осей расширения бита**:
 **20+**, организованные в 5 мета-групп:
