@@ -68,6 +68,7 @@
 50. SHA-256 full circle — §45 theorem applied back to §4, pairwise finds hidden bits
 51. SHA-256 R=1 inversion improved — pairwise features: 646× (2.1× over Hamming)
 52. Executive summary — what this program actually achieved
+53. P-bit: the missing primitive (Purdue/UCSB 2025, noise IS computation)
 
 ---
 
@@ -11304,7 +11305,198 @@ to **4,323,415×** — a 2,449-fold improvement over the original method.
 
 ---
 
-## Конец методички v3 (финальная версия)
+---
+
+## 53. P-bit — the missing primitive
+
+### 53.1 Discovery method
+
+After §52 «executive summary», user noted deviation from
+original goal. Returned to core question. Searched 2025-2026
+literature for breakthroughs in physics/math/computing missed
+during our insular development.
+
+**Found**: p-bits (probabilistic bits), thermodynamic computing,
+p-dits — an entire research wave (2025-2026) that our program
+**completely missed** while building taxonomy.
+
+### 53.2 What is a p-bit
+
+**P-bit** (Datta et al., Purdue 2019-2025): computational
+unit that **fluctuates** between 0 and 1 with controllable
+probability. Not deterministic (classical), not in superposition
+(quantum). **Third kind**.
+
+Update rule:
+
+$$m_i = \text{sgn}\!\Big(\text{rand}(-1,1) + \tanh\big(\beta(h_i + \sum_j J_{ij} m_j)\big)\Big)$$
+
+Key: noise is **intrinsic and required**. Not added externally
+(like SR §38). Not suppressed (like classical). The fluctuation
+**IS** the computation.
+
+### 53.3 Why we missed it
+
+Our taxonomy approached bits from **logic/algebra** literature:
+- §6.4 probability bit: represents $P(x)$ as static pair
+- §11.2 cost bit: energy $E(x)$ for optimization
+- §38 SR bit: noise helps subthreshold detection
+
+**P-bit** comes from **physics/engineering** literature (Purdue
+ECE, nanomagnet devices). It views the bit as a **physical
+fluctuating device**, not a mathematical value.
+
+Our bottom-up probes (§37-§39) came close — SR uses noise as
+resource — but stopped at «noise helps one task». P-bit goes
+further: **noise is ALL computation**.
+
+### 53.4 Native operation: SAMPLING
+
+Every axis in our taxonomy has a characteristic operation.
+P-bit's is **Boltzmann sampling**: given energy function
+$E(x)$, sample $x$ with probability $\propto e^{-\beta E(x)}$.
+
+This is **not** in our 22 axes:
+
+| axis | operation | sampling? |
+|---|---|---|
+| probability (§6.4) | Bayes update on distributions | represents, doesn't sample |
+| cost (§11.2) | argmin $E(x)$ | minimizes, doesn't sample |
+| SR (§38) | noise + threshold crossing | detects, doesn't sample |
+| stream (§6.3) | shift + XOR over $F_2$ | evolves, doesn't sample |
+| **p-bit** | **sample $x \sim e^{-\beta E(x)}$** | **YES — native** |
+
+**SAMPLING = genuinely new operation** not natively in any
+of our 22 axes.
+
+### 53.5 D1-D5 check
+
+- **D1**: $m \in \{-1, +1\}$ maps to binary ✓
+- **D2**: at $\beta \to \infty$, p-bit $\to$ deterministic
+  threshold gate ✓
+- **D3**: Boltzmann sampling — new primitive ✓
+- **D4**: sample distribution testable via $\chi^2$ ✓
+- **D5**: fluctuating state $\supsetneq \{0, 1\}$ ✓
+
+All 5 pass.
+
+### 53.6 What p-bits ACTUALLY achieved (2025)
+
+Published in **Nature Communications 2025**: p-computers with
+**adaptive parallel tempering** solved 3D spin-glass benchmarks
+**faster than D-Wave quantum annealer** (UCSB collaboration).
+
+Key facts:
+- Simulated millions of p-bits on CPU
+- **Beat quantum annealing** on same benchmarks
+- Algorithm readily implementable on **CMOS hardware**
+- CMOS p-bit + synapse array fabricated (Nature Comms 2026)
+
+**This is what our program was looking for**: a primitive that
+is **practically stronger than quantum** on specific tasks,
+running on **ordinary (CMOS) hardware**.
+
+### 53.7 Hierarchy of noise-as-computation
+
+Three levels discovered, we had only the first:
+
+| level | primitive | noise role | scope |
+|---|---|---|---|
+| §38 SR | stochastic resonance | helps **one** task | detection |
+| **§53 p-bit** | **probabilistic bit** | **IS** sampling | **optimization, ML** |
+| thermodynamic | thermo-computer | IS **all** computation | linear algebra, AI |
+
+**Normal Computing** (Nature Communications 2025): thermodynamic
+processor where noise = signal. 8 RLC circuits do Gaussian
+sampling + matrix inversion. Adding noise **increases** clock
+speed (published 2025).
+
+**Extropic AI**: thermodynamic computing for generative AI.
+Orders of magnitude less energy than GPU.
+
+### 53.8 Parallel evolution: p-dits ↔ our Z/m hierarchy
+
+**P-dits** (Phys. Rev. Applied 2025): d-dimensional p-bits.
+Generalization from 2-state to d-state probabilistic units.
+
+Our §46: Z/m phase hierarchy. Generalization from 2-phase
+to m-phase signed bits.
+
+**Same structure** discovered independently:
+- Us: Z/2 → Z/4 → Z/m (phase discrimination)
+- Them: p-bit → p-dit (probabilistic sampling)
+
+**Parallel evolution** suggests underlying mathematical
+universality.
+
+### 53.9 What this changes for our program
+
+**Before §53**: 22 axes in 5 metagroups. Noise = damage or
+niche resource. No SAMPLING primitive.
+
+**After §53**: **sampling as first-class operation** is a
+genuinely new axis that we missed. P-bit belongs to potential
+**6th metagroup: STOCHASTIC** (noise-native computation).
+
+| metagroup | axes | new? |
+|---|---|---|
+| VALUE (6) | binary, phase, ebit, prob, quot, fuzzy | |
+| OPERATION (5) | rev, lin, selfref, church, cost | |
+| RELATION (5) | braid, modal, rel, causal, spatial | |
+| TIME (5) | stream, interval, cyclic, branching, timed | |
+| DYNAMICAL (2-3) | chaos, SR, (RD) | §37-39 |
+| **STOCHASTIC (1+)** | **p-bit, (thermodynamic?)** | **§53 NEW** |
+
+### 53.10 Why p-bit may be the answer to the original goal
+
+User's goal: «биты мощнее обычных на обычном железе, может
+мощнее кубитов».
+
+P-bit:
+- ✓ **More powerful than classical** (samples Boltzmann, classical can't natively)
+- ✓ **On ordinary hardware** (CMOS fabricated, Purdue 2025-2026)
+- ✓ **Beats quantum on specific tasks** (spin-glass, Nature Comms 2025)
+- ✓ **Noise = computation** (paradigm shift, not just extension)
+
+Phase bits (our §5/§45): more powerful in **discrimination**
+(CHSH, GHZ). But not in **optimization**.
+
+P-bits: more powerful in **optimization/sampling**. Beat quantum
+annealing. On CMOS.
+
+**P-bit + phase bit = complementary toolkit** covering both
+discrimination AND optimization, both on ordinary hardware.
+
+### 53.11 Literature
+
+- [Pushing boundary of quantum advantage with p-computers](https://www.nature.com/articles/s41467-025-64235-y) (Nature Comms 2025)
+- [CMOS p-bits with synapse arrays](https://www.nature.com/articles/s41467-026-71906-x) (Nature Comms 2026)
+- [P-dits: d-dimensional probabilistic bits](https://journals.aps.org/prapplied/abstract/10.1103/4ngx-cmz7) (Phys Rev Applied 2025)
+- [UCSB: p-computers faster than quantum](https://news.ucsb.edu/2025/022239/new-ucsb-research-shows-p-computers-can-solve-spin-glass-problems-faster-quantum)
+- [Thermodynamic computing for AI](https://www.nature.com/articles/s41467-025-59011-x) (Nature Comms 2025)
+- [Noise increases thermodynamic clock speed](https://www.nature.com/articles/s44335-025-00038-0) (npj Unconv. Computing 2025)
+
+### 53.12 Статус
+
+**Most significant finding since §45 sign theorem.** P-bit
+is a genuinely missing primitive that:
+- Was not in our 22-axis taxonomy
+- Has SAMPLING as native operation (new to program)
+- Beats quantum annealing on benchmarks (published 2025)
+- Runs on CMOS hardware (fabricated)
+- Represents paradigm shift: noise = computation
+
+**Found through user's suggestion** to search current
+literature — confirming that our insular development missed
+an entire research wave.
+
+**Next**: implement p-bit + phase-bit combination. If sampling
+(p-bit) + discrimination (phase-bit) combine — we have a
+toolkit that covers BOTH domains on ordinary hardware.
+
+---
+
+## Конец методички v3 (после §53 — p-bit discovery)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
