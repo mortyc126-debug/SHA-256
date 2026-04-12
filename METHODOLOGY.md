@@ -56,6 +56,7 @@
 38. Stochastic resonance bit — второе bottom-up discovery, 22-я ось кандидат
 39. Reaction-diffusion field bit — tentative 23-я ось, + memristor honest negative
 40. Capstone v6 — консолидация bottom-up discoveries, revised 5-metagroup structure
+41. §37 noise fragility — honest practical correction + chaos computing insight
 
 ---
 
@@ -9761,7 +9762,214 @@ on tentative parts.
 
 ---
 
-## Конец методички v3 (после §40 — capstone v6)
+## 41. §37 noise fragility — honest practical correction
+
+### 41.1 Мотивация
+
+§40 consolidation identified parametric chaos (§37) as solid
+21-я axis candidate. После consolidation хотелось test'нуть
+practical value — robustness to noise как possible advantage.
+
+Hypothesis: classical threshold gates are brittle (rounding
+input к 0/1), continuous chaos cell might preserve function
+under small noise via nonlinear dynamics.
+
+§41 — honest test того, что нашёл обратное.
+
+### 41.2 Test setup
+
+**XOR gate comparison**:
+- **Classical**: 2-layer threshold network (OR + NAND → AND)
+  с input rounding
+- **§37 chaos**: single logistic cell с parameters
+  $x_\star = 0.362$, $n = 4$, shifts $(0.111, -0.122)$,
+  $\tau = 0.859$
+
+### 41.3 Test 1 — noisy inputs
+
+| input noise | chaos XOR | classical XOR |
+|---|---|---|
+| 0.00 | 100% | 100% |
+| **0.05** | **52% (random)** | **100%** |
+| 0.10 | 51% | 100% |
+| 0.20 | 48% | 98% |
+| 0.30 | 50% | 91% |
+| 0.40 | 50% | 81% |
+
+**Classical XOR stays at 91-100%** under input noise up to 0.3.
+**Chaos XOR collapses to 50%** (pure random) at noise 0.05.
+
+### 41.4 Test 2 — noisy parameters
+
+| param noise | chaos XOR accuracy |
+|---|---|
+| 0.000 | 100% |
+| **0.001** | **48% (random)** |
+| 0.010 | 48% |
+| 0.050 | 57% |
+| 0.100 | 50% |
+
+**Tiny parameter noise (0.001) destroys chaos XOR function**.
+
+### 41.5 Test 3 — combined noise
+
+| input noise | param noise | chaos | classical |
+|---|---|---|---|
+| 0.0 | 0.0 | 100% | 100% |
+| 0.1 | 0.01 | 54% | 100% |
+| 0.2 | 0.05 | 48% | 99% |
+| 0.3 | 0.10 | 49% | 92% |
+
+Chaos always ≈ 50% (random), classical always > 90%.
+
+### 41.6 Fundamental insight — chaos computing has inherent tension
+
+**Key observation**: §37 uses logistic map **because** it
+amplifies differences via positive Lyapunov exponent. XOR
+works благодаря этому nonlinear amplification — нелинейность
+lifts inputs to high-dim feature space где XOR becomes
+separable.
+
+**But the same amplification destroys robustness**. You can't
+simultaneously have:
+1. "Chaos enables non-linearly-separable gates" (needs
+   amplification / sensitive dependence)
+2. "Chaos suppresses noise" (needs contraction / stability)
+
+These are **opposite** dynamical requirements.
+
+**Classical threshold gates are contractive**: rounding input
+to {0, 1} at 0.5 threshold gives ±0.5 margin. Any noise < 0.5
+is absorbed by the rounding step. Classical logic is
+**designed** для noise suppression.
+
+**Chaos cells are expansive**: trajectories separate
+exponentially. Noise grows with each iteration, не shrinks.
+
+### 41.7 What Sinha-Ditto actually do differently
+
+Sinha-Ditto physical chaos gates на Chua circuits работают
+because they use **stable attractors с threshold control**,
+не trajectory-based computation:
+
+1. **Stable attractors** — fixed points с negative Lyapunov
+2. **Forcing** которое push'ит state к specific attractor
+3. **Relaxation** которая contract'ит toward basin
+4. **Threshold readout** после settling
+
+Это **contractive** near-attractor dynamics, не expansive
+trajectory dynamics. Different model!
+
+**My §37 probe model**: apply pulse, iterate, apply pulse,
+iterate — this uses TRAJECTORY behavior, which is where
+chaos lives и где noise amplifies.
+
+**Correct chaos computing model**: let system relax to
+attractor, encode input as attractor selection, readout after
+convergence. This uses BASIN behavior, which is noise-robust.
+
+### 41.8 §37 honest status update
+
+**§37 parametric chaos bit as axis**:
+- ✓ D1-D5 still pass
+- ✓ Novel primitive (trajectory-based vs classical gates)
+- ✓ Irreducible to 20 existing axes
+- ✗ **PRACTICAL fragility**: noise tolerance < 0.001 for
+  parameters, < 0.05 for inputs
+
+**§37 implementation model is wrong for practice**. My
+trajectory-based probe demonstrated the axis exists
+mathematically, but it's **not useful** for real computation
+because:
+- Narrow basins (2% parameter space для XOR)
+- Exponential noise amplification
+- Collapses to random output с tiny noise
+
+**Correct model** should use **contractive attractor
+dynamics**:
+- Multistable system с stable fixed points
+- Input biases basin selection
+- System relaxes to chosen attractor (noise-robust)
+- Readout after convergence
+
+Future work: re-probe chaos computing with attractor-based
+model, not trajectory-based.
+
+### 41.9 Methodological pattern — probe, find fragility, correct
+
+**Third honest negative в session 3**:
+1. §35: tropical neurobit 6.25× was Python baseline artefact
+2. §39: memristor not new axis, just hybrid × bounded
+3. **§41: §37 parametric chaos is fragile, not robust**
+
+Pattern: every bottom-up discovery needs **practical
+testing**, not just formal D1-D5 verification. Formal axiom
+satisfaction не implies practical utility.
+
+**Honest discovery productivity revised**:
+
+| claim | formal status | practical status |
+|---|---|---|
+| §31 CHSH | ✓ (theorem) | ✓ (math property, no noise) |
+| §32 GHZ | ✓ | ✓ |
+| §36 tropical vs scipy BF | ✓ | ✓ (187× measured) |
+| §37 parametric chaos | ✓ D1-D5 | **✗ fragile** (§41) |
+| §38 stochastic resonance | ✓ | ✓ (50% → 94%) |
+| §39 reaction-diffusion | ✓ (tentative) | ? untested |
+
+**Real practical wins**: §31, §32, §36, §38. That's 4 concrete
+practical advantages on ordinary hardware.
+
+§37 remains valid as theoretical axis but loses practical
+claim. Честное update.
+
+### 41.10 What §41 teaches about chaos computing
+
+Deeper insight: **chaos computing is a specific design
+pattern**, not "any nonlinear dynamical system". Required
+features:
+- Multistable attractors (not just chaos)
+- Relaxation dynamics (contracting near fixed points)
+- Input-controlled basin selection
+- Readout after settling
+
+Pure trajectory-based computation с chaotic map — **as I
+initially implemented** — is fundamentally noise-unstable.
+
+This matches literature: Sinha-Ditto emphasize "controlled
+chaos" с stable attractor dynamics. My naive iteration probe
+missed this structural constraint.
+
+**§37 axis classification**: valid but needs specification
+as **attractor-based chaos computing**, не **trajectory-based**
+chaos dynamics. Latter is formally an axis, но practically
+useless.
+
+### 41.11 Статус раздела 41
+
+**Honest practical correction of §37 claim.**
+
+- ✗ §37 XOR fragility confirmed (50% accuracy with noise 0.05)
+- ✗ Parameter noise 0.001 destroys function
+- ✓ Root cause identified: chaos computing needs attractor
+  dynamics, not trajectory dynamics
+- ✓ §37 remains valid as formal axis (D1-D5 pass)
+- ✓ §37 loses practical advantage claim
+
+**Lesson**: bottom-up discoveries need **practical tests**,
+not just formal D1-D5. Formal axioms capture necessary
+conditions, not sufficient for utility.
+
+**Real practical wins remain**: §31 CHSH, §32 GHZ, §36
+tropical vs BF (187×), §38 stochastic resonance. Four solid
+practical advantages на обычном железе.
+
+§37 joins list of "formally valid, practically fragile"
+primitives — worth noting but not ready for production use.
+
+---
+
+## Конец методички v3 (после §41 — honest noise test)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
