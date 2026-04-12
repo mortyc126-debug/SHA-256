@@ -12063,14 +12063,109 @@ S-bit НЕ зависит от гиперпараметров:
 
 ---
 
-## Конец методички v7 (после §59 — honest optimization comparison)
+## §61. Σ-bit: попытка супербита
+
+### Идея:
+
+Синтезировать ВСЕ найденные примитивы в один:
+- Phase bit → signed m ∈ [-1,1]
+- P-bit → stochastic updates
+- S-bit → self-tuning T (autocorrelation feedback)
+- **NEW**: σ ∈ [0,1] — самонастраиваемая уверенность
+
+σ — key innovation: переменные САМИ ЗНАЮТ, frozen ли они.
+High σ → deterministic (exploitation).
+Low σ → stochastic (exploration).
+
+### Результаты четырёх версий:
+
+**V1 (σ only increases, unfair budget = n× more flips):**
+- Detection: P=0.475, R=**0.924**, F1=0.628 (beats s-bit 0.573)
+- Optimization SK-50: Σ=-24.594 vs SA=-24.456 → **Σ-bit WINS**
+- Optimization SK-100: Σ=-48.669 vs SA=-48.414 → **Σ-bit WINS**
+- σ gap: frozen=0.933, free=0.424, gap=**0.509**
+- ПРОБЛЕМА: n× больше compute (full sweeps vs single flips)
+
+**V2 (frustration-based σ decay):**
+- σ падает слишком быстро → всё free → FAIL
+- SK-100: -31.2 vs SA -49.7 → катастрофа
+
+**V3 (measurement-based σ):**
+- σ ≈ within-basin stability ≠ frozenness
+- Detection gap NEGATIVE (-0.05) → FAIL
+
+**V_final (two-phase: detect → solve):**
+- Detection: P=0.566, R=0.881, F1=0.689 ≈ s-bit
+- Optimization SK-100: -33.4 vs SA -49.8 → SA wins (budget split)
+- No synergy beyond "two algorithms in one wrapper"
+
+### Честный вывод:
+
+На **равном вычислительном бюджете** (per-flip):
+- SA ≥ Σ-bit > s-bit на оптимизации
+- s-bit ≈ Σ-bit Phase 1 на детекции
+- Нет "магической синергии"
+
+НА **параллельном hardware** (p-bit chip):
+- Full sweep = одна операция
+- σ self-tuning "бесплатный"
+- V1 results РЕАЛЬНЫ: Σ-bit beats SA
+- Потому что parallel update даёт σ точную информацию
+  о глобальном состоянии
+
+### Ключевой insight:
+
+**Σ-bit advantage = parallel computation advantage.**
+На последовательном CPU: нет преимущества (pay n× for sweep).
+На параллельном чипе: sweep бесплатный → σ бесплатный →
+decimation бесплатный → beats SA.
+
+Это объясняет, почему p-bit hardware (Purdue MRAM chip)
+побеждает classical SA: не сам p-bit, а ПАРАЛЛЕЛИЗМ.
+Σ-bit = p-bit + intelligence (σ provides what parallel SA lacks).
+
+### Три режима σ:
+
+| σ dynamics      | Detection | Optimization | Issue          |
+|-----------------|-----------|-------------|----------------|
+| Only increases  | ✓ best    | ✓ (parallel) | locks all (seq)|
+| Frustration decay | ✗       | ✗           | too aggressive |
+| Measurement     | ≈ s-bit   | ✗           | wrong signal   |
+
+Правильный режим зависит от hardware:
+- Sequential CPU: не используй σ → чистый s-bit + SA
+- Parallel chip: v1 (σ increases) → real advantage
+
+### Σ-bit ≠ superbit
+
+Σ-bit — не магический "один бит сильнее всех".
+Это архитектурный blueprint для параллельного hardware:
+
+```
+PARALLEL HARDWARE (p-bit chip):
+  Each cycle: all spins update simultaneously
+  σ[i] = running consistency → FREE to compute
+  High σ → freeze → reduce effective search space
+  = automatic Survey Propagation + decimation
+
+SEQUENTIAL SOFTWARE:
+  No advantage over s-bit + SA separately
+  σ adds overhead without benefit
+```
+
+**Настоящий супербит — это p-bit chip + σ firmware.**
+Не новый бит. Новая АРХИТЕКТУРА.
+
+---
+
+## Конец методички v8 (после §61 — Σ-bit experiment)
 
 Документ построен в четыре захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
 для закрытия пропущенного нейробита (раздел 18), часть IV
-для p-bit/s-bit исследования (разделы 53-59).
+для p-bit/s-bit/Σ-bit исследования (разделы 53-61).
 
-**Общее количество разделов**: **60** (§1-§60)
+**Общее количество разделов**: **61** (§1-§61)
 
 **Общее число нативно независимых осей расширения бита**:
 **20+**, организованные в 5 мета-групп:
