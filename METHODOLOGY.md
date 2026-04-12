@@ -64,6 +64,7 @@
 46. Z/m phase hierarchy — from Z/2 to full complex, discrimination scales as m^(k-1)
 47. Z/4 unlocks full Clifford — qualitative jump: Y gate, S gate, QEC
 48. 1M-qubit DJ in 0.9s — peak practical result on laptop
+49. Task-Specificity Conjecture — why no single strongest bit exists
 
 ---
 
@@ -10937,7 +10938,95 @@ All three ingredients necessary. None sufficient alone.
 
 ---
 
-## Конец методички v3 (после §48 — 1M-qubit peak)
+---
+
+## 49. Task-Specificity Conjecture — the final structural insight
+
+### 49.1 Observation
+
+Mapped 6 verified bit extensions × 6 task domains. Result:
+
+| extension | discrimination | shortest path | threshold | reconfig | QEC | energy |
+|---|---|---|---|---|---|---|
+| sign (Z/2) | **✓** | ~ | ✗ | ✗ | **✓** | ✗ |
+| min-plus | ✗ | **✓** | ✗ | ✗ | ✗ | ✗ |
+| noise (SR) | ✗ | ✗ | **✓** | ✗ | ✗ | ✗ |
+| nonlinear | ✗ | ✗ | ✗ | **✓** | ✗ | ✗ |
+| complex (Z/4) | **✓** | ✗ | ✗ | ✗ | **✓** | ✗ |
+| reversibility | ✗ | ✗ | ✗ | ✗ | ~ | **✓** |
+
+**No extension helps more than 2 domains.**
+**No domain served by more than 2 extensions.**
+**Nearly one-to-one mapping.**
+
+### 49.2 Conjecture
+
+> **Task-Specificity of Bit Extensions.** For each
+> computational task domain, there exists a minimal bit
+> extension that enables beyond-classical performance. Different
+> domains require different extensions. No single extension
+> dominates all domains.
+
+### 49.3 Algebraic interpretation
+
+Each minimal extension corresponds to one **algebraic structure**:
+
+| extension | algebra | key operation |
+|---|---|---|
+| sign (Z/2) | group (additive inverse) | cancellation |
+| min-plus | lattice (partial order) | comparison |
+| noise | stochastic process | threshold pumping |
+| nonlinear iteration | dynamical system | amplification |
+| complex (Z/4) | ring ($i^2 = -1$) | rotation |
+| reversibility | groupoid (inverses) | conservation |
+
+**Six different algebraic structures**, each irreducible to others.
+
+### 49.4 Why this explains the whole program
+
+- **20+ axes** exist because 20+ task sub-domains exist
+- **6 frameworks** (§29) because 6 algebraic structure families
+- **Plurality theorem** (§29) because no universal algebra
+- **§45 theorem** (sign = minimal for discrimination) is a
+  **special case** of this conjecture for one domain
+- **No «strongest bit»** because «strength» is domain-dependent
+
+### 49.5 Honest status
+
+**Conjecture, not theorem.** Based on empirical pattern from
+program data, not proven mathematically. Could be refined or
+refuted by finding:
+- An extension helping 3+ domains (would weaken conjecture)
+- A domain requiring 0 extensions (would show classical
+  sufficiency for that domain)
+- Two extensions being interchangeable for same domain (would
+  break one-to-one mapping)
+
+The 6×6 matrix is **sparse and structured** — that's the pattern.
+Whether it's a theorem or a coincidence: open.
+
+### 49.6 Final arc of the program
+
+The theoretical arc across 49 sections:
+
+```
+§1-17:  "How many ways to extend a bit?"  → 17 (taxonomy)
+§18-24: "Three more ways"                 → 20 (extended taxonomy)
+§25-30: "How do they relate?"             → poset, 6 frameworks
+§31-36: "Do they work in practice?"       → CHSH, GHZ, tropical 187×
+§37-42: "What else exists? (bottom-up)"   → chaos, SR, fragility theorem
+§43-44: "How far do phase bits scale?"    → MPS: n=1M, DJ in 0.9s
+§45:    "What's the one thing?"           → sign = 2^(k-1) discrimination
+§46-47: "What's the full picture?"        → Z/m hierarchy, Clifford gap
+§48:    "How far does it go?"             → 1M qubits on laptop
+§49:    "Why is there no single answer?"  → task-specificity
+```
+
+**From «how many?» to «why plural?»** — the program's journey.
+
+---
+
+## Конец методички v3 (после §49 — Task-Specificity Conjecture)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
