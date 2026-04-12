@@ -66,6 +66,7 @@
 48. 1M-qubit DJ in 0.9s — peak practical result on laptop
 49. Task-Specificity Conjecture — why no single strongest bit exists
 50. SHA-256 full circle — §45 theorem applied back to §4, pairwise finds hidden bits
+51. SHA-256 R=1 inversion improved — pairwise features: 646× (2.1× over Hamming)
 
 ---
 
@@ -11128,7 +11129,75 @@ This is what the program was FOR.
 
 ---
 
-## Конец методички v3 (после §50 — full circle)
+---
+
+## 51. SHA-256 R=1 inversion improved by §45 pairwise features
+
+### 51.1 Setup
+
+Same 16-bit W, 20K training, 200 test as §20. Three methods:
+1. Single-bit linear prediction (§20 baseline)
+2. **Single + pairwise features** (§50 insight applied)
+3. Hamming retrieval (§20 strongest baseline)
+
+Pairwise features: 16 single + $\binom{16}{2}$ = 120 pairwise
+products = **136 features total**. Linear regression with
+regularization.
+
+### 51.2 Results
+
+| method | W-Hamming | success | avg verifs | **speedup** |
+|---|---|---|---|---|
+| single prediction | 4.020 | 56% | 1542 | 42× |
+| Hamming retrieval | ~1.6 | 97% | 215 | 305× |
+| **single + pairwise** | **0.655** | **98%** | **101** | **646×** |
+
+**Pairwise features: 646× speedup, 2.1× improvement over
+Hamming retrieval.**
+
+### 51.3 Why it works
+
+Single prediction: misses carry information. W-Hamming 4.0 =
+~4 wrong bits → large search radius → many verifications.
+
+**Pairwise products capture carry chains** (§50 analysis):
+consecutive state[i]·state[i+1] encodes carry from bit $i$
+to bit $i+1$. Adding these products → W-Hamming drops from
+4.0 to **0.655** = less than 1 wrong bit.
+
+Starting < 1 bit wrong → ball search radius 0-1 → **101 avg
+verifications** vs 215 for Hamming → **2.1× faster**.
+
+### 51.4 Significance
+
+**Direct practical payoff of §45 discrimination theorem**:
+
+Theory (§45) → pairwise products see hidden structure.
+Applied to SHA-256 (§50) → found carry-chain information.
+End-to-end (§51) → **2.1× speedup improvement** over
+strongest previous baseline.
+
+**The 50-section theoretical journey produced a concrete
+measurable improvement** on the original cryptographic task
+from §4.
+
+### 51.5 Comparison across sessions
+
+| section | method | speedup | note |
+|---|---|---|---|
+| §4.2 (session 1) | HDV retrieval, 32-bit | **1765×** | original result |
+| §20 (session 3) | Hamming, 16-bit | 176× | baseline |
+| §20 hybrid | Hamming + matched filter | 351× | moderate improvement |
+| **§51** (session 3) | **pairwise features** | **646×** | **§45 theorem applied** |
+
+§51's 646× on 16-bit is not directly comparable to §4.2's
+1765× on 32-bit (different scale). But the **method** —
+adding pairwise features from §45 theorem — can be applied
+to 32-bit too. Expected improvement: similar factor.
+
+---
+
+## Конец методички v3 (после §51 — practical payoff)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
