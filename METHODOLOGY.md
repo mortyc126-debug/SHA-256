@@ -10612,6 +10612,53 @@ Three-line proof. Numerically verified $k = 2$ through $k = 12$.
 Unifies §31, §32, §43 as special cases. States the
 **essential mechanism** of phase-bit advantage in one formula.
 
+### 45.11 Extension: full $2^k$ via one triple observable
+
+§45.2 gave $2^{k-1}$ (mod global sign). Adding **one**
+triple observable $s_1 s_2 s_3$ breaks the global sign
+degeneracy for all $k \geq 3$.
+
+**Extended Theorem**: for $k \geq 3$, pairwise observables
+$\{s_a s_b\}$ plus **one** triple $s_1 s_2 s_3$ distinguish
+**all** $2^k$ sign patterns.
+
+**Proof**: §45.3 shows pairwise gives $2^{k-1}$ classes
+(mod $\pm$). Triple product $s_1 s_2 s_3$ changes sign under
+$s \to -s$ (odd number of factors). So for any $s, -s$ pair
+with same pairwise signature, triple distinguishes them.
+Therefore all $2^k$ patterns distinguished. ∎
+
+**Verified**: k=3 through k=10, all exact match $2^k$.
+k=2: fails (only 2 entries, no meaningful triple).
+
+**Measurements**: $\binom{k}{2} + 1 = O(k^2)$, time $O(k^3)$.
+
+**Concrete numbers**:
+
+| $k$ | measurements | distinguished | advantage |
+|---|---|---|---|
+| 10 | 46 | $1{,}024$ | $10^3$ |
+| 50 | 1,226 | $10^{15}$ | $10^{15}$ |
+| 100 | 4,951 | **$10^{30}$** | **$10^{30}$** |
+
+**Full exponential advantage**: $O(k^2)$ polynomial measurements
+→ $2^k$ exponential discrimination. Classical: 1.
+
+**Edge case**: for even $k$ when $\sum s_j = 0$, amplitude sum
+alone fails. Triple product always works (odd powers flip
+under $s \to -s$). Triple is **universally robust** solution.
+
+### 45.12 Updated summary
+
+Original §45: advantage $= 2^{k-1}$.
+Extended §45.11: advantage $= 2^k$ for $k \geq 3$.
+
+**The whole program in one sentence** (updated):
+
+> *«One triple measurement plus $\binom{k}{2}$ pairwise
+> measurements on signed amplitudes distinguish all $2^k$
+> sign patterns that classical probability cannot see at all.»*
+
 **Not** a new axis or cell. Not a practical benchmark.
 A **theorem** — the kind of result that survives changes
 in implementation, framework, or application domain.
