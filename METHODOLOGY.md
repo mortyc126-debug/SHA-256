@@ -60,6 +60,7 @@
 42. XOR-fragility theorem + session 3 final summary
 43. Sparse phase bits + W-state exponential discrimination + trade-off principle
 44. MPS phase bits — DJ/BV at n=10,000 in 11ms, scalable phase-bit toolkit
+45. General Discrimination Theorem — the whole program in one sentence
 
 ---
 
@@ -10465,7 +10466,164 @@ rounds (§43-§44): not just theoretical advantage, but
 
 ---
 
-## Конец методички v3 (после §44 — scalable phase-bit toolkit)
+---
+
+## 45. General Discrimination Theorem
+
+### 45.1 Мотивация
+
+После ~50 experiments across §37-§44, остановился и задал
+вопрос: **what is the ONE thing** that makes phase bits work?
+
+Не 20 axes. Не MPS. Не tropical. Не chaos. **Один**
+алгебраический факт, из которого следует всё остальное.
+
+### 45.2 Theorem
+
+> **Phase-bit Discrimination Theorem.** For any $k$-sparse
+> signed state $|\psi\rangle = \sum_{i \in S} s_i |i\rangle$
+> with $|S| = k$ and $s_i \in \{-1, +1\}$, pairwise
+> observables $\langle X_a X_b \rangle = s_a s_b / k$ distinguish
+> exactly $\mathbf{2^{k-1}}$ sign patterns.
+>
+> Classical probability distribution
+> $P(i) = s_i^2 / k = 1/k$ is identical for all sign patterns.
+> Classical discrimination: **1** group.
+>
+> **Advantage factor = $2^{k-1}$**.
+
+### 45.3 Proof (3 steps)
+
+**Define** pairwise product map $\pi: \{±1\}^k \to \{±1\}^{\binom{k}{2}}$
+by $\pi(s)_{ab} = s_a s_b$ for $a < b$.
+
+**Step 1**: $\pi(s) = \pi(-s)$ for all $s$.
+
+*Proof*: $(-s_a)(-s_b) = s_a s_b$. ∎
+
+*Consequence*: $|\text{image}(\pi)| \leq 2^k / 2 = 2^{k-1}$.
+
+**Step 2**: $\pi$ is injective modulo global sign.
+
+*Proof*: Suppose $\pi(s) = \pi(t)$. Then $s_a s_b = t_a t_b$
+for all $a, b$. Fix $a = 1$: $s_1 s_b = t_1 t_b$ for all $b$.
+So $s_b / t_b = s_1 / t_1 =: c \in \{-1, +1\}$ for all $b$.
+Therefore $s = c \cdot t$, i.e., $s = t$ or $s = -t$. ∎
+
+*Consequence*: $|\text{image}(\pi)| \geq 2^k / 2 = 2^{k-1}$.
+
+**Step 3**: Combine: $|\text{image}(\pi)| = 2^{k-1}$. ∎
+
+### 45.4 Numerical verification
+
+| $k$ | total $2^k$ | distinct pairwise | theory $2^{k-1}$ | match |
+|---|---|---|---|---|
+| 2 | 4 | 2 | 2 | ✓ |
+| 3 | 8 | 4 | 4 | ✓ |
+| 4 | 16 | 8 | 8 | ✓ |
+| 5 | 32 | 16 | 16 | ✓ |
+| 6 | 64 | 32 | 32 | ✓ |
+| 8 | 256 | 128 | 128 | ✓ |
+| 10 | 1024 | 512 | 512 | ✓ |
+| 12 | 4096 | 2048 | 2048 | ✓ |
+
+**All exact match** for $k = 2$ through $k = 12$.
+
+### 45.5 Corollaries
+
+**Cor 1** (GHZ): $k = 2$, advantage $= 2$. [§32]
+
+**Cor 2** (W-state): $k = n$, advantage $= 2^{n-1}$. [§43]
+
+**Cor 3** (Dicke $D(n, 2)$): $k = \binom{n}{2}$, advantage
+$= 2^{\binom{n}{2} - 1}$. Super-exponential in $n$. [§43]
+
+**Cor 4** (Measurement): full discrimination requires
+$\binom{k}{2}$ pairwise observables, each $O(k)$ for sparse
+states. Total $O(k^3)$.
+
+**Cor 5** (Noise): pairwise products $s_a s_b$ are $\pm 1/k$
+(magnitude $1/k$). Noise $\sigma$ must be $< 1/k$ to
+preserve sign. Tolerance decreases with $k$.
+
+### 45.6 The whole program in one sentence
+
+> *«Allowing negative amplitudes gives $2^{k-1}$ extra
+> distinguishable states per $k$ nonzero entries. Classical
+> probability can't see them because $|s_i|^2 = |{-s_i}|^2$.»*
+
+All phase-bit results (CHSH, GHZ, W-state, DJ structural,
+MPS scalability) are **implementations and consequences**
+of this one algebraic fact.
+
+### 45.7 Why this matters
+
+The theorem says: **sign is the minimal beyond-classical
+extension of a bit**. You don't need:
+- Continuous values (fuzzy is nice but not essential)
+- Nonlinear dynamics (chaos is fragile anyway)
+- Spatial structure (holonomy is elegant but orthogonal)
+- Time evolution (stream is implementation, not source)
+- Noise as resource (SR is niche)
+
+You need **one thing**: allow $-1$ alongside $+1$ and $0$.
+That's it. The rest follows mathematically.
+
+### 45.8 Connection to quantum mechanics
+
+This theorem is the **classical analog** of the
+quantum-classical information gap:
+
+- Quantum: $n$ qubits encode $2^n$ complex amplitudes,
+  measured via Born rule $|a_i|^2$. Phases invisible to
+  probability, visible to interference.
+
+- Phase bits: $k$ signed entries encode $k$ signs,
+  measured via $|s_i|^2 = 1$. Signs invisible to probability,
+  visible to pairwise inner products.
+
+Same mechanism, simpler setting. Phase bits demonstrate
+the **essence** of quantum advantage in its simplest
+possible classical form.
+
+### 45.9 Честные границы теоремы
+
+**What theorem does NOT say**:
+1. Phase bits give **computational speedup**. They don't
+   (same complexity class as classical). Theorem is about
+   **discrimination**, not **computation**.
+2. Phase bits **replace** qubits. They don't (exponential
+   storage for general states, no Grover/Shor speedup).
+3. More axes → more power. 20+ axes are about DIVERSITY
+   of extensions, not ACCUMULATION of power. Phase bits
+   alone are sufficient for discrimination advantage.
+
+**What theorem DOES say**:
+1. Sign = minimal beyond-classical structure.
+2. Discrimination advantage exact: $2^{k-1}$.
+3. Implementable in $O(k^3)$ time on ordinary hardware.
+4. Noise-tolerant up to $\sigma < 1/k$ per entry.
+
+### 45.10 Статус
+
+**Strongest theoretical result of the program.**
+
+Three-line proof. Numerically verified $k = 2$ through $k = 12$.
+Unifies §31, §32, §43 as special cases. States the
+**essential mechanism** of phase-bit advantage in one formula.
+
+**Not** a new axis or cell. Not a practical benchmark.
+A **theorem** — the kind of result that survives changes
+in implementation, framework, or application domain.
+
+This is what 45 sections of exploration, taxonomy,
+structural math, probing, and honest corrections led to:
+
+**One sign. One theorem. One sentence.**
+
+---
+
+## Конец методички v3 (после §45 — Discrimination Theorem)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
