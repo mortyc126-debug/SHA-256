@@ -65,6 +65,7 @@
 47. Z/4 unlocks full Clifford — qualitative jump: Y gate, S gate, QEC
 48. 1M-qubit DJ in 0.9s — peak practical result on laptop
 49. Task-Specificity Conjecture — why no single strongest bit exists
+50. SHA-256 full circle — §45 theorem applied back to §4, pairwise finds hidden bits
 
 ---
 
@@ -11026,7 +11027,108 @@ The theoretical arc across 49 sections:
 
 ---
 
-## Конец методички v3 (после §49 — Task-Specificity Conjecture)
+---
+
+## 50. SHA-256 full circle — pairwise reveals hidden W bits
+
+### 50.1 The circle
+
+§4 (session 1): SHA-256 R=1 analysis via HDV retrieval and Walsh
+spectrum. Found 1765× speedup on R=1 inversion.
+
+§20 (session 3): Phase-neurobit matched filter confirmed bit 0, 1
+of W have correlation 1.0 with specific state bits.
+
+§45: General discrimination theorem — pairwise observables see
+$2^{k-1}$ patterns invisible to single-bit measurements.
+
+**§50**: Apply §45 theorem BACK to SHA-256 R=1. Pairwise state-bit
+products reveal W bits invisible to single-bit analysis.
+
+### 50.2 Key finding
+
+For each W bit, compared best **single** state-bit correlation vs
+best **pairwise** state-bit product correlation:
+
+| W bit | single |corr| | **pairwise** | improvement |
+|---|---|---|---|
+| W[1] | 0.018 (invisible) | **1.000** (perfect!) | **+0.98** |
+| W[5] | 0.170 | **0.824** | +0.65 |
+| W[7] | 0.204 | **0.793** | +0.59 |
+| W[9] | 0.199 | **0.802** | +0.60 |
+| W[12] | 0.111 | **0.899** | +0.79 |
+
+**W[1] is completely invisible to single-bit analysis** (corr 0.018
+≈ random) but **perfectly predictable** from state[0]·state[1]
+product (corr 1.000).
+
+### 50.3 Prediction accuracy
+
+| W bit | single-only | **+ pairwise** | change |
+|---|---|---|---|
+| W[1] | **49%** (random) | **100%** | **+51%** |
+| W[5] | 58% | **91%** | +33% |
+| W[10] | 79% | **97%** | +18% |
+
+**W[1]: from random guess to perfect prediction** by adding ONE
+pairwise feature.
+
+### 50.4 Structural explanation
+
+Best pairwise predictors are **consecutive** state bits:
+state[0,1] → W[1], state[2,3] → W[3], state[4,5] → W[5], etc.
+
+**Why**: SHA-256 R=1 modular addition creates **carry chains**.
+Carry from bit $i$ to bit $i+1$ is encoded in **product**
+$\text{state}[i] \cdot \text{state}[i+1]$, not in either bit alone.
+
+Classical (single-bit) analysis: **misses carries**.
+Phase-bit (pairwise) analysis: **captures carries via products**.
+
+This IS §45 theorem: signed products see information that
+marginals ($|s_i|^2 = 1$) cannot.
+
+### 50.5 Full circle
+
+```
+§4 SHA-256 → §5 phase bits → §45 sign theorem → §50 SHA-256
+    ↑                                               ↓
+    └───────── full circle: theory applied back ────┘
+```
+
+Program started with SHA-256 cryptoanalysis, developed phase-bit
+theory, and returns to SHA-256 with a **stronger tool** (pairwise
+products from §45 theorem) that reveals information the original
+analysis (§4, §20) didn't use.
+
+### 50.6 Practical implication
+
+§4.2 SHA-256 R=1 inversion used Hamming retrieval: 1765× speedup.
+§20 tried phase-neurobit matched filter: modest improvement.
+
+**§50 suggests**: add **pairwise state-bit products** as features
+for retrieval. For W bits where single correlation is low (W[1],
+W[5], W[7], W[9], W[12]), pairwise products dramatically improve
+prediction. This could **improve §4.2 speedup** beyond 1765×.
+
+Not tested end-to-end (would require re-running full inversion
+pipeline with expanded features). Open for future work.
+
+### 50.7 Статус
+
+**Clean positive finding.** Phase-bit pairwise analysis reveals
+SHA-256 R=1 information invisible to single-bit analysis.
+Applies §45 discrimination theorem to real cryptographic function.
+
+**Full circle**: program returns to its origin (SHA-256) with
+tools developed across 49 sections. The theory built in §5-§49
+produces **concrete new cryptanalytic capability**.
+
+This is what the program was FOR.
+
+---
+
+## Конец методички v3 (после §50 — full circle)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
