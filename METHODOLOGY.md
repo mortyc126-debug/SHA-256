@@ -13418,9 +13418,55 @@ SuperBit = execution layer, НЕ strategy. PnL зависит от
 
 ---
 
-## Конец методички v23 (после §76 — trading engine)
+## §77. σ vs Free Energy для regime detection (ответ на arxiv 2512.21823)
 
-**Общее количество разделов**: **76** (§1-§76)
+### Контекст:
+
+CRBM paper (Dec 2025): "free energy signal dominated by
+high-frequency noise, rendering it ineffective for regime detection."
+
+Гипотеза: σ-map (autocorrelation) лучше чем free energy.
+
+### Результат: ОБОИМ ПЛОХО
+
+| Method      | Detection Rate | False Positives |
+|-------------|---------------|-----------------|
+| Free Energy | 20% (1/5)     | 0%              |
+| **σ-map**   | **0% (0/5)**  | **10%**         |
+| Combined    | 60% (3/5)     | —               |
+
+σ-map НЕ побеждает free energy на regime detection.
+Изменения σ между режимами (~0.03) ≈ шум внутри (~0.05).
+
+### Что РАБОТАЕТ:
+
+1. **σ 18-34× менее шумный** чем free energy (confirmed)
+2. **Frozen fraction** различает режимы:
+   - crash: 20.5% frozen (корреляции разваливаются)
+   - choppy: 43.5% frozen (рынок застревает)
+3. **Combined (70% σ + 30% FE)**: 60% detection — лучше чем каждый
+
+### Честный вывод:
+
+Regime detection через Ising observables — ТРУДНАЯ задача.
+Ни free energy, ни σ по отдельности не работают надёжно.
+Combined signal — прогресс, но 60% недостаточно для production.
+
+Проблема не в σ-map, а в **Ising encoding**. Correlation-based
+J — слишком грубая модель рынка. Нужно: sector structure,
+market cap, liquidity, orderbook features.
+
+### Связь с CRBM paper:
+
+Мы ПОДТВЕРЖДАЕМ их finding: Ising observables alone
+недостаточны для reliable regime detection. Но σ — лучший
+building block (менее шумный, structural), чем free energy.
+
+---
+
+## Конец методички v24 (после §77 — σ vs FE honest)
+
+**Общее количество разделов**: **77** (§1-§77)
 
 **Общее число нативно независимых осей расширения бита**:
 **20+**, организованные в 5 мета-групп:
