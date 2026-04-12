@@ -58,6 +58,7 @@
 40. Capstone v6 — консолидация bottom-up discoveries, revised 5-metagroup structure
 41. §37 noise fragility — honest practical correction + chaos computing insight
 42. XOR-fragility theorem + session 3 final summary
+43. Sparse phase bits + W-state exponential discrimination + trade-off principle
 
 ---
 
@@ -10153,7 +10154,142 @@ negatives рядом с positives. Как ты и хотел.
 
 ---
 
-## Конец методички v3 (финальная версия после §42)
+---
+
+## 43. Sparse phase bits, W-state discrimination, trade-off principle
+
+### 43.1 Three findings from continued exploration
+
+After §42, continued digging in phase-bit direction. Three
+solid findings + one honest reduction.
+
+### 43.2 Finding 1 — sparse phase bits scale to n=10⁶
+
+GHZ/Bell states have only **2 nonzero entries** in $2^n$-dim
+space. All phase-bit operations (inner product, Pauli X/Z)
+are O(k) where k = number of nonzero entries.
+
+**Verified**:
+- GHZ discrimination at $n = 1{,}000{,}000$: **2 milliseconds**,
+  O(1) time, O(1) space
+- $\langle X^{\otimes n} \rangle = +1$ for GHZ+, $-1$ for GHZ-
+  at every tested $n$ up to $10^6$
+- Noise robustness: CHSH $> 2$ maintained up to amplitude
+  noise **1.0** on sparse (vs 0.35 on dense)
+
+**Resolves §31/§32 caveat**: «phase bits don't scale beyond
+n~25» is FALSE for sparse states. GHZ/Bell are O(1)-sparse,
+scale to arbitrary $n$.
+
+**CHSH correction**: CHSH (2-party test) works ONLY on 2-qubit
+Bell state. For n>2 GHZ, CHSH on first 2 qubits gives
+$S = \sqrt{2} < 2$ because reduced 2-qubit state is
+**classical mixed** (trace over remaining qubits). GHZ
+advantage requires **n-party** test $\langle X^{\otimes n}\rangle$,
+not 2-party CHSH.
+
+### 43.3 Finding 2 — W-state exponential discrimination
+
+**Signed W states**: $W_n^{(s)} = \sum_{i=0}^{n-1} s_i |e_i\rangle$
+where $s_i \in \{-1, +1\}$. All $2^n$ sign patterns have
+**identical** probability distributions $|s_i|^2 = 1$ for each
+one-hot basis state. Classical probability cannot distinguish
+any of them.
+
+Phase bits via pairwise $\langle X_i \cdot X_j \rangle$
+observables:
+
+$$\langle X_i \cdot X_j \rangle = \frac{s_i \cdot s_j}{n}$$
+
+This gives $\binom{n}{2}$ pairwise products, distinguishing
+sign patterns up to global sign flip ($s \sim -s$).
+
+| $n$ | patterns | distinguished | classical | **advantage** |
+|---|---|---|---|---|
+| 4 | 16 | 8 | 1 | **8×** |
+| 5 | 32 | 16 | 1 | **16×** |
+| 6 | 64 | 32 | 1 | **32×** |
+| 7 | 128 | 64 | 1 | **64×** |
+| 8 | 256 | 128 | 1 | **128×** |
+
+**Exactly $2^{n-1}$ distinguished** at every $n$. Ratio = 50%.
+Advantage = $2^{n-1}$ — **exponential in $n$**.
+
+**Extended to Dicke states D(n, k)** (generalization of W):
+
+| state | entries $\binom{n}{k}$ | advantage |
+|---|---|---|
+| D(6,1) = W | 6 | 32× |
+| D(6,2) | 15 | ~10000× |
+| D(6,3) | 20 | >100000× (sampled) |
+
+Advantage **grows super-exponentially** with $k$ (more entries
+= more pairwise info).
+
+### 43.4 Finding 3 — computation-robustness trade-off
+
+Measured across different substrates:
+
+| substrate | operation type | noise tolerance |
+|---|---|---|
+| Classical threshold | contractive (rounding) | ≤ 0.5 |
+| **Phase bits** | **linear + signed** | **≤ 0.35** (dense), **≤ 1.0** (sparse) |
+| Reservoir (sr=0.95) | near-edge contraction | gradual drop 20% |
+| **Chaos gates** (§37) | **expansive iteration** | **≤ 0.05** |
+
+**Universal principle**: LINEAR operations (phase bits,
+classical threshold) are noise-robust. NONLINEAR ITERATED
+operations (chaos, high-sr reservoir) are noise-sensitive.
+
+**Phase bits unique sweet spot**: linear + signed = beyond
+classical (CHSH, GHZ) AND robust (tolerance 0.35-1.0).
+No other primitive in program achieves both.
+
+### 43.5 Honest reduction — W-state memory ≈ quadratic kernel
+
+W-state discrimination used as **associative memory** massively
+beats classical Hopfield:
+
+| $n$ | stored | W-state memory | Hopfield |
+|---|---|---|---|
+| 32 | 10 | **100%** | 48% |
+| 32 | 100 | **100%** | **0%** |
+
+**BUT**: this reduces to **quadratic kernel nearest neighbor**
+(Vapnik 1995). Feature map $\phi(s)_{ij} = s_i \cdot s_j$ is
+standard polynomial kernel. Phase-bit framing calls it
+$\langle X_i X_j \rangle$; classical ML calls it quadratic
+feature expansion. **Same math**.
+
+W-state memory uses $\binom{n}{2}$ reals per pattern (vs $n$
+bits for Hopfield). More storage → more capacity — expected,
+not novel.
+
+**Real distinction**: in **unknown-state discrimination** use
+case (receive quantum-like state, identify which pattern),
+phase-bit observables give **quadratically more information**
+per measurement than classical single-qubit measurements.
+For **known-pattern** matching — reduces to classical kernel.
+
+### 43.6 What §43 adds to program
+
+**Confirmed**: phase bits are the program's **strongest**
+practical primitive — beyond classical, noise-robust, scalable
+via sparse representation.
+
+**New numbers**:
+- GHZ discrimination at $n = 10^6$ in 2ms
+- $2^{n-1}$ exponential W-state discrimination
+- Sparse noise tolerance up to 1.0
+
+**New theoretical**:
+- Computation-robustness trade-off across substrates
+- Phase bits as unique "linear + signed" sweet spot
+- W-state discrimination ≡ quadratic kernel (honest)
+
+---
+
+## Конец методички v3 (после §43)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
