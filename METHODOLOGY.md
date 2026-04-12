@@ -61,6 +61,7 @@
 43. Sparse phase bits + W-state exponential discrimination + trade-off principle
 44. MPS phase bits — DJ/BV at n=10,000 in 11ms, scalable phase-bit toolkit
 45. General Discrimination Theorem — the whole program in one sentence
+46. Z/m phase hierarchy — from Z/2 to full complex, discrimination scales as m^(k-1)
 
 ---
 
@@ -10670,7 +10671,112 @@ structural math, probing, and honest corrections led to:
 
 ---
 
-## Конец методички v3 (после §45 — Discrimination Theorem)
+---
+
+## 46. Z/m phase hierarchy — discrimination scales as $m^{k-1}$
+
+### 46.1 Мотивация
+
+§45 showed sign ($\mathbb{Z}/2$) is the minimal beyond-classical
+extension. Natural question: what's the NEXT step? If $\{-1, +1\}$
+gives $2^{k-1}$, what does $\{1, i, -1, -i\}$ give?
+
+### 46.2 Z/4 phase bits
+
+Amplitudes $\in \{1, i, -1, -i\}$ = 4th roots of unity.
+Arithmetic: Gaussian integers $a + bi$ with $a, b \in \{0, \pm 1\}$.
+Still **exact**, still on ordinary hardware. 2× storage per entry.
+
+**Pairwise map**: $\pi(s)_{ab} = \overline{s_a} \cdot s_b$.
+Products stay in $\mathbb{Z}/4$.
+
+**Global phase degeneracy**: $s \to \omega s$ for
+$\omega \in \{1, i, -1, -i\}$ preserves all pairwise products.
+4-to-1 degeneracy → $4^k / 4 = 4^{k-1}$ distinct.
+
+**Verified exactly** for $k = 2$ through $k = 7$:
+
+| $k$ | Z/2 distinct | **Z/4 distinct** | Z/4 theory $4^{k-1}$ | match |
+|---|---|---|---|---|
+| 2 | 2 | 4 | 4 | ✓ |
+| 3 | 4 | 16 | 16 | ✓ |
+| 5 | 16 | 256 | 256 | ✓ |
+| 7 | 64 | 4096 | 4096 | ✓ |
+
+### 46.3 General Z/m theorem
+
+> **$\mathbb{Z}/m$ Discrimination Theorem.** For $k$-sparse
+> state with amplitudes in $\mathbb{Z}/m$ (m-th roots of unity),
+> pairwise observables distinguish exactly $m^{k-1}$ patterns.
+> Classical: 1. Advantage $= m^{k-1}$.
+
+**Proof** (extends §45):
+
+1. Global phase: $s \to \omega s$ for $\omega \in \mathbb{Z}/m$
+   preserves pairwise products → $m$-to-1 → $\leq m^k / m = m^{k-1}$
+
+2. Injectivity mod global phase: same argument as §45 Step 2.
+   $\pi(s) = \pi(t) \Rightarrow s_b / t_b = s_1 / t_1$ for all $b$
+   → $s = \omega \cdot t$ for $\omega = s_1 / t_1 \in \mathbb{Z}/m$
+   → $\geq m^{k-1}$
+
+3. Combine: distinct $= m^{k-1}$. ∎
+
+### 46.4 Discrimination hierarchy
+
+| phase group | amplitudes | arithmetic | distinct patterns | advantage |
+|---|---|---|---|---|
+| classical $\mathbb{R}_{\geq 0}$ | $\{0, 1\}$ | natural | **1** | 1 |
+| $\mathbb{Z}/2$ (§45) | $\{-1, +1\}$ | **integer** | $2^{k-1}$ | $2^{k-1}$ |
+| $\mathbb{Z}/4$ | $\{1, i, -1, -i\}$ | **Gaussian int** | $4^{k-1}$ | $4^{k-1}$ |
+| $\mathbb{Z}/m$ | $m$-th roots | algebraic int | $m^{k-1}$ | $m^{k-1}$ |
+| $U(1)$ | $e^{i\theta}$ | float | $\infty$ | $\infty$ |
+
+**Each step**: $m \to m'$ multiplies discrimination by
+$(m'/m)^{k-1}$.
+
+$\mathbb{Z}/2 \to \mathbb{Z}/4$: improvement $2^{k-1}$.
+At $k = 20$: $2^{19} \approx 500{,}000\times$ more patterns.
+
+### 46.5 CHSH not improved by higher phases
+
+$|00\rangle + i|11\rangle$ (Z/4 Bell) gives CHSH $= \sqrt{2} < 2$.
+Only $|00\rangle + |11\rangle$ (Z/2 Bell) reaches Tsirelson
+$2\sqrt{2}$. Higher phases don't help CHSH — it's already
+maximal at Z/2.
+
+**Discrimination** benefits from higher $m$. **CHSH** does not.
+Different tasks, different optimal $m$.
+
+### 46.6 Cost-benefit
+
+| $m$ | storage per entry | arithmetic | discrimination gain |
+|---|---|---|---|
+| 2 | 1 bit (sign) | integer $\pm$ | baseline |
+| 4 | 2 bits (Re, Im signs) | Gaussian int | $\times 2^{k-1}$ |
+| 8 | 3 bits | algebraic | $\times 4^{k-1}$ |
+| $\infty$ | 64 bits (float) | floating point | $\times \infty$ |
+
+$\mathbb{Z}/2$ is **minimum cost, maximum bang-per-bit**.
+$\mathbb{Z}/4$ is **2× cost, exponential extra discrimination**.
+Higher $m$: diminishing returns per extra bit of storage.
+
+### 46.7 Significance
+
+This section completes the **theoretical arc** of the program:
+
+- §45: sign ($\mathbb{Z}/2$) = minimal beyond-classical extension
+- §46: Z/m hierarchy = smooth ladder from classical to quantum
+- Phase bits sit at **first rung**: cheapest, most efficient per bit
+
+The hierarchy shows: **quantum advantage is not binary** (classical
+vs quantum). It's a **continuous ladder** of phase precision.
+Each rung gives more discrimination at more arithmetic cost.
+$\mathbb{Z}/2$ is the **optimal entry point** for classical hardware.
+
+---
+
+## Конец методички v3 (после §46 — Z/m hierarchy)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
