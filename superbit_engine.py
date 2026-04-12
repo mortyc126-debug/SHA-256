@@ -322,6 +322,81 @@ class SuperBitRegister:
         }
 
     # ================================================================
+    # THREE-PHASE PROTOCOL (§66)
+    # ================================================================
+    def optimize_3phase(self, sweeps: int = 1000,
+                        detect_frac: float = 0.3,
+                        lock_frac: float = 0.3) -> Tuple[float, np.ndarray, dict]:
+        """Трёхфазный протокол: DETECT → DECIMATE → ANNEAL.
+
+        Phase 1: self-tuning exploration → σ measurement
+        Phase 2: lock high-σ variables
+        Phase 3: SA on remaining free variables
+
+        Returns: (energy, best_state, info_dict)
+        """
+        detect_sweeps = int(sweeps * detect_frac)
+        anneal_sweeps = sweeps - detect_sweeps
+
+        # Phase 1: DETECT
+        mag_sum = np.zeros(self.n)
+        ac_sum = np.zeros(self.n)
+        count = 0
+        for s in range(detect_sweeps):
+            self.sweep()
+            if s > detect_sweeps // 3:
+                mag_sum += self.m
+                ac_sum += self.m * self.prev_m
+                count += 1
+
+        if count > 0:
+            detect_sigma = (np.abs(mag_sum/count) + ac_sum/count) / 2
+            detect_mag = mag_sum / count
+        else:
+            detect_sigma = self.sigma.copy()
+            detect_mag = self.m.copy()
+
+        # Phase 2: DECIMATE
+        n_lock = int(self.n * lock_frac)
+        order = np.argsort(-detect_sigma)
+        locked = {}
+        for k in range(n_lock):
+            i = int(order[k])
+            locked[i] = 1.0 if detect_mag[i] > 0 else -1.0
+            self.m[i] = locked[i]
+
+        free_vars = [i for i in range(self.n) if i not in locked]
+        n_free = len(free_vars)
+
+        # Phase 3: ANNEAL
+        T_start = 2.0
+        T_end = 0.01
+        cool = (T_end / T_start) ** (1.0 / max(anneal_sweeps * n_free, 1))
+        T = T_start
+
+        for s in range(anneal_sweeps):
+            for _ in range(n_free):
+                if n_free == 0:
+                    break
+                idx = free_vars[self.rng.integers(n_free)]
+                dE = 2 * self.m[idx] * (self.h[idx] + self.J[idx] @ self.m)
+                if dE < 0 or self.rng.random() < np.exp(-dE / max(T, 1e-10)):
+                    self.m[idx] *= -1
+                T *= cool
+
+            E = self.energy()
+            if E < self.best_energy:
+                self.best_energy = E
+                self.best_state = self.m.copy()
+
+        info = {
+            'locked': locked,
+            'n_free': n_free,
+            'detect_sigma': detect_sigma,
+        }
+        return self.best_energy, self.best_state, info
+
+    # ================================================================
     # UTILITY
     # ================================================================
     def reset(self, seed: Optional[int] = None):
