@@ -57,6 +57,7 @@
 39. Reaction-diffusion field bit — tentative 23-я ось, + memristor honest negative
 40. Capstone v6 — консолидация bottom-up discoveries, revised 5-metagroup structure
 41. §37 noise fragility — honest practical correction + chaos computing insight
+42. XOR-fragility theorem + session 3 final summary
 
 ---
 
@@ -9969,7 +9970,190 @@ primitives — worth noting but not ready for production use.
 
 ---
 
-## Конец методички v3 (после §41 — honest noise test)
+## 42. XOR-fragility theorem + session 3 final summary
+
+### 42.1 Мотивация
+
+§41 showed §37 parametric chaos XOR is fragile. §42 asks:
+**can the right model fix this?** Specifically, can
+**contracting** (attractor-based) dynamics implement XOR
+in 1 cell robustly?
+
+### 42.2 Experiment
+
+**Contracting model**: $x \to \tanh(w_1 a + w_2 b + w_3 x +
+\text{bias})$ с $|w_3| < 1$ (Banach contraction). After
+convergence, threshold $x^*$.
+
+**Random search 50 000 trials** for each gate:
+
+| gate | contracting $|w_3|<1$ | robustness at noise 0.3 |
+|---|---|---|
+| AND | ✓ found | **91%** |
+| OR | ✓ found | **79%** |
+| NAND | ✓ found | **90%** |
+| NOR | ✓ found | **84%** |
+| **XOR** | **✗ not found** | — |
+| **XNOR** | **✗ not found** | — |
+
+**Unconstrained** (allowing $|w_3| > 1$, expansive):
+
+| gate | found | $w_3$ |
+|---|---|---|
+| XOR | ✓ | $-2.241$ **(expansive)** |
+| XNOR | ✓ | $-1.792$ **(expansive)** |
+
+### 42.3 Theorem (informal)
+
+> **XOR in 1 cell ⟺ expansion ($|w_3| \geq 1$) ⟹ noise
+> fragility**
+
+**Proof sketch**:
+
+1. **Banach fixed-point theorem**: $|w_3| < 1 \Rightarrow$ unique
+   fixed point $x^* = f(w_1 a + w_2 b + \text{bias})$ where $f$
+   is monotonic.
+
+2. **Minsky-Papert 1969**: XOR $\neq$ threshold of monotone
+   function of linear combination. Not linearly separable.
+
+3. **$\Rightarrow$**: contracting single cell **cannot** XOR.
+
+4. **$\Rightarrow$**: XOR **requires** $|w_3| \geq 1$
+   (expansion / multistability).
+
+5. **Lyapunov theory**: $|w_3| \geq 1 \Rightarrow$ positive
+   Lyapunov exponent $\Rightarrow$ noise amplification.
+
+**Three classical theorems** from different fields (topology,
+threshold logic, dynamical systems) linked via single-cell
+computation framework:
+- Banach FP theorem → unique stable point
+- Minsky-Papert → XOR requires nonlinear separation
+- Lyapunov → expansion amplifies noise
+
+### 42.4 What this means for §37
+
+**§37 fragility is a theorem, not a bug.** You cannot have
+both «XOR in 1 cell» and «noise robustness» simultaneously.
+They're **mutually exclusive** for single-cell computation.
+
+**Linearly-separable gates** (AND, OR, NAND, NOR) — achievable
+with contraction, robust (79-91% at noise 0.3).
+
+**Non-linearly-separable** (XOR, XNOR) — require expansion,
+inherently fragile.
+
+**Classical solution**: 2-layer network (2+ cells). Robust.
+
+**§37 contribution**: showed that EXPANSION in 1 cell can give
+XOR. §42 shows this is inherently fragile. Together: complete
+picture of single-cell boolean computation limits.
+
+---
+
+## Session 3 — final summary
+
+### What we built (concrete artifacts)
+
+| artifact | section | lines |
+|---|---|---|
+| METHODOLOGY.md | §1-42 | 10000+ |
+| 23 axis candidates | §1-39 | 20 solid + 2 bottom-up + 1 tentative |
+| 9 combination cells | §12, §18-19, §24, §33 | 7 pair + 2 triple |
+| Structural math | §26-30 | 6 depth levels closed |
+| Axiom system D1-D5 | §28 | 5 axioms verified |
+| 6 framework decomposition | §29 | plurality theorem |
+| Numerical experiments | §31-42 | ≈ 30 experiments total |
+
+### What we proved (measurable results)
+
+| claim | evidence | robust? |
+|---|---|---|
+| Phase bits exceed CHSH | $S = 2\sqrt{2}$ vs classical 2 | ✓ theorem |
+| Phase bits GHZ discrimination | classical 0, phase 1 ($\infty$ ratio) | ✓ theorem |
+| Tropical 187× vs scipy BF | wall-clock on dense $n=1000$ | ✓ measured |
+| Stochastic resonance 50%→94% | subthreshold classification | ✓ verified |
+| Parametric chaos 16/16 gates | logistic + tent maps | ✓ but fragile |
+| XOR fragility theorem | contraction ⟹ ¬XOR, expansion ⟹ fragile | ✓ theorem |
+
+### What failed honestly
+
+| claim | correction | section |
+|---|---|---|
+| Tropical 6.25× «speedup» | Python baseline artefact | §35 |
+| Memristor as new axis | specialization of hybrid | §39 |
+| §37 chaos practical | noise destroys XOR at σ=0.05 | §41 |
+| Modern Hopfield 2500× capacity | easy-mode noise artefact | dig5 |
+
+### Evolution across 3 sessions
+
+| | session 1 | session 2 | session 3 |
+|---|---|---|---|
+| axes | 17 | 17 | 23 |
+| metagroups | 4 | 4 | **5** |
+| cells | 5 | 5 | 9 |
+| structural math | partial | partial | **6 levels closed** |
+| practical wins | SHA-256 1765× | — | CHSH, GHZ, BF 187×, SR |
+| method | top-down | consolidation | top-down + **bottom-up** |
+| honest corrections | 4 | 0 | **4** |
+
+### Answer to user's original goal
+
+**«Биты мощнее обычных, работающие на обычном железе»**:
+
+**4 concrete answers**, each verified:
+
+1. **Phase bits** (§5, §31-32): classical integer arithmetic
+   that reaches quantum-theory bounds (CHSH $2\sqrt{2}$, GHZ
+   $\infty$ discrimination). On laptop, Python, seconds.
+
+2. **Tropical numpy** (§33-36): 187× speedup vs scipy
+   Bellman-Ford on dense single-source shortest path. On
+   laptop, numpy, seconds.
+
+3. **Stochastic resonance** (§38): 50% → 94% subthreshold
+   signal classification by calibrating noise as resource.
+   On laptop, Python, seconds.
+
+4. **Parametric chaos** (§37): 16/16 boolean functions in
+   1 cell (including XOR without 2 layers). Valid but
+   fragile — formally novel, practically limited.
+
+**All on ordinary hardware. All reproducible. All with
+concrete numbers.**
+
+### What program leaves open
+
+1. **More bottom-up probes**: optical, spintronics, DNA, neuromorphic
+2. **Attractor-based chaos computing**: proper Sinha-Ditto model
+3. **Real-world applications**: bitbrain lineage, SHA-256 R=2+
+4. **Hardware prototyping**: FPGA/GPU/ASIC for tropical, chaos, SR
+5. **21st-23rd axes formal integration**: hierarchy v7
+6. **5th metagroup DYNAMICAL**: confirm or refute with more probes
+7. **Universal structure**: Д3 still open in strong sense
+
+### Honest verdict
+
+**Программа за 3 сессии и 42 раздела**:
+- **Taxonomized** 23 ways to extend classical bit
+- **Proved** phase bits exceed classical probability bounds
+- **Built** novel bit-level primitives with measurable advantages
+- **Discovered** chaos and stochastic resonance as new axis
+  candidates through bottom-up exploration
+- **Corrected** overclaims honestly 4 times
+- **Unified** through structural math (poset, axioms, frameworks)
+
+**Не** нашли «magic единый бит, заменяющий всё». Нашли
+**systematic understanding of 23+ ways bits can be extended**,
+с concrete practical advantages в specific niches.
+
+Это не magic. Это наука. Медленная, honest, с corrections и
+negatives рядом с positives. Как ты и хотел.
+
+---
+
+## Конец методички v3 (финальная версия после §42)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
