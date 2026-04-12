@@ -13573,9 +13573,52 @@ SuperBit НЕ overfits (test > train по Sharpe).
 
 ---
 
-## Конец методички v26 (после §79 — realistic backtest)
+## §80. Hybrid quantum-classical trading: кубиты почти не помогают
 
-**Общее количество разделов**: **79** (§1-§79)
+### Эксперимент:
+
+SuperBit (30 assets) → σ-map → 15 most uncertain → "quantum"
+brute-force (2^15 = 32K states) → merge back.
+
+### Результат:
+
+| Strategy      | Return  | Sharpe | MaxDD |
+|--------------|---------|--------|-------|
+| SuperBit     | +131.6% | 7.45   | -2.2% |
+| **Hybrid 15q** | **+132.6%** | **7.63** | -2.2% |
+| Δ            | **+1.0%** | +0.18 | 0     |
+
+**Кубиты дают +1%. Маргинально.**
+
+### Почему:
+
+Кубиты оптимизируют КОМБИНАТОРИКУ (какие активы выбрать).
+PnL зависит от ПРЕДСКАЗАНИЯ (куда цена пойдёт).
+
+σ-map уже разделил: high-σ = предсказуемые → SuperBit
+handles. Low-σ = непредсказуемые → даже идеальная quantum
+optimization не помогает (optimizing randomness = random).
+
+### Где кубиты РЕАЛЬНО помогли бы:
+
+1. Жёсткие constraints (sector/regulatory limits) → QUBO
+2. Integer positions (lots, не дробные) → combinatorial
+3. Exotic derivatives (path-dependent payoffs) → quantum sampling
+4. НЕ для prediction accuracy
+
+### Вывод для торговли:
+
+SuperBit + кубиты ≈ SuperBit alone для unconstrained portfolios.
+Кубиты полезны только при ЖЁСТКИХ ОГРАНИЧЕНИЯХ.
+
+Инвестировать в: лучшие сигналы (ML), а не в кубиты.
+σ-map + learned J = гораздо более ценные, чем quantum boost.
+
+---
+
+## Конец методички v27 (после §80 — quantum hybrid)
+
+**Общее количество разделов**: **80** (§1-§80)
 
 **Общее число нативно независимых осей расширения бита**:
 **20+**, организованные в 5 мета-групп:
