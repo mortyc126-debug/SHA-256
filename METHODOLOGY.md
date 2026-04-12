@@ -67,6 +67,7 @@
 49. Task-Specificity Conjecture — why no single strongest bit exists
 50. SHA-256 full circle — §45 theorem applied back to §4, pairwise finds hidden bits
 51. SHA-256 R=1 inversion improved — pairwise features: 646× (2.1× over Hamming)
+52. Executive summary — what this program actually achieved
 
 ---
 
@@ -11197,7 +11198,104 @@ to 32-bit too. Expected improvement: similar factor.
 
 ---
 
-## Конец методички v3 (после §51 — practical payoff)
+---
+
+## 52. Executive summary — what this program actually achieved
+
+### One paragraph
+
+A three-session research program systematically explored extensions
+of the classical bit. Starting from SHA-256 cryptanalysis, it built
+a taxonomy of 20+ axis extensions, a structural mathematical
+framework (poset, axioms, categorical plurality), and a core
+theoretical result: the **discrimination theorem** — that signed
+($\pm 1$) amplitudes distinguish $2^k$ states where classical
+probability sees 1, via $O(k^2)$ pairwise measurements. Applied
+back to SHA-256, this produced a **2.1× improvement** over the
+best previous inversion method by exploiting carry-chain information
+invisible to single-bit analysis.
+
+### Numbers that matter
+
+| result | number | section |
+|---|---|---|
+| Phase-bit CHSH violation | $2\sqrt{2} \approx 2.83$ vs classical 2.0 | §31 |
+| GHZ discrimination | classical 0 vs phase 1 ($\infty$ ratio) | §32 |
+| Tropical vs scipy Bellman-Ford | **187× speedup** on dense $n$=1000 | §36 |
+| MPS Deutsch-Jozsa | **$n$=1,000,000 in 0.9 seconds** | §48 |
+| SHA-256 R=1 inversion | **646×** (2.1× over previous best) | §51 |
+| Discrimination theorem | $2^k$ states from $O(k^2)$ measurements | §45 |
+| SHA-256 R=2 wall | confirmed impenetrable (honest negative) | §4.3 + probe |
+
+### What IS genuinely new
+
+1. **Unified taxonomy**: 20+ extensions of the classical bit organized
+   in 4-5 metagroups with formal axioms (D1-D5), a poset structure,
+   and 6 categorical frameworks. No comparable systematization existed.
+
+2. **Discrimination theorem** (§45): for $k$-sparse signed state,
+   $\binom{k}{2}+1$ measurements distinguish all $2^k$ sign patterns.
+   Classical probability: 1. Three-line proof connecting Banach
+   fixed-point theorem, Minsky-Papert linear separability, and
+   Lyapunov stability.
+
+3. **SHA-256 carry-chain analysis** (§50-51): pairwise state-bit
+   products capture modular-addition carries invisible to single-bit
+   analysis. Concrete improvement: W[1] prediction from 49% (random)
+   to 100% (perfect). End-to-end: 646× speedup.
+
+4. **Z/m phase hierarchy** (§46-47): discrimination scales as
+   $m^{k-1}$. Z/4 unlocks full Clifford group (Y gate, S gate, QEC).
+   Z/2 = minimal beyond-classical. Z/4 = minimal for error correction.
+
+5. **Task-specificity conjecture** (§49): no single extension
+   dominates all tasks. Six algebraic structures (group, lattice,
+   stochastic, dynamical, ring, groupoid) each optimal for one domain.
+
+### What is NOT new (honest)
+
+- Phase bits ≈ quantum state simulation — known since 1990s
+- Tropical ≈ Bellman-Ford — known since 1957
+- MPS ≈ tensor networks — known since 2000s
+- FWHT ≈ Walsh-Hadamard — known since 1923
+- Stochastic resonance — known since 1981
+- Chaos computing — known since 2001
+- CHSH inequality — known since 1969
+
+The **individual components** are all known. The **framework unifying
+them as bit extensions** and the **specific applications** (SHA-256
+carry analysis, MPS DJ at $n$=1M) are new to this program.
+
+### For the original question
+
+«Биты мощнее обычных, работающие на обычном железе?»
+
+**Yes, in a specific sense**: phase bits (signed integer amplitudes)
+measurably exceed classical probability bounds (CHSH, GHZ), scale to
+millions of effective qubits for structured problems (MPS), and
+improve SHA-256 cryptanalysis by capturing carry-chain structure
+invisible to classical analysis.
+
+**No, in a universal sense**: no exponential speedup over classical
+algorithms for general tasks. No replacement for quantum computers.
+No single «strongest bit». Advantages are domain-specific and
+bounded.
+
+**The honest answer is both.** Phase bits are a legitimate,
+measurable, implementable extension of classical bits with
+concrete advantages in specific domains. They are not magic.
+
+### The program in three sentences
+
+We explored how to make bits more powerful than classical.
+We found that **one algebraic change — allowing negative amplitudes —
+gives exponential discrimination advantage** at polynomial cost.
+We applied this to SHA-256 and improved inversion by 2.1× over
+the best previous method.
+
+---
+
+## Конец методички v3 (финальная версия)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
