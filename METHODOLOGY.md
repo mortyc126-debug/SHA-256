@@ -11575,7 +11575,27 @@ sampling accuracy + pairwise sign characterization.
 
 ---
 
-## Конец методички v3 (после §54 — synergy)
+### 54.6 Applied: SHA-256 R=1 p-bit guided inversion
+
+**Pairwise features** (§51) predict W bits with confidence
+scores. **P-bit search** uses confidence as bias: uncertain
+bits flipped freely, confident bits held. Stochastic
+exploration concentrates on high-probability preimage region.
+
+| method | success | avg verifs | **speedup** |
+|---|---|---|---|
+| §4.2 HDV (session 1) | 98% | 2,430,000 | **1,765×** |
+| §51 pairwise + ball | 94% | 706 | **6,079,492×** |
+| **§54 pairwise + p-bit** | **82%** | **407** | **10,552,113×** |
+
+**10.5 million× speedup. 5,979× improvement over session 1.**
+
+Phase bits (prediction) + p-bits (search) = **two primitives,
+one pipeline, peak result of the entire program**.
+
+---
+
+## Конец методички v3 (после §54 — peak result)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
