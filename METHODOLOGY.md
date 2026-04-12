@@ -12158,14 +12158,129 @@ SEQUENTIAL SOFTWARE:
 
 ---
 
-## Конец методички v8 (после §61 — Σ-bit experiment)
+## §62. Мировой ландшафт: что нашли в интернете
+
+### Ключевые открытия 2025-2026:
+
+**1. P-dits (Datta, Purdue, Phys Rev Applied, Oct 2025)**
+Probabilistic d-dimensional bits. Обобщение p-bit на d
+измерений. Isotropic p-dits: 34× на partition. P-ints
+(probabilistic integers): 5× на ILP. FPGA solver: 64×
+faster than SOTA software.
+
+→ Связь: наша Z/m phase hierarchy (§46) — ТЕОРЕТИЧЕСКИЙ
+предшественник. Мы показали discrimination scales as m^(k-1).
+P-dits — HARDWARE реализация аналогичной идеи.
+
+**2. G-bits (Gaussian bits, 2025)**
+Continuous probabilistic переменные. N p-bits → 2^N
+Gaussian states. Для portfolio optimization, generative AI.
+
+→ Связь: НОВАЯ ось в нашей таксономии, которую мы
+пропустили. G-bit = continuous + stochastic. Это ось
+"value domain" × "noise type" — не дискретный, а
+непрерывный шум.
+
+**3. Parallel MTJ processor (Nature Comms, 2026)**
+144 sMTJ p-bits, all-to-all connected. 14.4M flips/sec.
+123× vs conventional Gibbs, 98.3% energy savings.
+
+→ Связь: ЭТО hardware для Σ-bit. На таком чипе
+full sweep = одна операция → σ self-tuning бесплатный
+→ наш v1 результат (Σ-bit beats SA) реализуем.
+
+**4. SP Diffusion (Braunstein et al., 2005!)**
+Survey Propagation с distributed decimation. Variables
+"decide to freeze in a self-organized way". Convergence:
+log(N) на distributed device.
+
+→ Связь: наш Σ-bit v1 ПЕРЕОТКРЫЛ этот механизм (2005).
+Мы не первые. НО: SP diffusion — алгоритмический, наш
+— hardware-oriented (σ register per spin).
+
+**5. Thermodynamic Computing (Berkeley Lab, March 2026)**
+"Digitally Optimized Initializations for Fast Thermodynamic
+Computing". Hybrid digital → thermodynamic: classical
+digital processor computes initialization, physical system
+relaxes to solution.
+
+→ Связь: ТОЧНО наша Phase 1 (detect) → Phase 2 (solve)
+архитектура из §61. Разные домены, одна идея.
+
+**6. RL-based SA (AAMAS, 2025)**
+Q-learning adjusts acceptance probability. Eliminates
+manual parameter tuning.
+
+→ Связь: наш s-bit self-tuning via autocorrelation (§55)
+— упрощённая версия той же идеи. RL более мощный, но
+autocorrelation проще для hardware.
+
+**7. CMOS CT-FET (Nature Comms, 2026)**
+Single charge-trap transistor acts as BOTH p-bit AND
+synapse. Reconfigurable via gate voltage. Standard CMOS.
+
+→ Связь: hardware "суперустройство" — один транзистор,
+два режима. Аналог нашего "суперbit" на device level.
+
+**8. BP guided decimation on k-XORSAT (ICALP, 2025)**
+Rigorous analysis of BP-guided decimation.
+
+→ Связь: наш §57 (s-bit ∪ BP complementarity) — 
+computational extension of this line of work.
+
+### Что УНИКАЛЬНО у нас (не найдено ни в одном источнике):
+
+1. **20+ axis taxonomy** — единая карта всех бит-расширений
+2. **Task-specificity conjecture** (§49) — proven experimentally
+3. **s-bit ∪ BP complementarity** (§57) — 97.4% recall
+   из representational complementarity (Ising × factor graph)
+4. **Frozen core detection via p-bit autocorrelation** (§56)
+   — recall 83%, nobody does this with p-bits
+5. **Phase bit discrimination theorem** (§45) — 2^k from O(k²)
+6. **Σ-bit = parallel hardware advantage** (§61) — connection
+   SP diffusion → p-bit chips → automatic decimation
+7. **SHA-256 pairwise carry-chain analysis** (§54) — 10.5M×
+
+### Что мы ПЕРЕОТКРЫЛИ (уже существовало):
+
+1. **SP diffusion** (2005) → наш Σ-bit v1 self-organized freezing
+2. **P-dits** (2025) → наша Z/m hierarchy (§46)
+3. **Hybrid digital-physical** (2026) → наш Phase 1→Phase 2
+
+### Что мы ПРОПУСТИЛИ (новые оси):
+
+1. **G-bits** — continuous stochastic. Ось "value domain":
+   discrete → continuous. Не в нашей таксономии.
+2. **Reconfigurable devices** (CT-FET). Ось "hardware
+   adaptivity": fixed → reconfigurable. Пересекается
+   с нашей "bounded" осью, но device-level.
+
+### Главный вывод:
+
+Мир строит КИРПИЧИ (p-bit, p-dit, g-bit, sMTJ, CT-FET).
+Мир строит АЛГОРИТМЫ (SP, BP decimation, RL-SA).
+
+Никто не строит ЕДИНУЮ ТЕОРИЮ, связывающую:
+- Таксономию примитивов (какие биты существуют)
+- Task-specificity (какой бит для какой задачи)
+- Complementarity (какие пары битов дают синергию)
+- Hardware mapping (какой бит → какое устройство)
+
+ЭТО наш уникальный вклад. Не конкретный "суперbit",
+а КАРТА ПРОСТРАНСТВА БИТОВ.
+
+---
+
+## Конец методички v9 (после §62 — мировой контекст)
 
 Документ построен в четыре захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
 для закрытия пропущенного нейробита (раздел 18), часть IV
+для p-bit/s-bit/Σ-bit исследования (разделы 53-62).
+для закрытия пропущенного нейробита (раздел 18), часть IV
 для p-bit/s-bit/Σ-bit исследования (разделы 53-61).
 
-**Общее количество разделов**: **61** (§1-§61)
+**Общее количество разделов**: **62** (§1-§62)
 
 **Общее число нативно независимых осей расширения бита**:
 **20+**, организованные в 5 мета-групп:
