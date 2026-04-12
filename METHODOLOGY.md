@@ -55,6 +55,7 @@
 37. Parametric chaos-configurable bit — bottom-up discovery, 21-я ось кандидат
 38. Stochastic resonance bit — второе bottom-up discovery, 22-я ось кандидат
 39. Reaction-diffusion field bit — tentative 23-я ось, + memristor honest negative
+40. Capstone v6 — консолидация bottom-up discoveries, revised 5-metagroup structure
 
 ---
 
@@ -9486,27 +9487,281 @@ pending clarification.
 - **§39 reaction-diffusion**: tentative 23-я axis candidate
 - **Potential metagroup**: DYNAMICAL / PHYSICAL emerging
 
-**Bottom-up exploration**: productive. После 4 probes в этом
-direction, накопили 2 solid + 1 tentative + 1 negative.
-
-**Методология работает**: bottom-up discoveries which top-down
-taxonomy was missing. Classical physics (chaos computing,
-stochastic resonance, reaction-diffusion) was invisible to
-our top-down search because it's in physics literature, не
-logic/algebra literature.
-
-**Honest tiredness**: после 39 разделов и 4 bottom-up probes в
-одной сессии, diminishing returns могут наступить. Каждый
-next probe будет либо confirming существующее или finding
-rare new genuine axis. Discovery rate likely decreasing.
-
-**Вопрос к пользователю**: продолжать exploration (wide
-survey), консолидировать (formalize 21-22-23 в hierarchy v6),
-или остановиться и review?
+После 4 probes в bottom-up mode накопили 2 solid + 1 tentative
++ 1 negative. Discovery rate diminishing — time to consolidate.
 
 ---
 
-## Конец методички v3 (после §39)
+## 40. Capstone v6 — consolidation of bottom-up discoveries
+
+### 40.1 Мотивация
+
+После §37-§39 программа накопила material, требующий
+формальной consolidation. §40 — capstone v6, обновляющий
+§25 с bottom-up findings.
+
+**What's new since §25 (capstone v5)**:
+- §26-30: structural math (6 depth levels closed)
+- §31-32: expressive wins (CHSH, GHZ)
+- §33-36: tropical numpy (novel cell + wall-clock win vs BF)
+- §37-39: bottom-up discoveries (parametric chaos, stochastic
+  resonance, reaction-diffusion tentative)
+
+### 40.2 Hierarchy v6 — revised axis list
+
+**Original 20 axes (§25.2, unchanged)**:
+
+**VALUE** (6): binary, phase, ebit/ghz, probability, quotient,
+fuzzy
+
+**OPERATION** (5): reversible, linear, self-ref, higher-order,
+cost
+
+**RELATION** (5): braid, modal, relational, causal,
+spatial-holonomy
+
+**TIME** (5): stream, interval, cyclic, branching, timed
+
+**New bottom-up candidates (§37-§39)**:
+
+**DYNAMICAL (potential 5th metagroup, 2-3 axes)**:
+- **21** — parametric chaos-configurable bit (solid) [§37]
+- **22** — stochastic resonance bit (solid) [§38]
+- **23?** — reaction-diffusion field bit (tentative) [§39]
+
+### 40.3 Witness kernels for new axes
+
+Following §25.2 format (one-line computer-checkable invariant):
+
+| # | axis | witness | source |
+|---|---|---|---|
+| 21 | parametric chaos | 16/16 boolean functions on single logistic cell | §37 |
+| 22 | stochastic resonance | noise-free 50% → noise-tuned 94% accuracy on subthreshold | §38 |
+| 23? | reaction-diffusion | Gray-Scott FFT spectrum distinguishable by (F, k) phase | §39 |
+
+Compare к existing 20 witnesses (§25.2):
+
+| # | ось | witness |
+|---|---|---|
+| 1 | binary | XOR commutative |
+| 2 | phase | $+1 + (-1) = 0$ |
+| ... | ... | ... |
+| 20 | timed | delay(1/3) + delay(2/3) = 1 density |
+| **21** | **parametric chaos** | **16/16 boolean gates via parameter** |
+| **22** | **stochastic resonance** | **50% → 94% subthreshold accuracy via noise** |
+| **23?** | **reaction-diffusion** | **Gray-Scott phase diagram distinguishable** |
+
+### 40.4 Cell catalogue v2 unchanged
+
+Из §25.3 — **8 клеток** (6 pair + 2 triple), без изменений в
+§26-40. Tropical neurobit (§33) — не новая клетка, а
+специализация stream×cost cell (нейробит §18) с tropical
+semiring.
+
+1. thermo_reversible (§12.2) — OP × OP
+2. modal_quotient (§12.3) — REL × VAL
+3. causal_cost (§12.4) — REL × OP
+4. stream_linear (§12.5) — TIME × OP
+5. neurobit (§18) — TIME × OP (stream × cost)
+6. hybrid_automata (§24) — TIME × OP (timed × cost)
+7. triple_rlc (§12.6) — OP³
+8. phase-neurobit (§19) — VAL × TIME × OP
+
+Cell count unchanged — exploration added axes, not cells.
+
+### 40.5 Revised metagroup structure
+
+**If DYNAMICAL accepted as 5th metagroup** (based on §37-§39):
+
+| metagroup | count | axes |
+|---|---|---|
+| VALUE | 6 | binary, phase, ebit/ghz, probability, quotient, fuzzy |
+| OPERATION | 5 | reversible, linear, selfref, higher-order, cost |
+| RELATION | 5 | braid, modal, relational, causal, spatial-holonomy |
+| TIME | 5 | stream, interval, cyclic, branching, timed |
+| **DYNAMICAL** | **2-3** | **parametric chaos, stochastic resonance, (reaction-diffusion?)** |
+
+**Total**: 23-24 axes across 5 metagroups (if we accept all).
+
+**Structure change**: §13.3 had «4 metagroups × 5-6 axes each».
+Now we have **5 metagroups** with uneven distribution. Это
+**serious revision** гипотезы.
+
+**Honest caveat**: DYNAMICAL metagroup has only 2-3 known axes
+so far (vs 5 in other groups). It's underfilled. Either
+discovery is incomplete (more DYNAMICAL axes to find), or
+this isn't really a separate metagroup but a specialized
+subset of existing ones.
+
+### 40.6 Updated §26 simulation matrix implications
+
+После §37-§39 старая матрица 21×21 (из §26) требует расширения
+до **23×23** или **24×24**.
+
+New edges нужно проверить для каждой новой оси против всех
+старых:
+
+**§37 parametric chaos**:
+- native → binary (все оси делают это)
+- encoded ← через church/stream (Turing complete can simulate)
+- vs cost, neurobit, hybrid automata: different primitive op
+- vs fuzzy: different dynamics family
+- Not natively simulated by any existing axis (verified in §37.10)
+
+**§38 stochastic resonance**:
+- native → binary
+- encoded ← через probability + stream combination
+- not native reducible
+
+**§39 reaction-diffusion**:
+- native → binary
+- encoded ← через spatial grid + hybrid automata с nonlinear
+  coupling
+- tentatively не native reducible
+
+Нужно formal matrix update, но это 2-3 раздела работы. Не
+делаю в §40.
+
+### 40.7 Honest status of discoveries
+
+**What's solid after §37-§39**:
+
+1. **§37 parametric chaos** passes all checks:
+   - 16/16 boolean functions on single cell
+   - Universal across nonlinear maps (logistic, tent)
+   - 14/16 on identity (Minsky-Papert confirmed)
+   - D1-D5 pass
+   - Irreducible to 20 axes
+   - Literature: Sinha-Ditto chaos computing 2001-2010
+
+2. **§38 stochastic resonance** passes all checks:
+   - Non-monotonic SR signature confirmed
+   - 50% → 94% on subthreshold classification
+   - D1-D5 pass
+   - Irreducible to 21 axes (including §37)
+   - Literature: Benzi et al 1981, Wiesenfeld-Moss 1995
+
+**What's tentative**:
+
+3. **§39 reaction-diffusion** — pattern formation clearly demonstrated, но:
+   - Witness (pattern class) less clean than §37/§38
+   - Closest cell: hybrid automata × spatial coupling
+   - Primitive vs computation paradigm question
+   - More verification needed before solid
+
+### 40.8 Methodology reflection
+
+**Exploration mode productivity rate after 4 bottom-up probes**:
+
+| probe | result | discovery? |
+|---|---|---|
+| chaos computing | solid positive | §37 axis candidate |
+| stochastic resonance | solid positive | §38 axis candidate |
+| memristor | honest negative | specialization only |
+| reaction-diffusion | tentative | §39 candidate pending |
+
+50% solid + 25% tentative + 25% negative = **reasonable
+research productivity** for bottom-up exploration.
+
+**Insight**: classical corpus of theoretical CS (logic, type
+theory, category theory) missed **entire physical discipline**
+— nonlinear dynamics, stochastic processes, pattern formation.
+Top-down taxonomy from CS literature naturally excludes
+physics. Bottom-up probes reveal this gap.
+
+**Counter-insight**: physical substrates often have caveats
+that make them uneasy fits for "bit primitive" framework:
+- Storage scaling (RD needs O(N^d))- Analog noise (every physical bit has noise)
+- Reproducibility (trajectory depends on initial conditions)
+
+Честно: bottom-up discoveries **extend** taxonomy, но каждый
+add'd axis comes with **specific practical caveats**. Не все
+равно важны как top-down discoveries (which are pure
+mathematical objects).
+
+### 40.9 Cumulative state after §40
+
+**Numbers**:
+- **Axes**: 20 solid + 2 solid bottom-up + 1 tentative = **23**
+- **Metagroups**: 4 (+1 potential) = **4 or 5**
+- **Cells**: 8 (unchanged)
+- **Structural depth levels**: 6 of 6 closed (§30)
+- **Numerical wins**: CHSH, GHZ, tropical vs BF 187× (§36)
+
+**Qualitative**:
+- Top-down taxonomy explored
+- Structural math explored
+- Bottom-up physical substrates started
+- 5th metagroup candidate emerging
+
+**Что осталось unexplored**:
+- Optical computing substrates (photons, solitons)
+- Spintronics / magnonics
+- DNA / molecular computing
+- Quantum-inspired classical (adiabatic, tensor networks)
+- Stochastic / probabilistic hardware (Ising machines)
+- Neuromorphic chips (Loihi, TrueNorth, SpiNNaker)
+- Field-programmable analog arrays
+
+Each может скрывать ещё одну ось или cell.
+
+### 40.10 Practical status
+
+**What user could do with this taxonomy right now**:
+
+1. **For classical simulations of quantum behavior**: phase bits
+   (§5, §31, §32) — CHSH violation, GHZ discrimination, DJ
+   algorithm. All на Python на laptop.
+
+2. **For graph algorithms на dense graphs**: tropical neurobit
+   (§33, §36) — 187× speedup vs scipy BF на n=1000.
+
+3. **For reconfigurable logic**: parametric chaos cell (§37) —
+   one cell implements 16/16 boolean functions via parameter
+   choice. Sinha-Ditto реализация на Chua circuits physical.
+
+4. **For subthreshold signal detection**: stochastic resonance
+   bit (§38) — calibrated noise enables detection of signals
+   below classical threshold. Used в neurons, SQUIDs.
+
+5. **For pattern formation**: reaction-diffusion bit (§39) —
+   Gray-Scott, Gierer-Meinhardt, used в morphogenesis modeling,
+   ARM Morphogen chip.
+
+Five concrete directions, each with literature backing and
+numerical verification in our program.
+
+### 40.11 Статус раздела 40
+
+**Capstone v6 consolidation**.
+
+- ✓ 23 axis candidates (20 solid + 2 new solid + 1 tentative)
+- ✓ 5-metagroup structure proposed (DYNAMICAL as new group)
+- ✓ 8 cells unchanged
+- ✓ Meta-hypothesis «4 groups» revised to «5 groups»
+- ✓ Exploration mode productivity documented
+- ✓ 5 practical directions identified
+
+**Honest note**: this is not final. Bottom-up exploration can
+continue через more substrates. Each probe может add, reduce,
+or revise таксономию. Program remains open-ended.
+
+**Session 3 cumulative cumulative**:
+- Session 1 (§1-17): 17 axes, top-down taxonomy, structural math
+  partial
+- Session 2 (§11-17): consolidation
+- Session 3 (§18-40): +3 new top-down axes (§21-23), +2 solid
+  bottom-up (§37-38), +1 tentative (§39), structural math
+  6 levels closed, 2 expressive wins, 1 wall-clock win, novel
+  cells
+
+**От 17 axes в 4 metagroups → 23 candidates в 5 metagroups**.
+Это substantial growth для single session, с honest caveats
+on tentative parts.
+
+---
+
+## Конец методички v3 (после §40 — capstone v6)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
