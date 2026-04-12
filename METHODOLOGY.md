@@ -13187,11 +13187,74 @@ corresponds to the computational phase transition.
 
 ---
 
-## Конец методички v19 (после §72 — математические фронтиры)
+## §73. Order parameter + RG — честные результаты
 
-**Общее количество разделов**: **72** (§1-§72)
+### σ as computational order parameter (n=14):
 
-**Количество теорем**: **9** (T1-T9, все верифицированы)
+| α    | P(SAT) | f_core | Ψ      |
+|------|--------|--------|--------|
+| 2.00 | 1.00   | 0.003  | 0.352  |
+| 3.00 | 1.00   | 0.131  | 0.083  |
+| 3.50 | 0.96   | 0.211  | 0.106  |
+| 4.00 | 0.92   | 0.466  | 0.076  |
+| 4.25 | 0.76   | 0.568  | 0.049  |
+| 4.50 | 0.48   | 0.750  | 0.031  |
+
+**Ψ падает**: 0.35 → 0.03 при α: 2→4.5 ✓
+**Hardness correlation**: low Ψ → больше flips ✓
+**Susceptibility peak**: α=2.75 (ожидали ~4.27) ✗
+
+Честно: n=14 слишком мал для clean finite-size scaling.
+Susceptibility peak не совпадает с SAT threshold.
+Hypothesis plausible но НЕ confirmed.
+
+### RG optimizer at scale — SA побеждает:
+
+| n    | SA E/n  | RG E/n  | Gap   | Speed |
+|------|---------|---------|-------|-------|
+| 50   | -0.492  | -0.485  | +1.5% | 0.9×  |
+| 200  | -0.507  | -0.498  | +1.8% | 0.8×  |
+| 1000 | -0.532  | -0.524  | +1.5% | 0.5×  |
+
+SA wins на всех масштабах. RG медленнее и хуже.
+
+*Причины*: correlation computation overhead O(n² × sweeps),
+greedy block assignment noisy, projection loses information.
+
+Ранний report (RG 2× faster) был при unfair budget — 
+RG получал больше total sweeps. При equal budget — no advantage.
+
+### Что РЕАЛЬНО работает (honest assessment):
+
+| Feature            | Status  | Evidence        |
+|-------------------|---------|-----------------|
+| σ-restart WalkSAT | **WORKS** | 80% vs 47% solve |
+| Temporal σ monitor | **WORKS** | clear regime detect |
+| Lyapunov (T9)     | **PROVEN** | V = (log T - log T*)² |
+| Scalping σ-filter | **WORKS** | 92% trade reduction |
+| σ-map as output   | **WORKS** | unique capability |
+| RG optimizer      | **FAILS** | SA beats it |
+| Per-variable T    | **MARGINAL** | ~1% on frustrated |
+| Order parameter   | **NOISY** | need larger n |
+| Parallel quality  | **GAP** | 20% worse than SA |
+
+### Вывод:
+
+SuperBit — НЕ универсальный optimizer (SA лучше).
+SuperBit — STRUCTURAL ANALYZER + σ-MAP provider.
+
+Сила не в оптимизации, а в:
+1. σ-map (what's frozen, what's free)
+2. σ-restart (backbone memory)
+3. Temporal monitoring (regime detection)
+4. Self-tuning (zero hyperparameters, proven Lyapunov)
+
+---
+
+## Конец методички v20 (после §73 — honest assessment)
+
+**Общее количество разделов**: **73** (§1-§73)
+**Количество теорем**: **9** (T1-T9)
 
 **Общее число нативно независимых осей расширения бита**:
 **20+**, организованные в 5 мета-групп:
