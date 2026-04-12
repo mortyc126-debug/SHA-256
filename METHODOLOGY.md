@@ -11184,17 +11184,25 @@ from §4.
 
 ### 51.5 Comparison across sessions
 
-| section | method | speedup | note |
-|---|---|---|---|
-| §4.2 (session 1) | HDV retrieval, 32-bit | **1765×** | original result |
-| §20 (session 3) | Hamming, 16-bit | 176× | baseline |
-| §20 hybrid | Hamming + matched filter | 351× | moderate improvement |
-| **§51** (session 3) | **pairwise features** | **646×** | **§45 theorem applied** |
+| section | method | W bits | speedup | note |
+|---|---|---|---|---|
+| §4.2 (session 1) | HDV retrieval | 32 | **1,765×** | original result |
+| §20 (session 3) | Hamming, 16-bit | 16 | 176× | baseline |
+| §20 hybrid | Hamming + matched filter | 16 | 351× | moderate |
+| §51 (16-bit) | pairwise features | 16 | 646× | §45 applied |
+| **§51 (32-bit)** | **pairwise features** | **32** | **4,323,415×** | **§45 at full scale** |
 
-§51's 646× on 16-bit is not directly comparable to §4.2's
-1765× on 32-bit (different scale). But the **method** —
-adding pairwise features from §45 theorem — can be applied
-to 32-bit too. Expected improvement: similar factor.
+**32-bit result**: 100K training, 528 features (32 single + 496
+pairwise), ridge regression (0.1s). Mean W-Hamming **1.14** (vs
+6.74 Hamming retrieval). Avg **993 verifications**. Success 94%.
+
+**Improvement over §4.2: factor 2,449.** From 1,765× to
+4,323,415× on same SHA-256 R=1 task.
+
+**This is the program's strongest concrete deliverable**: the
+theoretical framework from §45 (sign theorem → pairwise
+observables → carry-chain analysis) produced a **2,449×
+improvement** on the original motivating cryptographic problem.
 
 ---
 
@@ -11223,7 +11231,8 @@ invisible to single-bit analysis.
 | GHZ discrimination | classical 0 vs phase 1 ($\infty$ ratio) | §32 |
 | Tropical vs scipy Bellman-Ford | **187× speedup** on dense $n$=1000 | §36 |
 | MPS Deutsch-Jozsa | **$n$=1,000,000 in 0.9 seconds** | §48 |
-| SHA-256 R=1 inversion | **646×** (2.1× over previous best) | §51 |
+| SHA-256 R=1 inversion (16-bit) | **646×** (2.1× over Hamming) | §51 |
+| SHA-256 R=1 inversion (32-bit) | **4,323,415×** (2,449× over §4.2) | §51 |
 | Discrimination theorem | $2^k$ states from $O(k^2)$ measurements | §45 |
 | SHA-256 R=2 wall | confirmed impenetrable (honest negative) | §4.3 + probe |
 
@@ -11290,8 +11299,8 @@ concrete advantages in specific domains. They are not magic.
 We explored how to make bits more powerful than classical.
 We found that **one algebraic change — allowing negative amplitudes —
 gives exponential discrimination advantage** at polynomial cost.
-We applied this to SHA-256 and improved inversion by 2.1× over
-the best previous method.
+We applied this to SHA-256 and improved R=1 inversion from 1,765×
+to **4,323,415×** — a 2,449-fold improvement over the original method.
 
 ---
 
