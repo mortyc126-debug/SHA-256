@@ -13057,9 +13057,64 @@ Crossover с n=30. Quality trade-off: sequential лучше
 
 ---
 
-## Конец методички v17 (после §70 — пять развитий)
+## §71. Benchmark vs real solvers + scalping bot
 
-**Общее количество разделов**: **70** (§1-§70)
+### Benchmark 1: SAT (SuperBit vs DPLL)
+
+| Solver         | n=100 α=4.0 | n=500 α=4.0 |
+|---------------|-------------|-------------|
+| walksat       | 100% solve  | 90% solve   |
+| restart_walksat| 80%        | variable    |
+| DPLL          | timeout     | —           |
+
+Plain walksat самый robust. DPLL не масштабируется
+за n>100. σ-restart помогает на n=200-500 (backbone memory).
+
+### Benchmark 2: Optimization (SuperBit vs scipy)
+
+| Solver              | E/n (n=100) | Speed      |
+|--------------------|-------------|-----------|
+| **sa_optimize**     | **-0.51**   | baseline  |
+| parallel_optimize   | -0.41       | **5× fast**|
+| scipy.dual_annealing| -0.49       | 5-15× slow|
+
+SA best quality. Parallel 5× faster but 20% gap.
+scipy проигрывает из-за continuous→discrete rounding.
+
+### Benchmark 3: Scalping bot simulation
+
+20 инструментов, 500 timesteps, 3 рыночных режима.
+
+| Metric           | SuperBit | Momentum | Reduction |
+|-----------------|----------|----------|----------|
+| Total trades     | **106**  | 1,383    | **92%**  |
+| Crisis trades    | reduced  | full     | **83.5%**|
+| Decision latency | **4ms**  | instant  | —        |
+| Scale to n=100   | **13ms** | yes      | —        |
+| Regime detection | auto (σ) | none     | **unique**|
+
+### Уникальные преимущества SuperBit для scalping:
+
+1. **σ = position sizing**: high σ → hold (backbone), low σ → trade
+2. **Automatic crisis detection**: когда σ растёт → correlations spike
+   → freeze positions → 83.5% fewer crisis trades → less slippage
+3. **Correlation-aware**: J matrix captures cross-asset structure
+4. **92% trade reduction** vs momentum → dramatically lower costs
+5. **Real-time**: 4ms per decision, scales to 100 instruments
+
+### Честные ограничения:
+
+1. SA побеждает SuperBit на optimization quality (-0.51 vs -0.41)
+2. Synthetic market simulation — реальный рынок сложнее
+3. σ-filtering может пропустить critical trades (false freeze)
+4. Latency 4ms — конкурентно для soft-scalping, не для HFT (<1μs)
+5. No backtesting на реальных данных
+
+---
+
+## Конец методички v18 (после §71 — benchmarks + scalping)
+
+**Общее количество разделов**: **71** (§1-§71)
 
 **Общее число нативно независимых осей расширения бита**:
 **20+**, организованные в 5 мета-групп:
