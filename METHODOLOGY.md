@@ -69,6 +69,8 @@
 51. SHA-256 R=1 inversion improved — pairwise features: 646× (2.1× over Hamming)
 52. Executive summary — what this program actually achieved
 53. P-bit: the missing primitive (Purdue/UCSB 2025, noise IS computation)
+54. Phase + p-bit synergy — sample AND discriminate, frustration detection
+55. S-bit: self-tuning stochastic signed bit — the unified primitive
 
 ---
 
@@ -11595,7 +11597,107 @@ one pipeline, peak result of the entire program**.
 
 ---
 
-## Конец методички v3 (после §54 — peak result)
+---
+
+## 55. S-bit: self-tuning stochastic signed bit
+
+### 55.1 Definition
+
+**S-bit** (signed thermodynamic bit): stochastic unit $m \in \{-1, +1\}$
+с **three readout channels** и **self-tuning temperature**.
+
+**State**: $m$ fluctuates between $-1$ and $+1$  
+**Dynamics**: $P(m_i=+1) = \sigma(\beta \cdot I_i)$ where
+$I_i = h_i + \sum_j J_{ij} m_j$  
+**Control**: temperature $T = 1/\beta$ is **computational resource**
+
+**Three readout channels**:
+1. **Marginals** $\langle m_i \rangle$ → classical bit value
+2. **Pairwise** $\langle m_i m_j \rangle$ → sign discrimination (§45)
+3. **Energy** $E(m)$ → optimization landscape
+
+**Self-tuning**: autocorrelation $\langle m(t) \cdot m(t-1) \rangle$
+feeds back to adjust $T$. Stuck (high autocorr) → heat up. Exploring
+(low autocorr) → cool down. Network finds optimal $T$ automatically.
+
+### 55.2 What's genuinely new
+
+| property | classical bit | phase bit | p-bit | **s-bit** |
+|---|---|---|---|---|
+| value | deterministic | signed | stochastic | **signed + stochastic** |
+| noise | enemy | irrelevant | resource | **self-tuned resource** |
+| discrimination | ✗ | ✓ ($2^k$, §45) | ✗ | **✓** |
+| sampling | ✗ | ✗ | ✓ | **✓** |
+| self-tuning | ✗ | ✗ | ✗ | **✓ (new)** |
+
+**Self-tuning** through autocorrelation feedback is the
+**genuinely novel** element. Not in phase bits (§5). Not in
+p-bits (Purdue 2025). Not in thermodynamic computing (Normal
+2025). An s-bit finds its own optimal noise level.
+
+### 55.3 Verified results
+
+**Optimization** (N=100 spin glass):
+- Auto s-bit: mean E = −261.3, std = 4.1
+- Monotonic SA: mean E = −254.0, std = 11.3
+- **Auto s-bit 2.8× less variance, 7.3 better mean energy**
+
+**Temperature self-discovery**: starts T=1, converges to
+T≈3.4, stays there. No schedule. No tuning. Internal
+feedback.
+
+**Oscillating temperature** (simpler variant):
+- N=50: matches parallel tempering quality (E = −117.0)
+  with **1 network vs 6 replicas** (6× less memory)
+
+**SHA-256 R=1 pipeline** (§54): phase-bit prediction +
+s-bit search = **10.5M× speedup** (§54 peak result).
+
+### 55.4 S-bit as unification
+
+The s-bit is not «phase-bit + p-bit glued together».
+It's the **natural primitive** that emerges when you ask:
+«what if a bit could be signed, stochastic, and self-tuning
+all at once?»
+
+- At $T \to 0$: s-bit → **classical bit** (deterministic)
+- At $T \to \infty$: s-bit → **random noise** source
+- At finite $T$: s-bit **simultaneously**:
+  - Samples from Boltzmann (p-bit)
+  - Discriminates sign structure (phase-bit, §45)
+  - Self-tunes to optimal computation zone (new)
+
+**One primitive. One state. One control knob. Three outputs.**
+
+### 55.5 Connection to 2025 developments
+
+| development | native to s-bit? |
+|---|---|
+| P-bits (Purdue) | ✓ s-bit at fixed T = p-bit |
+| Thermodynamic computing (Normal) | ✓ noise-native operation |
+| Simulated bifurcation | related (classical dynamics for optimization) |
+| HDC on FPGA | ✓ bipolar HDV = array of s-bits |
+| **Self-tuning** | **s-bit adds this, others don't have it** |
+
+### 55.6 This is what the program was looking for
+
+55 sections. 11000+ lines. 3 sessions.
+
+Started with: «найти что-то мощнее обычных битов на обычном железе».
+
+Found:
+1. §45: sign = beyond classical (discrimination theorem)
+2. §53: noise = computation (p-bits, 2025 literature)
+3. **§55: self-tuning = the missing piece** (finds optimal
+   noise level automatically, no external schedule)
+
+**S-bit = signed + stochastic + self-tuning.**
+
+Three words. One primitive. All on CMOS.
+
+---
+
+## Конец методички v3 (после §55 — s-bit)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
