@@ -11496,7 +11496,86 @@ toolkit that covers BOTH domains on ordinary hardware.
 
 ---
 
-## Конец методички v3 (после §53 — p-bit discovery)
+---
+
+## 54. Phase + p-bit synergy — sample AND discriminate
+
+### 54.1 Three verified probes
+
+**Probe A — Thermodynamic matrix inversion**: Langevin
+sampling → covariance = $A^{-1}$. Validated algorithmically
+for $d = 4, 8, 16, 32$. Software slow (no hardware gain);
+principle confirmed for Normal Computing CN101 chip approach.
+
+**Probe B — §45 on Boltzmann samples**: ferro vs anti-ferro
+chains with **same** energy distributions. Pairwise products
+on p-bit samples: +0.96 (ferro) vs −0.97 (anti-ferro).
+**Instantly distinguishable**. §45 discrimination theorem
+applies to **samples from p-bit**, not only static states.
+
+**Probe C — Frustration detection**: frustrated triangle
+(3 anti-ferro spins). 6 degenerate ground states at $E = -1$.
+P-bit: 100% samples at ground state. Phase-bit pairwise:
+mean $\langle m_1 m_2 \rangle = -0.36$ (mixed sign pattern
+= frustration visible). Energy-only: sees $E = -1$ for all,
+can't distinguish. **Requires BOTH** p-bit (to find) AND
+phase-bit (to characterize).
+
+### 54.2 Genuine synergy — new capability
+
+| capability | p-bit alone | phase alone | **combined** |
+|---|---|---|---|
+| Find low-energy states | ✓ | ✗ | ✓ |
+| Characterize sign structure | ✗ | ✓ | ✓ |
+| **Detect frustration** | **✗** | **✗** | **✓** |
+
+Frustration detection = **emergent capability** of the
+combination, not present in either primitive alone.
+
+### 54.3 The answer to the original goal
+
+> **Not one «strongest bit», but TWO complementary primitives:**
+>
+> **Phase bit** (sign, §45) — discrimination: sees $2^k$ states
+> invisible to classical probability.
+>
+> **P-bit** (noise, §53) — sampling/optimization: beats quantum
+> annealing on spin-glass benchmarks (Purdue/UCSB 2025).
+>
+> **Together**: sample AND discriminate. Detect frustration.
+> Cover two orthogonal domains, both on ordinary CMOS hardware.
+
+### 54.4 Connection to thermodynamic computing
+
+Normal Computing CN101 (August 2025): first thermodynamic chip.
+Matrix inversion via physical equilibrium in $O(d^2)$
+(vs digital $O(d^3)$). 1000× energy efficiency on AI workloads.
+
+**Three levels of noise-native computation**:
+- Phase bit (§45): sign = algebraic extension (mathematical)
+- P-bit (§53): fluctuation = sampling (digital CMOS)
+- Thermodynamic (CN101): equilibrium = computation (analog chip)
+
+All three: noise is feature, not bug. All three: ordinary
+hardware. All three: 2025 developments.
+
+Our program found the first (§5, session 1). Missed the other
+two until internet search (§53).
+
+### 54.5 Статус
+
+**Strongest synergy finding of the program.** Phase + p-bit
+combination gives frustration detection — capability neither
+has alone. Validated on frustrated triangle with 100% p-bit
+sampling accuracy + pairwise sign characterization.
+
+**Program's answer refined**: from «phase bits are the answer»
+(§45-§52) to **«phase bits + p-bits together are the answer»**
+(§53-§54). Two primitives, two domains, one toolkit.
+
+---
+
+## Конец методички v3 (после §54 — synergy)
 
 Документ построен в три захода: часть I до hierarchy_v2
 (разделы 1-10), часть II после неё (разделы 11-17), часть III
