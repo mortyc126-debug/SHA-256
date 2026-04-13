@@ -15005,3 +15005,136 @@ destructive interference (path-dependent, algebraic, geometric).
 Код: probe8_subsumption.py (180 строк), probe9_geometry.py (200 строк)
 в `/tmp/pathbit/`, не сохраняется в репо.
 
+---
+
+## §85. Первый tour of wild questions — 5 направлений, 5 walls
+
+### 85.1 Мотивация
+
+После §80-§84 (path-bit foundation) пользователь переориентировал программу:
+"если mighty classical bit существует, math для него либо не развита, либо
+не применена, либо требует bold step". Принцип: **не верим запретам, пока
+сами не убедимся**.
+
+§85 — первый shotgun tour по пяти **дико-нестандартным** направлениям.
+Benchmark: CHSH и magic square для violation tests.
+
+### 85.2 Baseline check: magic square holds at 8/9
+
+Перед дикими вопросами — проверили сами optimal classical strategies
+для Mermin-Peres magic square game:
+
+| стратегия | win rate |
+|---|---|
+| Exhaustive 4096 deterministic | **8/9 = 0.8889** |
+| Shared randomness (convex) | ≤ 8/9 |
+| Memory (iid queries) | = 8/9 |
+| Valid post-selection | ≤ 8/9 на kept |
+| Outcome peek (cheat) | 1.0 (invalid) |
+| 1-bit communication | 1.0 (invalid signaling) |
+
+**Bell bound robust empirically. Мы не поверили литературе — проверили сами.**
+
+### 85.3 Q1: Negative probability bit
+
+**Идея**: $p(0), p(1) \in \mathbb{R}$ с $p_0 + p_1 = 1$, отрицательные
+вероятности разрешены (Feynman 1987, Halliwell 2002, Wigner quasi-prob).
+
+**Результат**:
+- Без marginal constraint: CHSH unbounded trivially (нет физики)
+- С positive marginals: NP-bit $=$ no-signaling polytope, max CHSH $= 4$
+- Но non-negative NS уже достигает 4 (PR-box)
+
+**Вердикт**: NP-bit не даёт ничего нового. Тривиально или редуцируется.
+
+### 85.4 Q2: Retrocausal / CTC bit
+
+**Идея**: state = fixed-point of $b = f(b, \text{query})$ (Deutsch 1991).
+
+**Результат**:
+- Ideal CTC oracle = PP complexity class (Aaronson-Watrous 2009)
+- Classical realization через iteration = Banach fixed-point (no advantage)
+- Paradox fixed-point $b = \neg b$ = uniform random bit (no advantage)
+
+**Вердикт**: theoretically powerful, но classical cost = exponential.
+
+### 85.5 Q3: Paraconsistent ⊥-bit
+
+**Идея**: state $\in \{0, 1, \top, \bot\}$ где $\bot = $ "and 0 and 1"
+(Belnap 1977).
+
+**Результат**:
+- 4-valued logic = Turing-equivalent (no speedup)
+- Contradiction propagation работает
+- KS-like scoring: 3/3 на 3-obs scenario, как и classical 2-valued
+
+**Вердикт**: representation advantage (robustness), НЕ computation.
+
+### 85.6 Q4: Process bit (Lafont interaction combinators)
+
+**Идея**: bit = running computation, не stored state (Lafont 1995,
+game semantics Abramsky-Jagadeesan).
+
+**Результат**:
+- Turing-equivalent
+- **Strong confluence**: native deterministic concurrency
+- Advantage на parallel hardware, не serial
+
+**Вердикт**: architectural advantage (concurrency). **Связь с direction D**
+(emergent) — process bits могут быть substrate для emergent bit algebra.
+
+### 85.7 Q5: Auto-contextual self-ref bit
+
+**Идея**: $b := $ fixed-point of $b = f(b, \text{ctx})$ (Q2 + Q3 combined).
+
+**Результат**:
+- Local generators: CHSH max = 2 (bounded)
+- Non-local generators: CHSH max = 4, но **effectively signaling**
+- AC-bit with VALID local computation не нарушает Bell
+
+**Вердикт**: локально bounded. Interesting для reflective computation.
+
+### 85.8 Закономерность
+
+Пять независимых wild attempts → **одна и та же wall**:
+
+> Любой primitive, удовлетворяющий (а) constructive, (б) no-signaling,
+> (в) local computation — bounded классическими Bell/Tsirelson inequalities.
+
+Все escape-маршруты требуют:
+- Явного communication (Q1 unbounded, Q5 non-local) — не "классика"
+- Exponential cost (Q2 CTC) — не practical
+- Только representation/architecture advantage (Q3, Q4) — полезно, не mighty
+
+**Это robust empirical finding**: Bell wall — не артефакт одного доказательства,
+а convergent limit from five orthogonal approaches.
+
+### 85.9 Что открыто
+
+Из исходного web-search landscape (direction A-E), остаётся **direction D
+(emergent / mesoscale)** — единственный untested, без готовой математики,
+требующий создания её.
+
+**Q4 (process bits) дал hint**: emergent algebra может возникать из
+**взаимодействия** простых bits, не из их внутренней структуры. Это
+substrate-first подход, не primitive-first.
+
+### 85.10 Статус §85
+
+**Honest negative result по 5 шотган-направлениям.**
+Classical bounds держатся под:
+- Negative probabilities
+- CTC/retrocausality
+- Paraconsistency
+- Process computation
+- Self-reference
+
+Это ценный negative — мы **сами проверили**, не поверили на слово.
+
+Программа остаётся с открытой дверью в direction D (emergent).
+§86+ будут первыми разделами, где мы **создаём математику**, а не применяем
+готовую. Риск выше, компас отсутствует, но это единственный untested path.
+
+Код: Q1_negprob.py, Q2_retrocausal.py, Q3_paraconsistent.py, Q4_process.py,
+Q5_autocontextual.py в `/tmp/wild/`, не сохраняется в репо.
+
