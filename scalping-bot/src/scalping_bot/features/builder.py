@@ -29,14 +29,42 @@ def load_trades_range(
     start: date,
     end: date,
 ) -> pl.DataFrame:
-    """Load all hourly trade Parquets for dates in [start, end] inclusive.
+    """Load all hourly trade Parquets for dates in [start, end] inclusive."""
+    return _load_parquet_range(
+        base=Path(data_dir) / "trades",
+        symbol=symbol,
+        start=start,
+        end=end,
+        sort_col="ts",
+    )
 
-    Returns a single sorted frame.
-    """
+
+def load_orderbook_snapshots_range(
+    data_dir: Path,
+    symbol: str,
+    start: date,
+    end: date,
+) -> pl.DataFrame:
+    """Load all orderbook snapshot Parquets for dates in [start, end] inclusive."""
+    return _load_parquet_range(
+        base=Path(data_dir) / "orderbook_snapshots",
+        symbol=symbol,
+        start=start,
+        end=end,
+        sort_col="ts",
+    )
+
+
+def _load_parquet_range(
+    base: Path,
+    symbol: str,
+    start: date,
+    end: date,
+    sort_col: str,
+) -> pl.DataFrame:
     if start > end:
         raise ValueError(f"start={start} must be <= end={end}")
 
-    base = Path(data_dir) / "trades"
     frames: list[pl.DataFrame] = []
     current = start
     while current <= end:
@@ -49,7 +77,7 @@ def load_trades_range(
 
     if not frames:
         return pl.DataFrame()
-    return pl.concat(frames, how="vertical_relaxed").sort("ts")
+    return pl.concat(frames, how="vertical_relaxed").sort(sort_col)
 
 
 def build_feature_matrix(

@@ -30,10 +30,14 @@ from __future__ import annotations
 import gzip
 import json
 import zipfile
+from collections.abc import Iterator
 from datetime import UTC, datetime
 from pathlib import Path
 
 import polars as pl
+
+BATCH_ROWS = 50_000
+"""Flush every N rows to bound peak memory to ~10-50 MB per batch."""
 
 
 def convert_trades_to_parquet(
@@ -114,29 +118,26 @@ def convert_trades_to_parquet(
     return first_date_dir if first_date_dir is not None else Path()
 
 
-def _iter_orderbook_records(zip_path: Path) -> list[dict[str, object]]:
-    """Read the JSONL entries from a Bybit orderbook ZIP archive.
+def _iter_orderbook_records(zip_path: Path) -> Iterator[dict[str, object]]:
+    """Yield JSONL records from a Bybit orderbook ZIP one at a time.
 
-    Returns a list of parsed dicts. These archives are ~300 MB zipped; the
-    decoded JSONL is larger. For now we materialize; a streaming variant
-    can replace this when memory becomes a concern.
+    Streaming — memory stays bounded regardless of archive size. These
+    archives expand to multi-GB JSONL from ~300 MB zip, so materializing
+    them is not an option on typical laptops.
     """
     with zipfile.ZipFile(zip_path, "r") as zf:
         names = zf.namelist()
         if not names:
-            return []
+            return
         with zf.open(names[0]) as fh:
-            lines = fh.read().splitlines()
-
-    records: list[dict[str, object]] = []
-    for raw in lines:
-        if not raw:
-            continue
-        try:
-            records.append(json.loads(raw))
-        except json.JSONDecodeError:
-            continue
-    return records
+            for raw in fh:
+                line = raw.strip()
+                if not line:
+                    continue
+                try:
+                    yield json.loads(line)
+                except json.JSONDecodeError:
+                    continue
 
 
 def _ob_row_from_record(rec: dict[str, object]) -> dict[str, object] | None:
@@ -174,31 +175,51 @@ def convert_orderbook_to_parquet(
     symbol: str,
     out_root: Path,
 ) -> Path:
-    """Parse a Bybit orderbook ZIP archive into hourly Parquet files.
+    """Stream a Bybit orderbook ZIP into hourly Parquet files.
 
     Splits records into two streams:
       - `orderbook`           : delta records
-      - `orderbook_snapshots` : snapshot records (initial + periodic rebuilds)
+      - `orderbook_snapshots` : snapshot records
+
+    Memory is bounded: we buffer `BATCH_ROWS` rows, flush, clear.
     """
-    records = _iter_orderbook_records(zip_path)
-    if not records:
-        return Path()
+    buffer: list[dict[str, object]] = []
+    first_date_dir: Path | None = None
 
-    rows: list[dict[str, object]] = []
-    for rec in records:
+    for rec in _iter_orderbook_records(zip_path):
         row = _ob_row_from_record(rec)
-        if row is not None:
-            rows.append(row)
+        if row is None:
+            continue
+        buffer.append(row)
+        if len(buffer) >= BATCH_ROWS:
+            written = _flush_ob_batch(buffer, symbol, out_root)
+            if written is not None and first_date_dir is None:
+                first_date_dir = written
+            buffer.clear()
 
+    if buffer:
+        written = _flush_ob_batch(buffer, symbol, out_root)
+        if written is not None and first_date_dir is None:
+            first_date_dir = written
+
+    return first_date_dir if first_date_dir is not None else Path()
+
+
+def _flush_ob_batch(
+    rows: list[dict[str, object]],
+    symbol: str,
+    out_root: Path,
+) -> Path | None:
+    """Write a batch of orderbook rows, split by type and hour. Returns a representative dir."""
     if not rows:
-        return Path()
+        return None
 
     df = pl.DataFrame(rows).with_columns(
         _date_str=pl.col("ts").dt.strftime("%Y-%m-%d"),
         _hour_str=pl.col("ts").dt.strftime("%H"),
     )
 
-    first_date_dir: Path | None = None
+    first_dir: Path | None = None
 
     for msg_type, stream in (("snapshot", "orderbook_snapshots"), ("delta", "orderbook")):
         sub = df.filter(pl.col("type") == msg_type)
@@ -216,7 +237,7 @@ def convert_orderbook_to_parquet(
                 write_df = pl.concat([existing, write_df], how="vertical_relaxed")
 
             write_df.write_parquet(dest, compression="snappy")
-            if first_date_dir is None:
-                first_date_dir = date_dir
+            if first_dir is None:
+                first_dir = date_dir
 
-    return first_date_dir if first_date_dir is not None else Path()
+    return first_dir
