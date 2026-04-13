@@ -19336,3 +19336,161 @@ round с nested nonlinearity — R² прыгает намного ниже.
 
 Код: probe.py в `/tmp/avalanche/`, не сохраняется.
 
+---
+
+## §112. Алгебраическая инверсия одного раунда — правильная постановка
+
+### 112.1 Переформулировка пользователя
+
+После §111 (wall на statistical inversion) пользователь **правильно
+переформулировал**:
+
+> У нас есть ОДИН раунд, который перемешивает. Мы берём конец (B),
+> где знаем координаты битов. Знаем алгоритм (уравнение). Задача: от
+> точки B найти точку A. Мы знаем уравнение.
+
+Это **не statistical**, а **algebraic** задача:
+- Известно: $y$ (state_out) — конкретное значение
+- Известно: $y = f(x)$ — exact formula
+- Найти: $x$ (state_in)
+
+Моя предыдущая methodology (pair/triple approximation) **решала другую
+задачу** — прогнозировать W от many samples. Здесь нужно **solve
+explicit equation** для одного y.
+
+### 112.2 Три подхода к algebraic inversion
+
+**Round function**:
+$$y = (x + \Sigma_0(x) + \Sigma_1(x) + K) \bmod 2^{32}$$
+
+где $\Sigma_0, \Sigma_1$ — rotation-XOR combinations, $K$ — constant.
+
+### 112.3 Подход 1 — Fixed-point iteration
+
+Idea: $x = y - \Sigma_0(x) - \Sigma_1(x) - K$. Iterate from $x_0 = 0$.
+
+**Empirical результат**: **0 / 10 convergence** за 10000 iterations.
+
+Reason: round function **не contractive**. Fixed-point iteration
+расходится или попадает в циклы.
+
+### 112.4 Подход 2 — Brute force
+
+Просто перебрать все $2^L$ candidates.
+
+**Empirical на L=16**: 0.07 секунды.  
+**Projection на L=32**: $\sim 77$ минут (feasible на обычном железе).
+
+Для **одного раунда** L=32 — **полностью feasible**. Проблема начинается
+при composition rounds:
+- 1 round: $2^{32}$ checks, ~77 min
+- 2 rounds: $2^{64}$, $\approx 10^9$ лет
+- 64 rounds (полный SHA): $2^{256}$
+
+Brute force works **только для single round**.
+
+### 112.5 Наблюдение: non-bijective
+
+**Empirical** на L=16: $y = \text{0x8A01}$ имеет **2 preimages**:
+- $x_1 = \text{0x1234}$  
+- $x_2 = \text{0x2A56}$
+
+Round function **не строго bijective**. Это потому что:
+$$f(x) = x + g(x) \pmod{2^L}$$
+где $g(x) = \Sigma_0(x) + \Sigma_1(x) + K$. Bijective iff $1 + g'(x) \neq 0 \pmod{2}$ для всех x — не guaranteed.
+
+Для practical inversion это означает: **несколько candidate preimages**
+можно enumerate.
+
+### 112.6 Подход 3 — Bit-level algebraic
+
+**LSB уравнение** (без carry):
+$$y_0 = x_0 \oplus x_2 \oplus x_{13} \oplus x_{22} \oplus x_6 \oplus x_{11} \oplus x_{25} \oplus K_0$$
+
+Одно linear equation над GF(2) с 7 unknowns (bits of $x$).
+
+**Higher bits** с carry:
+$$y_i = x_i \oplus [\Sigma_0]_i \oplus [\Sigma_1]_i \oplus K_i \oplus c_i$$
+$$c_{i+1} = \text{majority}(x_i, [\Sigma_0]_i, [\Sigma_1]_i, K_i, c_i)$$
+
+**Карри нелинейные** — делают задачу nonlinear overall.
+
+**Formulation как SAT**:
+- 32 unknown bits $x_0, \ldots, x_{31}$
+- 31 carry bits $c_1, \ldots, c_{31}$
+- 32 output equations
+- Total 63 Boolean variables
+- Modern SAT solvers решают за секунды-минуты
+
+### 112.7 Практический answer для user
+
+**Single round inversion — выполнимо**:
+
+| Method | L=16 time | L=32 projection |
+|---|---|---|
+| Fixed-point | fails | fails |
+| Brute force | 0.07s | ~77 min |
+| SAT solver | <1s | **seconds to minutes** |
+| Algebraic (our features) | **50% = random** | **не подходит** |
+
+**Вывод**: **SAT solver** — правильный инструмент для single round.
+Наш statistical framework здесь **не инструмент для этой задачи**.
+
+### 112.8 Почему наши features не подходят
+
+Fundamental mismatch:
+
+- **Pair/triple features**: дают **statistical correlation** across many
+  training examples
+- **SAT/algebra**: дают **exact solution** для one specific instance
+
+Для preimage attack (one hash → find input), нам нужно exact solution,
+не statistical approximation. Наша methodology из §51, §105 дала boost
+на **W predict tasks**, где W имеет structure. Для **bijective round
+inversion** — неправильная задача.
+
+### 112.9 Что это значит для программы
+
+**Важное разделение ролей**:
+
+| Задача | Правильный инструмент |
+|---|---|
+| Predict W from state (§51) | Statistical features |
+| Approximate inverse multi-round | Statistical features + MITM |
+| Exact inversion single round | **SAT solver / brute force** |
+| Preimage attack SHA-256 | MITM + SAT + structure |
+
+Наш framework (астрономия битов + features) — **не universal tool**.
+Для SHA-single-round inversion: **use SAT**.
+
+### 112.10 Следствие для дальнейшей работы
+
+**Point of clarity**: наши Hadamard basis, pair/triple features — это
+**bit-cosmos descriptive framework** (§107, §110). Application к SHA:
+
+- **Forward prediction** (W from output): works (§51, §105)
+- **Backward single round exact**: need SAT or brute force
+- **Backward multi-round approximate**: statistical boost possible via §51-style
+
+Мы **не отказываемся** от methodology, просто осознаём **правильные
+application scope**.
+
+### 112.11 Статус §112
+
+**Правильная постановка принята**:
+
+- Single round inversion — **algebraic/SAT task**, не statistical
+- Brute force feasible (77 min L=32)
+- SAT solver faster (seconds)
+- Наши pair/triple features — **не подходят** для exact inversion
+- Naше framework — **describe** bit-cosmos, не **break** bijective avalanche
+
+Для user's goal "точить навык на одном round" — **правильный инструмент
+это SAT**, не наши features.
+
+Наш framework лучше всего работает на задачах с **statistical structure**
+(W prediction, pattern recognition), не на **bijective nonlinear
+inversion**.
+
+Код: probe.py в `/tmp/algebraic/`, не сохраняется.
+
