@@ -16729,3 +16729,146 @@ coords.
 
 Код: level0.py в `/tmp/tools/`, не сохраняется.
 
+---
+
+## §96. Proper Platonic coord-vector — исправление методологии
+
+### 96.1 Корректный вопрос пользователя
+
+Пользователь заметил принципиальную дыру: в §95 я использовал
+**11 ad-hoc projections**, а не проекции на **все 20+ осей** из
+таксономии. Правильная постановка:
+
+> Бит живёт **одновременно на нескольких осях**. Его "координата" —
+> **вектор проекций на ВСЕ applicable оси**. Оси и есть координаты.
+
+Это уточнение фундаментальное и меняет методологию.
+
+### 96.2 Proper coord-vector
+
+Для 4-битных patterns вычислили проекции на 20 осей из таксономии:
+
+| № | Ось | Проекция |
+|---|---|---|
+| 1 | binary (§1) | integer value |
+| 2 | phase_sum (§5) | $\sum \pm 1$ |
+| 3 | probability (§6.4) | fraction of 1s |
+| 4 | fuzzy (§21) | membership average |
+| 5 | reversible (§6.2) | hamming (conserved) |
+| 6 | cost_ising (§11.2) | Ising energy |
+| 7 | path_levy (§80) | Lévy area |
+| 8 | stream_f2 (§6.3) | F₂-linear feature |
+| 9 | cyclic_period (§11.6) | minimal period |
+| 10 | quotient_canonical (§11.4) | rotation-canonical form |
+| 11 | topological_winding (§84) | winding number |
+| 12-14 | walsh_{1,2,3} (§4.4) | Walsh spectrum |
+| 15-20 | pair_{01,02,03,12,13,23} (§45) | phase-bit pair products |
+
+### 96.3 Результаты
+
+**Bijectivity**: 16 patterns → 16 unique coord-vectors (0 collisions) ✓.
+
+**Effective dimension через SVD**: **11 из 20** проекций независимы.
+
+**Strongly correlated axes** (r=1.000 — линейно зависимы):
+- phase_sum ≡ probability ≡ fuzzy ≡ reversible (все $\propto$ hamming)
+
+**4 "разных" оси таксономии = одна информация** для binary patterns:
+они все являются reparameterizations hamming weight.
+
+### 96.4 Критическое открытие
+
+Наша таксономия 20+ осей содержит **~50% избыточность**. Эффективная
+dimension bit-cosmos ≈ 11 для L=4 patterns.
+
+Некоторые оси "разные" концептуально но **численно дают ту же информацию**:
+- phase_sum = 2·hamming - L
+- probability = hamming / L
+- fuzzy = hamming / L
+- reversible = hamming (invariant)
+
+**Это не делает оси бесполезными** — концептуально они разные. Но для
+**bit-cosmos геометрии** мы должны искать **truly independent axes**.
+
+### 96.5 Ответ на вопрос пользователя
+
+> "Биты могут быть в одной или в нескольких осях одновременно?"
+
+**В нескольких одновременно**. Для pattern [0,1,1,0]:
+- binary axis: value 6
+- phase axis: pair_01 = -1
+- path-bit axis: Lévy area = -1.0
+- topological axis: winding 0
+- cost axis: Ising energy 2.0
+- cyclic axis: period 4
+- ... + ещё 13 проекций одновременно
+
+**Полная координата** бита в bit-cosmos = все эти проекции вместе.
+
+> "Вычислим их на всех осях это и будет координатой?"
+
+**Да, точно**. Proper coord-vector — это вектор проекций на все applicable
+оси. Это Platonic address бита в bit-cosmos.
+
+### 96.6 Доработка нашего toolkit (§95)
+
+§95 использовал 11 projections, получал effective dim = 6. Теперь с 20
+proper projections effective dim = 11. **+5 linearly independent axes**
+благодаря добавлению path-bit, cost, cyclic, quotient, topological.
+
+Но это ВСЁ ЕЩЁ не hamming + lwalsh + всё остальное. Hamming действительно
+dominant dimension.
+
+### 96.7 Что нужно для true bit-cosmos базиса
+
+**Linearly independent coords** (не просто distinct):
+- hamming (1 dim) — covers many axes
+- Walsh spectrum (L-1 dims, but walsh_0 = phase_sum = redundant)
+- Path-bit Lévy (1 dim, genuinely new)
+- Topological winding (1 dim, genuinely new)
+- Cost Ising energy (1 dim, depends on J)
+- Cyclic period (1 dim, discrete)
+- Pairs (up to $\binom{L}{2}$ dims, but with walsh redundancy)
+
+Для L=4 максимум linearly independent ≈ 11 (as SVD found).
+
+### 96.8 Следующий шаг — Уровень 1 с правильным coord-vector
+
+**Scale L=4 → L=8**: проекции на 20 осей, посмотреть:
+- Effective dimension scaling?
+- Bijectivity preserved?
+- Формулы ROT, NOT, XOR работают для правильного coord-vector?
+
+**§95 ROT формула** обобщается: все position-dependent coords (pairs,
+walsh) permutируются под rotation, position-independent (hamming)
+invariants.
+
+**§95 NOT формула**: hamming → L - hamming, pairs invariant, path-bit
+Lévy invariant (симметрия).
+
+### 96.9 Мета-insight
+
+Пользователь задал вопрос, который **reveal нашу programma-level
+confusion**: наши 20+ осей **не orthogonal**. Это не просто каталог
+independent primitives, а **partly-redundant measurement system**.
+
+Это согласуется с §90 finding (effective dim < total axes) и с §27
+(13 structurally primitive). Но только теперь ясно: даже на уровне
+numerical projection, оси repeat друг друга.
+
+**True bit-cosmos basis** — маленькое ядро независимых координат,
+plus рестинг — разные names для same info.
+
+### 96.10 Статус §96
+
+- Acknowledged methodological error (ad-hoc vs proper coord)
+- Built proper 20-projection coord-vector на L=4
+- SVD показал effective dim = 11
+- Identified redundant axes (phase_sum = probability = fuzzy = reversible)
+- Plan: scale up с правильным coord-vector
+
+Пользовательский вопрос прояснил fundamental thing про методологию:
+**оси = координаты**. Их вектор = identity бита.
+
+Код: proper.py в `/tmp/tools2/`, не сохраняется.
+
