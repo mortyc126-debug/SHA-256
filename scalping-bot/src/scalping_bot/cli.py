@@ -142,6 +142,30 @@ def _build_parser() -> argparse.ArgumentParser:
     train.add_argument("--n-pairwise", type=int, default=10)
     train.add_argument("--enter-threshold", type=float, default=0.55)
 
+    backtest = sub.add_parser("backtest", help="Walk-forward backtest with realistic costs.")
+    backtest.add_argument("--symbol", default=None)
+    backtest.add_argument("--start", type=_parse_date, required=True)
+    backtest.add_argument("--end", type=_parse_date, required=True)
+    backtest.add_argument("--data-dir", type=Path, default=None)
+    backtest.add_argument("--bar-seconds", type=float, default=1.0)
+    backtest.add_argument("--horizon-bars", type=int, default=30)
+    backtest.add_argument("--threshold-bps", type=float, default=2.0)
+    backtest.add_argument("--n-splits", type=int, default=4)
+    backtest.add_argument("--n-pairwise", type=int, default=10)
+    backtest.add_argument("--starting-capital", type=float, default=100.0)
+    backtest.add_argument("--leverage", type=float, default=3.0)
+    backtest.add_argument("--enter-threshold", type=float, default=0.45)
+    backtest.add_argument("--exit-threshold", type=float, default=0.50)
+    backtest.add_argument("--take-profit-bps", type=float, default=5.0)
+    backtest.add_argument("--stop-loss-bps", type=float, default=8.0)
+    backtest.add_argument("--max-hold-bars", type=int, default=60)
+    backtest.add_argument("--kelly-fraction", type=float, default=0.20)
+    backtest.add_argument(
+        "--maker",
+        action="store_true",
+        help="Assume maker fills (rebate). Default: taker (cost).",
+    )
+
     return p
 
 
@@ -404,6 +428,100 @@ def _cmd_train(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_backtest(args: argparse.Namespace) -> int:
+    from scalping_bot.backtest import (
+        StrategyConfig,
+        run_walk_forward_backtest,
+    )
+    from scalping_bot.features import build_feature_matrix, load_trades_range
+
+    settings = get_settings()
+    settings.ensure_dirs()
+    log: structlog.stdlib.BoundLogger = setup_logging(log_level=settings.log_level)
+
+    symbol = args.symbol or settings.symbol
+    data_dir = Path(args.data_dir) if args.data_dir else settings.data_dir / "raw"
+
+    log.info("cli.backtest.loading", start=args.start.isoformat(), end=args.end.isoformat())
+    trades = load_trades_range(data_dir, symbol, args.start, args.end)
+    if trades.is_empty():
+        log.error("cli.backtest.no_data")
+        return 1
+
+    fm = build_feature_matrix(
+        trades,
+        bar_seconds=args.bar_seconds,
+        label_horizon_bars=args.horizon_bars,
+        label_threshold_bps=args.threshold_bps,
+    )
+    label_col = f"label_{args.horizon_bars}"
+    feature_cols = [c for c in DEFAULT_FEATURE_COLS if c in fm.columns]
+    log.info(
+        "cli.backtest.features_built",
+        bars=len(fm),
+        feature_cols=len(feature_cols),
+    )
+
+    cfg = StrategyConfig(
+        enter_threshold=args.enter_threshold,
+        exit_threshold=args.exit_threshold,
+        take_profit_bps=args.take_profit_bps,
+        stop_loss_bps=args.stop_loss_bps,
+        max_hold_bars=args.max_hold_bars,
+        kelly_fraction=args.kelly_fraction,
+    )
+
+    fold_results, aggregate = run_walk_forward_backtest(
+        feature_matrix=fm,
+        feature_cols=feature_cols,
+        label_col=label_col,
+        n_splits=args.n_splits,
+        n_pairwise=args.n_pairwise,
+        starting_capital_usd=args.starting_capital,
+        leverage=args.leverage,
+        strategy_config=cfg,
+        bar_seconds=args.bar_seconds,
+        use_taker=not args.maker,
+    )
+
+    for fr in fold_results:
+        s = fr.summary
+        log.info(
+            "cli.backtest.fold",
+            fold=fr.fold,
+            n_trades=s.n_trades,
+            win_rate=round(s.win_rate, 4),
+            total_pnl_usd=round(s.total_pnl_usd, 2),
+            total_return_pct=round(s.total_return_pct, 4),
+            max_drawdown_pct=round(s.max_drawdown_pct, 4),
+            profit_factor=round(s.profit_factor, 3) if s.profit_factor != float("inf") else "inf",
+            sharpe_per_trade=round(s.sharpe_per_trade, 4),
+            sharpe_annualized=round(s.sharpe_annualized, 3) if s.sharpe_annualized else None,
+            avg_holding_seconds=round(s.avg_holding_seconds, 1),
+        )
+
+    log.info(
+        "cli.backtest.aggregate",
+        n_trades=aggregate.n_trades,
+        win_rate=round(aggregate.win_rate, 4),
+        total_pnl_usd=round(aggregate.total_pnl_usd, 2),
+        total_fees_usd=round(aggregate.total_fees_usd, 2),
+        total_return_pct=round(aggregate.total_return_pct, 4),
+        max_drawdown_pct=round(aggregate.max_drawdown_pct, 4),
+        profit_factor=(
+            round(aggregate.profit_factor, 3)
+            if aggregate.profit_factor != float("inf")
+            else "inf"
+        ),
+        sharpe_annualized=(
+            round(aggregate.sharpe_annualized, 3) if aggregate.sharpe_annualized else None
+        ),
+        gate_passed=aggregate.total_return_pct > 0
+        and (aggregate.sharpe_annualized or 0) > 1.5,
+    )
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -414,6 +532,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_download(args)
     if args.command == "train":
         return _cmd_train(args)
+    if args.command == "backtest":
+        return _cmd_backtest(args)
 
     parser.print_help()
     return 2
