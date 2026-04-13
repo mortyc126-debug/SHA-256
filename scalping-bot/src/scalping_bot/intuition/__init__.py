@@ -14,6 +14,7 @@ yesterday's microstructure regime is gone.
 """
 
 from scalping_bot.intuition.engine import IntuitionConfig, IntuitionEngine
+from scalping_bot.intuition.trailing import TrailingStopConfig, TrailingStopState
 from scalping_bot.intuition.voters import (
     VoterResult,
     flow_imbalance_voter,
@@ -25,6 +26,8 @@ from scalping_bot.intuition.voters import (
 __all__ = [
     "IntuitionConfig",
     "IntuitionEngine",
+    "TrailingStopConfig",
+    "TrailingStopState",
     "VoterResult",
     "flow_imbalance_voter",
     "momentum_voter",
