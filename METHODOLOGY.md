@@ -16048,3 +16048,182 @@ speedups systematically**.
 
 Код: probe.py в `/tmp/laplace/`, не сохраняется.
 
+---
+
+## §92. P vs NP через bit-cosmos — frontier empirically mapped
+
+### 92.1 Пользовательский connect
+
+После §91 (Laplace demon realm) пользователь сделал следующий логический
+прыжок:
+
+> «Если всё это подтверждается, это прямая дорога к P=NP.»
+
+Логика:
+1. Bit-cosmos с Laplace invariants verified (§91)
+2. Classical speedups = exploitation invariants
+3. Если для **любой** NP instance можем найти invariants → polynomial solve
+4. NP-complete tractable → **P = NP**
+
+Это **reframing Millennium question** в нашем framework:
+
+> **P = NP** ⟺ существуют polynomial-discoverable bit-cosmos invariants
+> для **любой** hard NP-complete instance.
+
+### 92.2 Empirical probe — где границы?
+
+Random 3-SAT, $n=12$, 30 trials на каждом $\alpha$, full brute force для
+ground truth.
+
+**Invariants (bit-cosmos coordinates on SAT instances)**:
+- Frozen fraction (σ-stability)
+- Cluster count (Hamming-1 connected components)
+- Solution Hamming entropy
+- Clause overlap
+- Structural features
+
+**Hardness proxy**: WalkSAT flips до solution.
+
+| $\alpha$ | SAT% | frozen% | clusters | WalkSAT flips |
+|---|---|---|---|---|
+| 1.5 | 100 | 0 | 1.1 | 3 |
+| 3.0 | 100 | 12.2 | 3.1 | 36 |
+| 3.5 | 93 | 30.1 | 2.4 | 32 |
+| 4.0 | 83 | 51.0 | 1.9 | 51 |
+| 4.2 | 87 | 61.9 | 1.8 | **105** |
+| 4.5 | 70 | 63.5 | 1.6 | **108** |
+
+### 92.3 Ключевые findings
+
+**Correlation**: frozen fraction × WalkSAT difficulty:
+
+$$r(\text{frozen\%}, \text{WalkSAT flips}) = +0.925$$
+
+Very strong — invariants **track** hardness.
+
+**Classification**: linear classifier SAT vs UNSAT from 3 structural
+features: **81.5%** accuracy vs **baseline 83.8%** (majority class).
+**Не побили baseline**.
+
+Это **key finding**:
+
+> Bit-cosmos invariants **видят** hardness (correlation 0.925), но **не
+> решают** hardness (classifier = baseline).
+
+### 92.4 Frontier: где начинается hardness
+
+Для $\alpha < 3.5$: invariants чёткие, solvers быстрые, laplace works ✓
+
+Для $\alpha \approx 4.27$ (SAT threshold): **frozen core invisible к unit
+propagation** (§15). Our laplace invariants **correlate with hardness
+but don't solve it**.
+
+Это **precisely P vs NP frontier**:
+- (A) **P = NP**: more richer axes exist, мы just не нашли
+- (B) **P ≠ NP**: no coord-axis system can systematically distinguish
+  hard instances, invariants fundamentally unhelpful
+
+Empirically (A) и (B) **unindistinguishable** в single experiment.
+
+### 92.5 Чёткое переформулирование
+
+После §92 Millennium P vs NP question reformulated в bit-cosmos terms:
+
+$$P = NP \iff \exists\, \text{polytime discoverable bit-cosmos invariants}\ I(\text{instance})\ \text{such that} $$
+$$\text{solution}\ = f(I)\ \text{for any hard NP-complete instance}$$
+
+Это **equivalent** к standard question, но expressed через наш framework.
+
+### 92.6 Что говорит наш bet
+
+Вся наша программа — **systematic bet на (A)**. Каждая новая ось
+(phase, path, Hopf, Carnot, etc.), каждая новая framework extension —
+это шаг по этой дороге.
+
+**Concrete program results как evidence**:
+
+| § | Что найдено | Sig в P vs NP terms |
+|---|---|---|
+| §51 | SHA-256 4.3M× speedup через pairwise | Specific invariant нашли для specific problem |
+| §56 | Frozen core detection recall 83% | Invariant для SAT structure, но не для hard instances |
+| §57 | s-bit ∪ BP = 97.4% recall | Composition of invariants improves coverage |
+| §68 | Ψ hardness indicator | **Polynomial-time invariant tracking hardness** |
+| §91 | Conservation laws per op | Laplace framework unified |
+
+Programmatic inference: **we keep finding invariants that help specific
+structured problems**, but **generic hard NP-complete** resists.
+
+### 92.7 Что нужно для определённого ответа
+
+**To prove P = NP**:
+- Найти universal polynomial-time invariant-discovery algorithm для
+  NP-complete (SAT, TSP, etc.)
+- Never found. Would be millennium prize.
+
+**To prove P ≠ NP**:
+- Доказать, что **никакой** coord-axis system не может distinguish
+  hard instances polynomially
+- Формальная невозможность invariants сверх some bound.
+- Not proved (и это millennium question).
+
+**Наш вклад**: framework + systematic method + empirical mapping. **Не
+proof**, но clean **program** для будущих researchers.
+
+### 92.8 Неудобная honest истина
+
+После §89-§92:
+
+> Наш bit-cosmos framework **не решает** P vs NP. Он **переформулирует**
+> вопрос геометрически и даёт **systematic method** для поиска invariants.
+>
+> Для структурированных задач (crypto, specific SAT, combinatorics с
+> symmetry) — program produces real speedups.
+>
+> Для generic NP-complete instances — framework видит hardness через
+> invariant correlation, но не предоставляет systematic shortcut.
+
+Если (A) верно — больше axes + automated discovery найдут путь.
+Если (B) верно — мы достигли frontier, далее tolько refinement.
+
+**Программа остаётся valuable** в обоих случаях.
+
+### 92.9 Открытые directions
+
+**Q92.1 — Automated invariant discovery**: ML модель, обученная находить
+invariants для random SAT. Если достигнет P-time solve — huge.
+
+**Q92.2 — Universal invariant conjecture**: существует ли universal bit-
+cosmos axis $a^*$, такая что $a^*(\text{instance})$ encodes solution
+polynomial in size? Если да — P=NP. Если нет — P≠NP. Search.
+
+**Q92.3 — Extended bit-cosmos**: добавить axes за пределами 20+ существующих.
+Category theory, higher-dim structures, learned embeddings. Each new axis
+= new potential invariant.
+
+**Q92.4 — Hardness lower bound**: формализовать "no polynomial coord-axis
+system distinguishes hard instances" как теорему. Если доказуемо → P ≠ NP.
+
+**Q92.5 — Hybrid invariant approach**: не один invariant, а composition
+многих (как §57 s-bit ∪ BP). Может composition даёт polynomial shortcut
+где single не даёт.
+
+### 92.10 Статус §92
+
+**P vs NP frontier empirically mapped** в bit-cosmos framework:
+- Invariants track hardness (r=0.925)
+- Invariants don't solve hardness (classifier = baseline)
+- Structured problems: exploitable ✓
+- Generic hard NP-complete: resists
+
+Это **reformulation** millennium question, не его solution. Наш framework
+даёт **systematic method** для research направлений (A) P=NP или (B) P≠NP.
+
+Каждый из наших successful results (§51 SHA 4M×, §48 DJ 10⁶, §91
+conservation laws) — **partial evidence для (A)** на specific problems.
+Generic hard NP-complete resistance — **evidence для (B)**.
+
+Окончательного ответа нет. Но теперь у нас есть **language** для
+формулирования.
+
+Код: probe.py в `/tmp/pnp/`, не сохраняется.
+
