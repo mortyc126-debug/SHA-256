@@ -16227,3 +16227,179 @@ Generic hard NP-complete resistance — **evidence для (B)**.
 
 Код: probe.py в `/tmp/pnp/`, не сохраняется.
 
+---
+
+## §93. Bit-cosmos совпадает с Platonic Representation Hypothesis (2024-2025)
+
+### 93.1 Пользовательские вопросы
+
+После §92 пользователь сформулировал три принципиальных вопроса:
+
+1. Reading answer without computing — в принципе возможно?
+2. Стандартные tools не в курсе осей — что в литературе?
+3. Laplace demon нужна карта битов — сколько их? какие участвуют?
+
+Web search (April 2026) дал **неожиданное открытие**: наше framework —
+часть active research wave 2024-2025.
+
+### 93.2 Platonic Representation Hypothesis (Huh et al 2024)
+
+**Paper**: "The Platonic Representation Hypothesis" (Huh, Cheung, Wang,
+Isola 2024).
+
+Hypothesis: нейросети, обученные на аналогичных данных, **сходятся к
+выровненным internal representations**. Различные architectures
+(ViT, ResNet, language models) find **the same** underlying representation
+structure.
+
+**Прямая параллель с нашим bit-cosmos**: разные implementations одних
+и тех же computations **convergируют** в одно coord-пространство. "Телескопы"
+смотрят на one and the same Platonic cosmos.
+
+**Information-geometric justification**: representation alignment — direct
+consequence of Bayesian posterior concentration on true data distribution.
+Для sufficiently expressive models, они all approximate the same function.
+
+### 93.3 Universal Geometry of Embeddings (2025)
+
+**Work**: "Harnessing the Universal Geometry of Embeddings" (2025).
+
+Unsupervised approach translates **any embedding** to/from a **universal
+latent representation**. Prerequisites: Platonic structure exists.
+
+**Our methodology's direct analog**: bit-pattern → coord-vector на нашем
+bit-cosmos. Different "implementations" (hash, neural, algebraic) produce
+comparable projections of same underlying object.
+
+### 93.4 Bit dependency analysis (2021+)
+
+**Paper**: "Approximate Bit Dependency Analysis to Identify Program
+Synthesis Problems as Infeasible" (VMCAI 2021, FAU-Inf2).
+
+Real tool identifies **which input/output bits participate** in operation.
+**Saves 33%** of time в bit-vector synthesis.
+
+Ответ на пользовательский Q3 "какие именно bits used?":
+- **Existing technique**, formalized as static analysis
+- Applicable к SAT, program synthesis, crypto
+- Can be extended to our bit-cosmos axis tracking
+
+### 93.5 Laplace demon — known limits (Wolpert 2008)
+
+**Paper**: Wolpert 2008 — Cantor diagonalization argument.
+
+Fundamental result: **no two computational devices can completely
+predict each other**. Self-referential prediction impossible.
+
+Additional limits:
+- **Speed-of-light**: can't predict events through time $T$ in $< T$
+  real time для speed-of-light processes
+- **Information-theoretic**: continuous variables require uncountably
+  infinite info encoding
+
+Для **discrete bit-cosmos** эти limits **menee жёсткие**:
+- Cantor argument applies к self-predicting, не ко всем primitives
+- Discrete bits avoid continuous-variable issue
+- Speed limits irrelevant в classical synchronous computation
+
+### 93.6 Прямые ответы на пользовательские вопросы
+
+**Q1: Reading answer without computing?**
+
+Теоретически **возможно** (Laplace + Platonic Representation). Практически
+**только для structured problems** с known invariants. Наша программа case-
+by-case уже делает это; теперь мы знаем, что это часть bigger research
+wave.
+
+**Q2: Tools?**
+
+**Существуют в другой литературе**:
+- **Platonic Representation Hypothesis** (2024) — ML/cognitive
+- **Universal Geometry of Embeddings** (2025) — information geometry
+- **Bit dependency analysis** (2021+) — static analysis / program synthesis
+- **BitSAD** (2019) — DSL для bitstream computing, hardware generation
+- **Information geometry** (Amari 1985+) — mathematical framework
+
+Мы строили наши tools **параллельно** другим, не зная о connection.
+
+**Q3: Bit count + которые used?**
+
+| Вопрос | Ответ |
+|---|---|
+| Physical count в чипе | limited by memory ($2^{38}$ bits для 32GB) |
+| Logical count в computation | bounded by $2^N$ states over time |
+| Which bits participate | **bit dependency analysis**, existing tool |
+| Карта битов | не нужна полная — computing on-demand |
+| Fundamental limit | Wolpert diagonalization для self-prediction |
+
+### 93.7 Что это меняет для программы
+
+**Не в изоляции**: наше bit-cosmos — special case Platonic Representation
+applied к bit primitives. Можем:
+
+1. **Leverage literature methods**: universal embedding translation →
+   applicable to our axis projections
+2. **Contribute back**: наша 20+ axis taxonomy — concrete candidates
+   для Platonic coordinate system
+3. **Formal connection**: bit-cosmos coord-vector IS Platonic
+   representation в information-geometric sense
+
+**New direction enabled**: используем existing bit-dependency tools
+для **автоматически tracking** which bits participate в complex
+computations (SAT, SHA, etc.). Это прямо applies к Q91.1 (automated
+invariant discovery).
+
+### 93.8 Reconciliation с Laplace demon limits
+
+Wolpert диагонализация — **не блокирует** наше framework:
+
+- Мы не строим **self-predicting universal device**
+- Мы строим **partial invariants** для **specific computations**
+- Wolpert barrier касается global self-reference, наше — local structure
+
+Практический Laplace demon для конкретной задачи — **possible** within
+memory bounds. Full-universe Laplace — **impossible** by Wolpert. Мы
+в первом режиме.
+
+### 93.9 Критическое следствие для P vs NP
+
+Platonic Representation Hypothesis suggests все computational primitives
+convergируют к one underlying coord system.
+
+**Если** этот underlying system имеет **polynomial structure** для hard
+NP-complete instances → P = NP.
+
+**Если** underlying system has **fundamental exponential structure** →
+P ≠ NP.
+
+Эмпирически Platonic Representation aligns **для similar data**. Random
+hard NP instances — explicitly dissimilar. Так что Platonic convergence
+**не expected** для arbitrary hard instances.
+
+Это **evidence для P ≠ NP в Platonic framework**: convergent structure
+works для structured problems (где P=NP на specific instances), не для
+truly random hardness.
+
+Но это **argument**, не proof.
+
+### 93.10 Статус §93
+
+**Major orientation shift**: наша программа не изолирована, а **участник
+bigger research wave** 2024-2025.
+
+| Наше понятие | Aligned with |
+|---|---|
+| Bit-cosmos coord-space | Platonic Representation Hypothesis |
+| Axis projections | Universal embedding geometry |
+| Laplace invariants | Information-geometric conservation |
+| Bit dependency tracking | Approximate Bit Dependency Analysis |
+
+**New strategic option**: leverage их methods для our primitives.
+Особенно bit dependency analysis для systematic invariant discovery.
+
+Sources (web search April 2026):
+- Platonic Representation Hypothesis (Huh et al 2024)
+- Universal Geometry of Embeddings (2025)
+- Approximate Bit Dependency Analysis (VMCAI 2021)
+- Wolpert 2008 Cantor diagonalization
+
