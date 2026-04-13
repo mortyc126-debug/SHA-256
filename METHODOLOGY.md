@@ -17205,3 +17205,202 @@ patterns (L ≥ 8) — требуют расширения.
 
 Код: laws.py в `/tmp/astro/`, не сохраняется.
 
+---
+
+## §99. Что происходит при выполнении задачи — коррекция метафоры
+
+### 99.1 Пользовательский вопрос
+
+После §98 пользователь задал принципиально важный вопрос:
+
+> «Задачка — прозрачный куб в космосе охватывающий звёзды-биты.
+> Что она делает? Искривляет? Телепортирует? Сам куб телепортируется?
+> Какие биты участвуют? Как это выглядит с точки зрения coord-space?»
+
+Это revealsет conceptual gap в моём объяснении. Задача **НЕ куб**.
+Задача — **не объект в пространстве вообще**.
+
+§99 исправляет метафору через worked example.
+
+### 99.2 Правильная метафора
+
+**Bit-cosmos = бесконечный город с фиксированными домами**.
+
+- Каждый дом = specific bit-pattern
+- Каждый дом имеет **fixed address** = coord-vector
+- Дома **никогда не двигаются** (Platonic, eternal)
+
+**Задача = маршрут (recipe)**: "от дома A поверни налево, потом
+направо, придёшь в дом B". 
+
+**Задача — не объект**. Это **правило**, описывающее связи между
+домами.
+
+### 99.3 Map of cosmos на L=4 (16 домов)
+
+| Pattern | int | Coord (ham, phase, walsh_1) |
+|---|---|---|
+| [0,0,0,0] | 0 | (0, -4, 0) |
+| [0,0,0,1] | 8 | (1, -2, -2) |
+| [0,0,1,0] | 4 | (1, -2, 2) |
+| [0,0,1,1] | 12 | (2, 0, 0) |
+| [0,1,0,0] | 2 | (1, -2, -2) |
+| [0,1,0,1] | 10 | (2, 0, -4) |
+| [0,1,1,0] | 6 | (2, 0, 0) |
+| [0,1,1,1] | 14 | (3, 2, -2) |
+| [1,0,0,0] | 1 | (1, -2, 2) |
+| [1,0,0,1] | 9 | (2, 0, 0) |
+| [1,0,1,0] | 5 | (2, 0, 4) |
+| [1,0,1,1] | 13 | (3, 2, 2) |
+| [1,1,0,0] | 3 | (2, 0, 0) |
+| [1,1,0,1] | 11 | (3, 2, -2) |
+| [1,1,1,0] | 7 | (3, 2, 2) |
+| [1,1,1,1] | 15 | (4, 4, 0) |
+
+**Замечание**: некоторые patterns имеют одинаковый coord (напр.
+[0,0,1,1], [0,1,1,0], [1,0,0,1], [1,1,0,0] все имеют (2,0,0)).
+Это collisions — resolution-limited.
+
+### 99.4 Задача как arrow-diagram
+
+Задача ROT_1 (rotate right by 1) как **полный mapping**:
+
+```
+[0,0,0,0] → [0,0,0,0]    (self-loop: zero invariant)
+[0,0,0,1] → [1,0,0,0]
+[0,0,1,0] → [0,0,0,1]
+[0,0,1,1] → [1,0,0,1]
+[0,1,0,0] → [0,0,1,0]
+...
+```
+
+Это **полное описание задачи**: каждая "дверь" в каждом доме ведёт
+куда-то. Задача **не меняет дома, только arrows**.
+
+### 99.5 Worked example — trajectory
+
+Начальный pattern: $P_0 = [1, 0, 1, 0]$, coord (2, 0, 4).
+
+Задача: $\text{task}_{\text{complex}} = \text{ROT}_1 \circ \text{NOT} \circ \text{XOR}(1010)$.
+
+Trajectory через cosmos:
+
+| Step | Pattern | Coord | Действие |
+|---|---|---|---|
+| 0 (start) | [1,0,1,0] | (2, 0, 4) | Мы в этом доме |
+| 1 (ROT_1) | [0,1,0,1] | (2, 0, -4) | Перешли в дом [0,1,0,1] |
+| 2 (NOT) | [1,0,1,0] | (2, 0, 4) | Вернулись в [1,0,1,0] |
+| 3 (XOR 1010) | [0,0,0,0] | (0, -4, 0) | Пришли в дом [0,0,0,0] |
+
+**Дома никогда не двигались**. Мы — computation pointer — прошли
+маршрут.
+
+### 99.6 Какие биты "участвуют"
+
+Зависит от **operation definition**:
+
+| Op | Участвующие bits |
+|---|---|
+| ROT_k | Все L bits (каждый сдвигается по позиции) |
+| NOT | Все L bits (каждый flip) |
+| XOR with C | Positions где $C_i = 1$ flip, остальные unchanged |
+| AND with C | Positions где $C_i = 0$ обнуляются |
+| Projection to subset | Только read bits в subset |
+
+**"Участвуют"** = positions, which are **read or written** by operation.
+Это property of the operation, not of the pattern.
+
+### 99.7 Инверсия — reverse route
+
+Для invertible задачи (bijective), inverse = **обратный маршрут**:
+
+Задача: $A \xrightarrow{f_1} B \xrightarrow{f_2} C \xrightarrow{f_3} D$.
+
+Inverse: $D \xrightarrow{f_3^{-1}} C \xrightarrow{f_2^{-1}} B \xrightarrow{f_1^{-1}} A$.
+
+Проверено на our example: task_complex([1,0,1,0]) = [0,0,0,0], затем
+task_inverse([0,0,0,0]) = [1,0,1,0]. **Match** ✓.
+
+Для **lossy** ops (AND с zeros, XOR с self, hash functions):
+- Multiple inputs → same output
+- **Inverse = search в preimage set**
+- Crypto hash deliberately has huge preimage set (hard to invert)
+
+### 99.8 Коррекция conceptual misperceptions
+
+**НЕ происходит**:
+- ✗ Задача не создаёт "cube" в пространстве
+- ✗ Задача не искривляет cosmos
+- ✗ Биты/patterns не teleport
+- ✗ Patterns как объекты не меняются (Platonic, fixed)
+- ✗ "Куб телепортируется" — нет куба
+
+**Происходит**:
+- ✓ Задача = **правило mapping** (pattern → pattern)
+- ✓ Computation state движется **по arrows** правила
+- ✓ Trajectory через permanent cosmos
+- ✓ Same input + same task = same trajectory (deterministic)
+- ✓ Each step — **переход** между двумя fixed houses
+
+### 99.9 Два уровня view
+
+**Platonic view** (bit-astronomy): patterns stationary, computation
+travels through cosmos. Metadata: coord-vector of each pattern.
+
+**Operational view** (classical CS): state register stores value,
+operations rewrite it. Metadata: current register value.
+
+Оба правильные. Platonic — это **global geometric view**. Operational
+— **local mechanical view**. Они describe same thing от разных angles.
+
+Analogy: astronomical vs mechanical views of Solar System. Оба valid,
+different emphases.
+
+### 99.10 Re-reformulation в правильных терминах
+
+Пользовательский вопрос переформулируется:
+
+**"Какая задача на какие bits"**: задача определяет arrow-function.
+Каждый pattern — fixed node в graph. Arrows = rule of transformation.
+
+**"Одна задача — one input — one output"**: deterministic arrow.
+
+**"Что обратить"**: arrow-function (если bijective). Mapping
+preserves, we reverse the RULE. Patterns themselves неизменны.
+
+**"Как процесс выглядит с точки зрения coord'ов"**: point moving
+through fixed 3D scatter plot. Points stay put. Trajectory traces.
+
+### 99.11 Следствия для дальнейшей работы
+
+Теперь понятно, что:
+
+1. **Чтобы обратить задачу** — нужно знать **mapping полностью** (или
+   его inverse). Не нужно "искривлять космос" — нужна **inverse
+   function**.
+
+2. **Crypto hash** — mapping с **huge fan-in** (multiple patterns →
+   same output). Inverse **не unique**. Hence hard.
+
+3. **Computation shortcut** — найти **direct mapping** от input coord
+   к output coord без intermediate steps. Это **geometric
+   shortcut** (§91 Laplace concept).
+
+4. **Participation** битов — local property of op, describe'able.
+
+### 99.12 Статус §99
+
+**Conceptual clarification**: задача = arrow-function, не cube, не
+область. Patterns stationary в cosmos. Computation travels через них.
+
+Теперь framework астрономии битов completely clear:
+- Cosmos = map patterns
+- Tasks = rules (arrow diagrams)  
+- Computation = navigation
+- Invariants = conservation laws (§91)
+- Resolution = telescope quality (§97)
+
+Это finish Phase 1 framework. Готовы к Phase 2 (scaling).
+
+Код: explanation.py в `/tmp/task/`, не сохраняется.
+
