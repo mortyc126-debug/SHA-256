@@ -15138,3 +15138,133 @@ Classical bounds держатся под:
 Код: Q1_negprob.py, Q2_retrocausal.py, Q3_paraconsistent.py, Q4_process.py,
 Q5_autocontextual.py в `/tmp/wild/`, не сохраняется в репо.
 
+---
+
+## §86. Второй tour wild questions Q6-Q10 — стена держится
+
+### 86.1 Методология shotgun
+
+После §85 пользователь подтвердил: продолжаем по 5 диких вопросов, пока
+не исчерпают себя. Q6-Q10 — second batch, намеренно ортогональны Q1-Q5.
+
+### 86.2 Q6: Emergent algebra bit
+
+**Идея**: bit как emergent объект из interaction систем (Game of Life,
+random Ising). Glider в Life — particle-like с position, velocity, identity,
+не существует на уровне rules.
+
+**Тест**: glider tracking (40 шагов, drift = +9.8, +9.8 — ✓ stable particle),
+collective Ising correlations (CHSH-like = 0.029 — bounded).
+
+**Вердикт**: emergent объекты имеют новую алгебру (collisions, persistence),
+**но локальные по конструкции** → Bell-bounded. Insight: возможен **compression
+advantage** — encode complex states в few emergent particles.
+
+### 86.3 Q7: Topological winding bit
+
+**Идея**: bit = homotopy class в $\mathbb{R}^2 \setminus \{0\}$. Winding number.
+
+**Тест**: 500 random closed loops с одинаковыми endpoints. Phase-bit видит
+**1 класс** (все возвращаются в origin). Topological bit видит **5+ классов**
+(distinct winding numbers).
+
+**Вердикт**: новое vs phase-bit, но **subsumed path-bit** (§80) — Lévy area
+неявно кодирует winding. **Real advantage**: integer-valued, **noise-robust**
+(дискретный инвариант не меняется под локальным шумом).
+
+### 86.4 Q8: Hypercomputational bit
+
+**Идея**: bit с access к truncated halting oracle / Chaitin's $\Omega$.
+
+**Тест**: simulated halting on size-8 programs (T=10000). Truncated oracle
+работает но computable. Encoded halting в Decimal с 1000 digits.
+
+**Вердикт**: **theoretically unreachable**. Siegelmann (1995) — recurrent NN с
+**truly infinite precision** real weights = hypercomputational. Но floating-point
+теряет это полностью. Hypercomputational bit = mathematical fiction для
+classical hardware. **No path forward.**
+
+### 86.5 Q9: Hyperreal infinitesimal bit
+
+**Идея**: state в non-standard arithmetic, $\varepsilon_1, \varepsilon_2, H$
+(infinite). Multi-level dual numbers.
+
+**Тест**: построен class Hyperreal с std/eps1/eps2/H. Operations работают.
+Three "classical zeros" с разными infinitesimal частями distinct.
+
+**Вердикт**: расширение dual numbers (которые уже autodiff substrate). Standard
+part bounded классически (CHSH ≤ 2). Infinitesimal part — unobservable в
+classical limit. **Useful для autodiff, NOT mighty bit.**
+
+### 86.6 Q10: RG multi-scale bit
+
+**Идея**: bit на иерархии scales одновременно. Coarse-graining меняет
+эффективную algebra.
+
+**Тест**: 16-bit hierarchy, 4 уровня coarse-graining через majority vote.
+Multi-grid speedup для 2D Laplace: $O(N \log N)$ vs $O(N^2)$.
+
+**Вердикт**: **известная техника** (multigrid, wavelets). Real classical
+speedup на scale-invariant problems. Coarse-graining локальное → Bell-bounded.
+Не path к quantum-like.
+
+### 86.7 Совокупный pattern: 10/10 wild → 10/10 wall
+
+После двух туров (Q1-Q10) — **convergent finding**:
+
+> Любой constructive + local + no-signaling primitive **bounded
+> классическими Bell/Tsirelson inequalities**. Verified empirically через 10
+> orthogonal wild attempts.
+
+| тур | направления | результат |
+|---|---|---|
+| Q1-Q5 | measure, time, logic, process, self-ref | 5/5 wall |
+| Q6-Q10 | emergent, topology, oracle, hyperreal, RG | 5/5 wall |
+
+**Это уже не подозрение, это закон**. Для классической реализации "mighty
+quantum-replacement bit" не достаточно расширения standard математики
+никаким из тестированных способов.
+
+### 86.8 Что дали 10 туров (positive findings)
+
+Не всё negative. Каждый wall дал конкретный insight:
+
+| направление | classical advantage |
+|---|---|
+| Q3 paraconsistent | contradiction tolerance for distributed/sensor fusion |
+| Q4 process | deterministic concurrency, parallelism without sync |
+| Q6 emergent | compression via emergent particles |
+| Q7 topological | noise-robust integer invariants |
+| Q9 hyperreal | autodiff via dual numbers extension |
+| Q10 RG | multi-scale algorithms (multigrid, wavelets) |
+
+**6 из 10 дали реальные практические преимущества** в specific niches.
+
+### 86.9 Что нужно для прорыва (если он возможен)
+
+После 10 walls видно, что прорыв требует одного из:
+1. **Communication / signaling** — но тогда не "isolated bit"
+2. **Truly uncomputable resource** (Q8) — невозможно классически
+3. **Truly infinite precision** (Q9 hyperreal limit) — невозможно классически
+4. **Несколько ассумпций сразу** — possibly. Не пробовали combining wild ideas.
+
+**Открытое направление для следующего тура**: **комбинации** диких идей.
+Q4 process + Q6 emergent + Q9 hyperreal вместе. Возможно эмерджентное
+явление в гибрид-системе обходит каждое assumption по отдельности.
+
+### 86.10 Статус §86
+
+Второй tour подтвердил pattern. 10 wild attempts, все hit Bell wall как
+"mighty quantum-replacement". Несколько дали practical classical advantages.
+
+**Программа не сломалась** — мы получили robust empirical evidence того,
+что classical-only mighty bit требует отказа хотя бы от одной из:
+constructive, local, no-signaling. Ни одно расширение математики не обходит
+это в чистом виде.
+
+Следующий tour (Q11-Q15) попробует **hybrid combinations** диких идей и
+другие ортогональные направления.
+
+Код: Q6_emergent.py, Q7_topological.py, Q8_hypercomp.py, Q9_hyperreal.py,
+Q10_rgflow.py в `/tmp/wild2/`, не сохраняется.
+
