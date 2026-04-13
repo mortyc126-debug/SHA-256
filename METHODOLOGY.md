@@ -15546,3 +15546,154 @@ Cosmic-bit raid: 5/5 walls, но **полезные insights** для каждо
 Код: C1_wormhole.py, C1_recheck.py, C2345.py в `/tmp/cosmic/`, не
 сохраняется.
 
+---
+
+## §89. CoordBit — reframe bit identity через universal coordinates
+
+### 89.1 Пользовательский insight
+
+После 20/20 wall пользователь переформулировал проблему на уровень
+глубже:
+
+> «Биты как звёзды. С Земли одинаковые точки, с телескопом — уникальные
+> планеты. У каждого бита фиксированные координаты в cosmos. Введи координаты
+> в любое железо — получишь тот же бит.»
+
+Перевод: **bit identity = coordinates in universal space**, не value.
+Value — только бедная projection. Рост identity-значимости меняет саму
+постановку задачи.
+
+### 89.2 Формализация CoordBit
+
+**Универсум** $U: \mathbb{N} \to \{0, 1\}$ — фиксированная функция, shared
+across all hardware. Примеры:
+- $U = $ binary expansion of $(\pi - 3)$
+- $U = $ binary expansion of $(e - 2)$
+- $U = $ Chaitin's $\Omega$ (uncomputable)
+- $U = $ truncated halting oracle (exponential precompute)
+- $U = $ algebraic structure (path signature, §80)
+
+**CoordBit** at coord $c$: identity = $c$ (primary), value = $U(c)$ (derived).
+
+**Key invariant**: two systems с same $(U, c)$ access **same bit**.
+Cross-system identity via coordinates, как git SHA hashes.
+
+### 89.3 Experiments
+
+**[1] Cross-system identity**: trivial ✓. Two CoordBits at same $c$ в same
+$U$ agree on value.
+
+**[2] Compression**: pattern "первые 50 бит π" encodable as coord=0, length=50
+≈ 6 bits vs direct 50. Для случайных patterns — no compression (normal
+numbers conjecture: paттerns appear at position $\sim 2^n$ в average).
+
+**[3] CHSH test**: shared-randomness через $\pi$ universe + shifts. Max
+CHSH over 200 random configurations: **2.03** (≈ 2.0 с noise). **Bounded
+by 2 classically** — coord-bit framework не пробивает Bell.
+
+**[4] Coord-algebra structure**: $P(U(c_1 + c_2) = U(c_1) \oplus U(c_2)) = 0.511$
+на $\pi$ (expected 0.5 for random). $\pi$ is empirically normal — **нет
+алгебраической структуры** для exploit.
+
+**[5] Compressed reference**: для $\pi$-prefix-50: **6 bits** coord vs 50
+bits direct. **WIN для structured patterns**. Для random patterns: direct
+encoding лучше.
+
+**[6] Hypercomputational universe**: truncated halting oracle работает как
+lookup table. Cost: $2^k$ precompute для programs size $\leq k$. **Same as
+classical memoization**.
+
+### 89.4 Честный вердикт
+
+CoordBit — **framework / reframe**, не primitive который нарушает Bell.
+
+Полезные свойства:
+- ✓ Universal cross-system identity (like content-addressable storage)
+- ✓ Compressed reference для structured patterns
+- ✗ CHSH bounded by 2
+- ✗ Нет exploitable structure если universe is normal
+- ✗ Hypercomputational universe требует infinite precompute
+
+**Новая точка зрения на программу**: path-bit (§80) — **специальный случай**
+CoordBit с universe = tensor algebra (signature). Signature IS coordinate.
+Value at coordinate = signature components.
+
+### 89.5 Key insight: вопрос меняется
+
+До §89: «какое operation на bit даёт Bell violation?»
+После §89: **«какая universal structure $U$ даёт useful classical power?»**
+
+Это смена research question. Вместо перебора operations — **systematic
+search universes**:
+
+| universe | что даёт | cost |
+|---|---|---|
+| $\pi, e$ (normal) | shared randomness | O(1) per bit |
+| Chaitin $\Omega$ | hypercomputation (halting oracle) | infinite |
+| Truncated $\Omega_k$ | bounded halting oracle | $2^k$ precompute |
+| Path-signature algebra | path-bit (§80) | polynomial |
+| Champernowne-like | compression | polynomial |
+| **Algorithm-specific** $U_T$ | **task-specific precomputed structure** | problem-dependent |
+
+Последняя строка — ключ. **Algorithm-specific universe** = precomputed
+structure специально для конкретной задачи. Classical pre-computation
+через CoordBit lens.
+
+Это уже известная техника (lookup tables, precomputed tables для crypto,
+game-theory tables), но раньше не рассматривалась как **bit primitive**.
+
+### 89.6 Что это открывает
+
+**CoordBit paradigm shift**: вместо «what operations give power?», вопрос
+«what **precomputed universal structure** is worth querying as a bit?».
+
+Кандидаты для research:
+- $U = $ SAT solution-space structure (frozen core positions, etc.)
+- $U = $ cryptographic tables (rainbow tables)
+- $U = $ algebraic constants (factorizations, primes)
+- $U = $ combinatorial enumerations (canonical Gödel numbers)
+- $U = $ compressed representation of specific domains (wavelet coefs, etc.)
+
+Каждый $U$ определяет **specialized CoordBit** with its own advantages.
+
+### 89.7 Связь с программой
+
+Retrospectively:
+- **§45 phase-bit**: coord = sign pattern, universe = $\{-1, +1\}^k$ with
+  pairwise-product structure. Discrimination $2^{k-1}$ — via universe
+  algebra.
+- **§51 SHA-256 pairwise**: coord = pair of state-bit indices, universe =
+  SHA's state → W carry-chain structure. Speedup 4M× from exploiting
+  specific $U$.
+- **§80 path-bit**: coord = path (up to reparametrization), universe = free
+  tensor algebra.
+
+**Каждый из наших successful primitives был implicit CoordBit**. §89 делает
+это явным как framework.
+
+### 89.8 Что CoordBit НЕ даёт
+
+Ни одно concrete universe $U$ не ломает Bell classically — это все
+**distillations of shared randomness**. Bell bound is about correlations
+between queries to $U$, не о query cost itself.
+
+Для Bell-violating correlations нужен universe с **non-classical**
+structure (quantum). Classical universes $U: \mathbb{N} \to \{0,1\}$ все
+поддаются Bell-argument через локальность lookup.
+
+### 89.9 Статус §89
+
+**Reframe achieved**, not breakthrough. CoordBit:
+- Makes explicit: bit identity ≠ bit value
+- Unifies: path-bit, pairwise SHA features, phase-bit pattern — все
+  implicit CoordBits
+- Opens: systematic search over universes $U$ для specialized primitives
+- Honest: не ломает Bell, но обогащает conceptual framework
+
+Программа теперь имеет **три уровня** bit primitives:
+1. Value-primitive (classical bit, phase bit, p-bit)
+2. Operation-primitive (path-bit, process-bit)
+3. **Coordinate-primitive** (§89 CoordBit) — universal addressing
+
+Код: probe.py в `/tmp/coord/`, не сохраняется.
+
