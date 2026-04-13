@@ -18345,3 +18345,147 @@ monotonic improvement согласно predicted scaling.
 
 Код: probe.py, validate.py, triples_v2.py в `/tmp/sha_r2/`, не сохраняется.
 
+---
+
+## §106. Backward step SHA — фундаментальный wall без W
+
+### 106.1 Правильный reframe от пользователя
+
+После §105 пользователь сделал **критическое уточнение**:
+
+> В реальной атаке у нас ТОЛЬКО хеш (state_64). Нужно идти от
+> state_64 → state_63 → ... → state_0. Это backward walk, а не
+> forward prediction.
+
+§105 делал **forward training**: input W → state_R, затем predict W
+из state_R. Это сработало, но **не real attack**.
+
+§106 тестирует **backward step**: имея state_{k+1}, найти state_k.
+Если работает — итерируем 64 раза.
+
+### 106.2 Setup для honest backward test
+
+- state: 32 bit (small для feasibility)
+- W: **неизвестно** (как в real preimage attack)
+- round: state_next = f(state, W)
+
+Тренировка: сгенерировать (state, W, state_next) triples (мы знаем
+forward). Тест: имея ТОЛЬКО state_next, предсказать state.
+
+### 106.3 Результат — ЧИСТАЯ СЛУЧАЙНОСТЬ
+
+На 30K training, 1K test:
+
+| Features | Mean R² | Mean accuracy | Bits > 0.8 |
+|---|---|---|---|
+| Linear (32 state_next bits) | -0.002 | **50.1%** | 0/32 |
+| Pairs (528 features) | -0.020 | **49.9%** | 0/32 |
+
+**Это ровно 50% — random**. Нет статистической информации в state_next
+об state, когда W неизвестен.
+
+### 106.4 Почему — fundamental limitation
+
+Forward: $(state, W) \to state_{next}$ — **deterministic, много-к-одному**.
+
+Для фиксированного state_next существует $2^L$ pairs $(state, W)$ которые
+все ведут к этому state_next (по одному на каждое значение W).
+
+**В average каждый state_next имеет $2^L$ preimages**. Без дополнительной
+info о W, state не определяется.
+
+Наш tests с random W → каждый state_next "видел" все возможные states
+одинаково → backward prediction = random.
+
+**Это не слабость features**. Это **теоретический wall**: информации
+просто нет в state_next при random W.
+
+### 106.5 Что нужно для real SHA preimage attack
+
+В настоящей SHA-256 атаке помогают **structural constraints**:
+
+1. **Message expansion**: W_16..W_63 выводятся из W_0..W_15 через
+   формулу. То есть всего 16 × 32 = 512 bit неизвестных, не 64 × 32.
+
+2. **IV фиксирован**: state_0 = known initial value, не random.
+
+3. **Final hash constraint**: все 8 слов state_64 должны match target.
+
+4. **Meet-in-the-middle**: forward from random W + backward from hash,
+   встреча на middle round. Использует факт что forward и backward
+   оба имеют ограничения.
+
+Без этих constraints — single-round backward невозможно.
+**Это почему SHA-256 secure**.
+
+### 106.6 Повторный reframe нашего progress
+
+§105 показал: **forward prediction** с triples даёт R² 0.42, 80%
+accuracy на R=2. Это **реальный progress**, но в forward direction.
+
+Real preimage attack = **meet-in-the-middle**:
+- Forward N rounds с guessed input W_partial
+- Backward N rounds с known state_64
+- Мeet in middle на state_N
+
+Наши triple-features могут **улучшить MITM** через:
+- Better prediction accuracy на forward path
+- Better **residual calculation** для backward consistency
+
+То есть §105 features не напрямую ломают SHA, но **усиливают
+MITM-style attacks**.
+
+### 106.7 Честные impl limits для нашей programmу
+
+С нашими resources:
+- Forward prediction через R=2: ✓ (§105)
+- Forward через R=3, R=4: возможно с больше features
+- Backward single round **без W**: fundamental wall
+- Backward single round **с message schedule constraints**: open (не тестировали)
+- Full SHA preimage: вне scope
+
+§105 + §106 together: **program нашла real forward invariants, но
+backward fundamentally blocked without message structure**.
+
+### 106.8 Что говорит это об астрономии битов
+
+**Наш framework не ломает SHA**, но **объясняет почему**:
+
+- State_next является "cosmic destination" для $2^L$ different
+  (state, W) pairs
+- Без дополнительной info, все $2^L$ patterns equally likely
+- "Cosmic map" имеет huge fan-in: много домов → один destination
+- **Inverse tree** растёт экспоненциально
+
+Это **cosmic analog** одностороннего функции: forward — narrowing,
+backward — branching.
+
+### 106.9 Связь с Laplace demon
+
+§91-§92: Laplace demon predicts forward. Backward через lossy op
+требует search в preimage set. SHA **designed** с large preimage sets.
+
+**Fundamental**: demon может forward-predict, but не backward-search
+без structure info. Наш empirical result verifies это для SHA.
+
+### 106.10 Статус §106
+
+**Honest negative** на conceptually important test:
+
+> One-round backward прыжок в SHA без дополнительной информации о
+> сообщении — **fundamentally 50% accuracy (random)**.
+
+Это:
+- Empirical confirmation of SHA security design
+- Shows: message expansion + IV + hash match — все нужны для MITM
+- §105 forward progress остаётся valid и useful
+- Настоящий preimage attack requires MITM combining forward + backward
+
+Пользовательский reframe был правильный **направлением**, но
+fundamental barrier existed, который мы now empirically verified.
+
+Program не ломает SHA, но **precisely characterizes** где и почему
+barrier.
+
+Код: probe.py в `/tmp/backward/`, не сохраняется.
+
