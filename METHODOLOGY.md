@@ -18669,3 +18669,152 @@ $\{11\text{ axes}\} = \text{independent basis} \iff L \leq 6$?
 
 Код: math.py в `/tmp/astro_deep/`, не сохраняется.
 
+---
+
+## §108. Замена неподходящих осей — критика пользователя применена
+
+### 108.1 Пользовательская критика
+
+После §107 пользователь указал ключевую проблему:
+
+> Наши оси не подходят вообще. Нужны те координаты, которые статичны
+> при любом раскладе.
+
+Интерпретация: ось должна **различать patterns всегда**, не иметь
+mode values, на которых большинство patterns сливается.
+
+### 108.2 Количественная проверка проблемы
+
+Mode concentration для current 9 axes на L=8 (256 patterns):
+
+| Axis | # unique | Mode concentration |
+|---|---|---|
+| hamming | 9 | 0.273 |
+| phase | 9 | 0.273 |
+| walsh_1 | 9 | 0.273 |
+| walsh_2 | 9 | 0.273 |
+| levy_area | 5 | 0.375 |
+| cost | 5 | 0.547 |
+| cyclic_period | 4 | **0.938** |
+| **winding** | 3 | **0.953** |
+| pair_sum | 5 | 0.438 |
+
+**Проблема подтверждена**: winding — 95% patterns имеют одно значение
+(0). cyclic_period — 94% имеют mode (L=8). Эти оси **тривиальны для
+почти всех patterns** — критика пользователя точна.
+
+**Bijectivity**: current 9 axes дают только 165/256 distinct coord-vectors
+на L=8 — значит **91 pattern сливаются в collisions**.
+
+### 108.3 Альтернативы: Hadamard и Raw bits
+
+**Hadamard basis (8 axes для L=8)**:
+
+| Axis | # unique | Mode concentration |
+|---|---|---|
+| H_0 | 9 | 0.273 |
+| H_1 | 9 | 0.273 |
+| ... | ... | ... |
+| H_7 | 9 | 0.273 |
+
+**Все 8 осей идентично распределены**: binomial (-8, -6, -4, -2, 0, 2, 4, 6, 8)
+с 70 patterns на mode=0, равномерно. **Avg concentration 0.273** vs 0.483
+у current.
+
+**Collectively bijective**: 256/256 unique ✓.
+
+**Raw bits (8 axes для L=8)**:
+
+Каждая ось имеет ровно 128/128 split (50% mode concentration, но это
+perfect uniform бинарный). **Тривиально bijective** (= pattern encoding).
+
+### 108.4 Сводная таблица
+
+| System | # axes | Avg mode conc | Max mode conc | Bijective L=8 |
+|---|---|---|---|---|
+| Current 9 | 9 | 0.483 | **0.953** (bad) | ✗ 165/256 |
+| **Hadamard** | **8** | **0.273** | **0.273** | **✓ 256/256** |
+| Raw bits | 8 | 0.500 | 0.500 | ✓ trivially |
+
+### 108.5 Почему Hadamard — правильный выбор
+
+1. **Каждая ось informative**: max 27% concentration, не 95% как у winding
+2. **Все оси симметрично распределены** (binomial distribution)
+3. **Collectively bijective** для любого L=2^k
+4. **Mathematically clean**: orthogonal basis, $H \cdot H^T = L \cdot I$
+5. **Platonic**: formula точна, same на любом hardware
+6. **Invertible**: pattern = $H^{-1} \cdot \text{coord-vector}$
+7. **Не trivial** как raw bits — каждая ось **combination** всех бит
+
+### 108.6 Обновлённый список осей для астрономии битов
+
+После §108 правильный **primary basis** астрономии битов:
+
+**Для L = 2^k битных patterns**:
+$$\boxed{\text{Hadamard coefficients } H_0, H_1, \ldots, H_{L-1}}$$
+
+с формулой $H_k(p) = \sum_{i=0}^{L-1} (-1)^{\text{popcount}(k \wedge i) \bmod 2} \cdot (2p_i - 1)$.
+
+Это **sharp, uniform, Platonic basis**. Удовлетворяет критерию
+пользователя "статичны при любом раскладе".
+
+### 108.7 Role previous axes — не исчезают, а становятся дополнительными
+
+Current 9 axes **не отменяются**. Они переходят в роль **insight axes**:
+
+- hamming = $L/2 + H_0/2$ (функция Hadamard_0) — structural
+- levy_area, winding — topological invariants
+- cost — Ising energy (physical)
+- cyclic_period — symmetry
+- etc.
+
+Это **structural properties**, полезные для interpretation, но **не
+primary coordinate basis**. Primary — Hadamard.
+
+### 108.8 Для non-power-of-2 L
+
+Hadamard существует только для $L = 2^k$. Для прочих $L$:
+
+- **Paley construction**: Hadamard-like на $L = p+1$ где $p$ — prime
+- **Generalized Walsh**: работает на любом L
+- **Pad to next 2^k**: add zeros до ближайшей степени 2
+
+Для практической работы SHA-256 state (256 bits = $2^8$ — YES) и
+32-bit words ($2^5$ — YES) — Hadamard работает directly.
+
+### 108.9 Новая формулировка астрономии битов
+
+**Revised framework**:
+
+- **Primary basis**: $L$ Hadamard coefficients (bijective, uniform)
+- **Secondary insights**: 9 physical axes (hamming, levy, etc.) для
+  interpretation и conservation laws (§91)
+- **Operations**: formulas через Hadamard (§102-§103 done)
+
+Это **clean, mathematical foundation** replacing §107 ad-hoc axes.
+
+### 108.10 Что меняется в программе
+
+**Уточнение prior results**:
+- §90 Platonic test — verified, unchanged (coords still universal)
+- §91 Laplace invariants — should transfer к Hadamard basis (future work)
+- §97 collisions на L=8 — больше не проблема с Hadamard
+- §107 activity pattern — был based на mode values current axes; с
+  Hadamard каждая ось более uniformly active
+
+**Основной shift**: primary axes = Hadamard. Physical interpretations —
+derived axes.
+
+### 108.11 Статус §108
+
+**Критика пользователя принята и исправлена**:
+- Current 9 axes имеют high mode concentration (winding 95%) — не подходят
+- **Hadamard basis** — proper foundation: uniform, bijective, Platonic
+- Physical axes переходят в secondary role (interpretation)
+- Astronomy битов теперь имеет mathematically clean basis
+
+**Это исправление fundamental**. Программа получает правильное
+математическое основание.
+
+Код: probe.py в `/tmp/static_axes/`, не сохраняется.
+
