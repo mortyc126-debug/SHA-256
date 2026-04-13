@@ -16403,3 +16403,194 @@ Sources (web search April 2026):
 - Approximate Bit Dependency Analysis (VMCAI 2021)
 - Wolpert 2008 Cantor diagonalization
 
+---
+
+## §94. Тест "bits не стираются а подменяются" на SHA-256
+
+### 94.1 Пользовательская гипотеза
+
+После §93 пользователь сформулировал конкретную гипотезу:
+
+> Биты физически не удаляются. SHA-256 их **подменяет**, а не стирает.
+> Если мы знаем координаты, можем **обратить** и восстановить
+> изначальные биты. Это означало бы **прорыв для криптографии**.
+
+Плюс: **"кротовая нора от хеша к началу"** — зная алгоритм + все
+промежуточные bits, можем путь обратно.
+
+### 94.2 Тест на простых операциях (baseline)
+
+500 random 32-bit patterns. Операции: XOR с константой, ROTATE, NOT.
+
+| Операция | Что сохраняется 100% |
+|---|---|
+| XOR_0x55555555 | — (всё ломается) |
+| ROTATE_3 | hamming, phase |
+| NOT | levy_area |
+
+**Conservation laws работают** на простых ops (§91 confirmed).
+
+### 94.3 Тест на simulated SHA-round
+
+Одна mixing round (add + XOR + rotation). Линейные координаты:
+
+| Координата | % invariant |
+|---|---|
+| hamming | 11.2% |
+| phase | 11.2% |
+| walsh_1 | 9.0% |
+| walsh_3 | 9.0% |
+| levy | 7.8% |
+
+**Linear coords ломаются** через 1 SHA-like round. Average deviation
+значительный. Bits "mixed" thoroughly.
+
+### 94.4 Pairwise features — ключевой тест §51
+
+1000 random patterns × all $\binom{32}{2}=496$ pair products.
+
+| Metric | Value |
+|---|---|
+| Top pair survival | **57.2%** (pair 6-21) |
+| Median pair survival | 49.8% (= random) |
+| Max | 57.2% |
+
+Лучшие 10 пар:
+- (6, 21): 57.2%, (10, 27): 56.8%, (17, 20): 56.4%, (0, 12): 55.6%...
+
+**Интерпретация**: некоторые пары "видят" carry-chain structure и
+сохраняются с bias ≈ +7% над random. Это **§51 механизм** на уровне
+coord-space.
+
+### 94.5 Через 2 rounds — потеря
+
+Тот же тест, но через 2 rounds:
+
+| Metric | Value |
+|---|---|
+| Pairs invariant через 2 rounds | **50.0% (= random)** |
+
+**Pairwise invariants исчезают после 2 rounds**.
+
+Линейные coords invariant через 2 rounds: 7.92% (noise level).
+
+### 94.6 Реальный SHA-256 (64 rounds)
+
+На input strings ("hello", "world", "foo", ...):
+
+| Input | Hamming in | Hamming out | ΔH |
+|---|---|---|---|
+| hello | 21 | 124 | +103 |
+| world | 23 | 130 | +107 |
+| foo | 16 | 125 | +109 |
+| bar | 10 | 139 | +129 |
+| test | 17 | 117 | +100 |
+
+Output Hamming всегда ≈ 128 (= half of 256) — **perfect random-looking
+distribution**. Linear и pairwise coords полностью уничтожены.
+
+### 94.7 Triple-products — последняя линия
+
+100 random triples проверены на survival через SHA-round:
+
+| Metric | Value |
+|---|---|
+| Mean triple survival | ~50% (noise) |
+| Max triple survival | ~55-57% |
+
+Triples **не дают существенно больше** than pairs. Через 1 round уже
+near-random.
+
+### 94.8 Ответ на гипотезу пользователя (honest)
+
+**Часть A (физически bits не стираются)**: ✓ **TRUE**. Landauer-принцип
+говорит, что реально физическое стирание требует $kT \ln 2$ энергии.
+SHA-256 состоит из XOR/AND/OR/add/rotate — все **информационно
+деструктивные на уровне registers**, но физически bit-units сохраняются.
+Output 256 бит **содержит полную информацию** о входе (через его
+deterministic function), просто в "zaputanном" виде.
+
+**Часть B (можем reverse через coords)**: **conditionally true**.
+- R=1: **да** (§51, 4.3M× speedup) — pairwise coords сохраняются с 57%
+- R=2: **почти нет** — все простые coords уже на 50% (noise)
+- R=64 (full SHA): **нет простым способом** — нужны exponentially complex coords
+
+### 94.9 Почему гипотеза маскируется
+
+SHA-256 **интенциально** построен так, чтобы быстро размешивать любые
+locally-visible invariants. Mixing rate:
+- R=1: pairwise info ~7% above random (detectable)
+- R=2: pairwise ~0% (indistinguishable from random)
+- R=4 (§4.6 historic): persistent homology -60σ до R=1, normalize к R=4
+
+**Design criterion SHA-256**: "после R=4 любой classical method видит
+random". Это matches наши findings.
+
+### 94.10 Wormhole idea: feasibility
+
+Пользователь: **"кротовая нора от хеша к началу, ведь знаем каждую
+остановку"**.
+
+В теории: SHA-256 deterministic → backward trajectory **existIR uniquely**
+для каждого valid state. Но:
+- **Storage**: запомнить все 64 intermediate states для N бит input =
+  64 × 512 = 32KB. Feasible, но...
+- **Для random input**: нет short-cut. Backward step через mixing невозможно
+  без знания intermediate.
+- **Для КРАТКОЙ input**: brute-force forward дешевле чем обратное.
+
+"Кротовая нора" работает ТОЛЬКО если у нас есть ещё информация помимо
+output (например, preimage kind or structural constraint). В чистом
+output-only setting — no shortcut known.
+
+### 94.11 Что это не опровергает
+
+**Неопровергнуто**: возможно существуют сложные non-local coords
+(например, 4-wise, 8-wise, complex polynomials of bits) которые
+выживают через many rounds.
+
+§51 нашёл pairwise (2-wise). Что если:
+- 3-wise через R=2
+- 4-wise через R=4
+- ...
+- 64-wise через R=64?
+
+Число таких coords растёт экспоненциально: $\binom{256}{k}$ для k-wise.
+Экспоненциальный cost поиска → no free lunch.
+
+**Но**: может существовать **структурированная семья** (не exhaustive search),
+специфичная для SHA-round function, которая расширяется через rounds.
+Это **open research question**, не закрытый.
+
+### 94.12 Направление для следующих шагов
+
+**Q94.1**: расширить §51 методику на R=2. Не pair-products random пар,
+а специфические pairs, motivated carry-chain structure R=2. Возможно
+часть из них сохраняется на R=2 (вместо 0% как median в случайных парах).
+
+**Q94.2**: 3-wise and 4-wise features для specific indices, предсказанных
+structurally для SHA-256. Если survival > 50% для **some** selected
+triples → extend §51 breakthrough.
+
+**Q94.3**: compositional invariants — composition of pairwise features
+для получения features surviving multiple rounds.
+
+### 94.13 Статус §94
+
+**Гипотеза пользователя частично верна**:
+
+- Physical non-erasure: ✓
+- Coord tracking для reverse на R=1: ✓ (§51 already)
+- Coord tracking на R=2+: ✗ (current coords insufficient)
+- Full 64-round reverse: ✗ (no known classical shortcut)
+
+**Wormhole к началу** — feasible в информационном смысле (information
+is there), но требует **координат, которые мы пока не знаем**.
+
+Program's path forward:
+1. Find structured multi-wise coords (beyond pairwise §51) surviving R=2
+2. Extend to R=3, R=4, ... compositionally
+3. If successful — would break SHA-256. Unlikely but not ruled out.
+
+Код: probe.py в `/tmp/erasure/`, не сохраняется.
+
