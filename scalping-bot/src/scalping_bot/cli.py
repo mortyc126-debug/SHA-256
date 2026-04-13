@@ -28,6 +28,22 @@ from scalping_bot.historical import (
 from scalping_bot.market_data import Collector
 from scalping_bot.utils import setup_logging
 
+DEFAULT_FEATURE_COLS = [
+    "flow_imbalance",
+    "trade_rate",
+    "rv_w60",
+    "rv_w300",
+    "vwap_w30",
+    "vwap_w300",
+    "cum_delta_w30",
+    "cum_delta_w300",
+    "price_range_w300",
+    "hour_sin",
+    "hour_cos",
+    "minute_sin",
+    "minute_cos",
+]
+
 
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="scalping_bot")
@@ -113,6 +129,18 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Re-download files that already exist locally.",
     )
+
+    train = sub.add_parser("train", help="Fit Distinguisher with walk-forward validation.")
+    train.add_argument("--symbol", default=None)
+    train.add_argument("--start", type=_parse_date, required=True)
+    train.add_argument("--end", type=_parse_date, required=True)
+    train.add_argument("--data-dir", type=Path, default=None)
+    train.add_argument("--bar-seconds", type=float, default=1.0)
+    train.add_argument("--horizon-bars", type=int, default=30)
+    train.add_argument("--threshold-bps", type=float, default=2.0)
+    train.add_argument("--n-splits", type=int, default=4)
+    train.add_argument("--n-pairwise", type=int, default=10)
+    train.add_argument("--enter-threshold", type=float, default=0.55)
 
     return p
 
@@ -272,6 +300,110 @@ def _download_and_convert(
     raise ValueError(f"unknown kind: {kind!r}")
 
 
+def _cmd_train(args: argparse.Namespace) -> int:
+    from scalping_bot.features import build_feature_matrix, load_trades_range
+    from scalping_bot.models import (
+        Distinguisher,
+        directional_metrics,
+        walk_forward_splits,
+    )
+
+    settings = get_settings()
+    settings.ensure_dirs()
+    log: structlog.stdlib.BoundLogger = setup_logging(log_level=settings.log_level)
+
+    symbol = args.symbol or settings.symbol
+    data_dir = Path(args.data_dir) if args.data_dir else settings.data_dir / "raw"
+
+    log.info(
+        "cli.train.loading",
+        symbol=symbol,
+        start=args.start.isoformat(),
+        end=args.end.isoformat(),
+    )
+    trades = load_trades_range(data_dir, symbol, args.start, args.end)
+    if trades.is_empty():
+        log.error("cli.train.no_data")
+        return 1
+    log.info("cli.train.ticks_loaded", ticks=len(trades))
+
+    fm = build_feature_matrix(
+        trades,
+        bar_seconds=args.bar_seconds,
+        label_horizon_bars=args.horizon_bars,
+        label_threshold_bps=args.threshold_bps,
+    )
+    label_col = f"label_{args.horizon_bars}"
+    log.info("cli.train.features_built", bars=len(fm), cols=fm.width)
+
+    feature_cols = [c for c in DEFAULT_FEATURE_COLS if c in fm.columns]
+
+    results = []
+    for split in walk_forward_splits(n_rows=len(fm), n_splits=args.n_splits):
+        train_df = fm[split.train_start : split.train_end]
+        val_df = fm[split.val_start : split.val_end]
+
+        d = Distinguisher(
+            feature_cols=feature_cols,
+            label_col=label_col,
+            n_pairwise=args.n_pairwise,
+        )
+        d.fit(train_df)
+
+        proba = d.predict_proba(val_df)
+        classes = d.classes_.tolist()
+        proba_up = proba[:, classes.index(1)] if 1 in classes else None
+        proba_down = proba[:, classes.index(-1)] if -1 in classes else None
+        if proba_up is None or proba_down is None:
+            log.warning("cli.train.fold_skipped_missing_class", fold=split.fold)
+            continue
+
+        y_val = val_df[label_col].to_numpy()
+        metrics = directional_metrics(
+            y_true=y_val,
+            proba_up=proba_up,
+            proba_down=proba_down,
+            enter_threshold=args.enter_threshold,
+        )
+        log.info(
+            "cli.train.fold_done",
+            fold=split.fold,
+            train_rows=split.train_end - split.train_start,
+            val_rows=split.val_end - split.val_start,
+            auc_up=round(metrics.auc_up_vs_rest, 4),
+            auc_down=round(metrics.auc_down_vs_rest, 4),
+            coverage=round(metrics.coverage, 4),
+            directional_accuracy=round(metrics.directional_accuracy, 4),
+            precision_up=round(metrics.precision_up, 4),
+            precision_down=round(metrics.precision_down, 4),
+            n_signals=metrics.n_signals,
+        )
+        results.append(metrics)
+
+    if not results:
+        log.error("cli.train.no_folds")
+        return 1
+
+    avg_auc_up = sum(r.auc_up_vs_rest for r in results) / len(results)
+    avg_auc_down = sum(r.auc_down_vs_rest for r in results) / len(results)
+    avg_coverage = sum(r.coverage for r in results) / len(results)
+    avg_acc = sum(
+        r.directional_accuracy for r in results if r.directional_accuracy == r.directional_accuracy
+    ) / max(
+        1, sum(1 for r in results if r.directional_accuracy == r.directional_accuracy)
+    )
+    log.info(
+        "cli.train.summary",
+        folds=len(results),
+        avg_auc_up=round(avg_auc_up, 4),
+        avg_auc_down=round(avg_auc_down, 4),
+        avg_coverage=round(avg_coverage, 4),
+        avg_directional_accuracy=round(avg_acc, 4),
+        gate_passed=min(avg_auc_up, avg_auc_down) > 0.55,
+    )
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -280,6 +412,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_collect(args)
     if args.command == "download":
         return _cmd_download(args)
+    if args.command == "train":
+        return _cmd_train(args)
 
     parser.print_help()
     return 2
