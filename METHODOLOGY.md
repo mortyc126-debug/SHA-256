@@ -15268,3 +15268,125 @@ constructive, local, no-signaling. Ни одно расширение матем
 Код: Q6_emergent.py, Q7_topological.py, Q8_hypercomp.py, Q9_hyperreal.py,
 Q10_rgflow.py в `/tmp/wild2/`, не сохраняется.
 
+---
+
+## §87. Третий tour wild questions Q11-Q15 — 15/15 wall
+
+### 87.1 Q11: Game-equilibrium bit
+
+**Идея**: bit = Nash equilibrium игры. Mixed strategies — probabilistic.
+
+**Тест**: 10000 random 2x2 zero-sum games, max CHSH через equilibrium products.
+
+**Вердикт**: Nash + Correlated Equilibria bounded ≤ 2. Quantum games (Eisert
+1999) ломают это, но требуют quantum substrate. **Game theory классически
+не помогает.**
+
+### 87.2 Q12: Hybrid process + emergent
+
+**Идея**: Lafont-style + cellular automaton. Эмерджентные particles в
+process soup.
+
+**Тест**: γ/δ/ε reduction rules, 500 шагов. Stable steady state, emergent
+clusters, charge-like conservation. Bell-bounded.
+
+**Вердикт**: rich behavior, but **локальная эмерджентность сохраняет
+locality**. Hybrid не даёт non-local effective primitive. **Two weak локальных
+не дают одну сильную non-local.**
+
+### 87.3 Q13: Anti-bit (annihilation)
+
+**Идея**: states $\{0, 1, \bar{0}, \bar{1}\}$ с annihilation на встрече.
+Conservation законов как primitive.
+
+**Тест**: charge conservation verified (200-bit soup, 500 collisions). CHSH
+с anti-bit pair = perfect anti-correlation = 2 ровно (классический максимум
+для shared anti-correlation).
+
+**Вердикт**: новый conservation law, useful для error detection. **Не
+CHSH-breaker** — conservation alone gives only shared randomness.
+
+### 87.4 Q14: Meta-bit (derivative as primitive)
+
+**Идея**: state = (value, derivative). Operations preserve chain rule.
+
+**Тест**: реализован class MetaBit, autodiff XOR/AND работают. Discrimination
+"одинаковые values, разные derivatives" работает.
+
+**Вердикт**: **equivalent to Q9 hyperreal at level 1** = dual numbers =
+autodiff substrate. Standard part bounded ≤ 2 на CHSH. Useful, not mighty.
+
+### 87.5 Q15: Co-defining pair-primitive
+
+**Идея**: pair $(a, b)$ — atomic, single bit derived. Bell's locality
+assumption challenged.
+
+**Тест**: exhaustive поиск над 16 constraints + 4 bases per side. Local pair
+measurement → CHSH bounded ≤ 2. Non-local basis coupling → $> 2$ но это
+**signaling в маскировке**.
+
+**Вердикт**: «pair as atom» не помогает если measurements local. Locality
+assumption about MEASUREMENT, не state. **Bell wall ROBUST даже при
+изменении что считается primitive.**
+
+### 87.6 Совокупный итог: 15/15 wall
+
+После трёх туров — **convergent Bell-wall finding**:
+
+| тур | направления | результат |
+|---|---|---|
+| Q1-Q5 | measure, time, logic, process, self-ref | 5/5 wall |
+| Q6-Q10 | emergent, topology, oracle, hyperreal, RG | 5/5 wall |
+| Q11-Q15 | game theory, hybrid, anti-bit, meta, pair-prim | 5/5 wall |
+
+**Это закон, не подозрение**. После 15 wild attempts из 15 разных
+математических областей — никакой classical primitive не нарушает Bell
+без отказа от:
+- Constructiveness (Q8 hypercomp требует uncomputable)
+- Locality (Q5 non-local, Q15 non-local basis = signaling)
+- No-signaling (Q1 unbounded без marginals = no physics)
+
+### 87.7 Что мы выяснили положительно (15 туров)
+
+| направление | classical advantage |
+|---|---|
+| Q3 paraconsistent | contradiction tolerance |
+| Q4 process | deterministic concurrency |
+| Q6 emergent | compression via emergent particles |
+| Q7 topological | noise-robust integer invariants |
+| Q9 hyperreal / Q14 meta | autodiff |
+| Q10 RG | multigrid speedup |
+| Q12 hybrid | rich emergent dynamics (computational interest) |
+| Q13 anti-bit | charge-like conservation, error detection |
+| Q15 pair-prim | structural primitive design pattern |
+
+**9 из 15 → real classical advantages в специфических нишах**. Программа не
+теряет ценности, даже если "mighty bit" недостижим.
+
+### 87.8 Что осталось и куда дальше
+
+Один потенциальный escape, не пробованный полностью:
+**combinations of multiple wild ideas одновременно** (не parallel testing,
+а deep integration). Q12 был partial hybrid. Q11+Q5 game + self-ref.
+Q13+Q6 anti-bit emergent. Etc.
+
+**Hypothesis**: возможно single-axis wildness не пробивает wall, но
+структурная композиция нескольких pierces somehow.
+
+Альтернативно: после 15 attempts стоит **переформулировать цель** — может
+"mighty bit" в смысле quantum-replacement principally невозможен классически,
+и продуктивнее искать **architectural advantages** где классика beats quantum
+(memory cost, energy, robustness). Это уже частично сделано (§59-§60 honest
+optimization defeat, §63 frustrated systems s-bit win).
+
+### 87.9 Статус §87
+
+Тур 3 завершён. 15/15 wild attempts → 15/15 Bell wall. **Convergent law
+verified empirically через 15 ortho directions**. 9/15 дали practical
+classical wins в специфических domains.
+
+Следующий тур (Q16-Q20) попробует **deep combinations** диких идей.
+Если 4-й тур тоже даст 5/5 wall — нужен radical reframe цели.
+
+Код: Q11-Q15 в `/tmp/wild3/`, не сохраняется.
+
