@@ -3,8 +3,8 @@
 BTC perpetual scalping bot on Bybit. Risk-first architecture,
 5s–10min timeframe. Python 3.12 + pybit + uv.
 
-> Status: **Phase 1** — risk framework + market data collector (live WebSocket
-> ingest → Parquet). No trading logic yet.
+> Status: **Phase 1** — risk framework + live market-data collector
+> + historical data downloader. No trading logic yet.
 
 ## Quick start
 
@@ -40,7 +40,7 @@ scalping_bot/
 └── __main__.py    # `python -m scalping_bot`
 ```
 
-## Running the data collector
+## Running the live data collector
 
 ```bash
 # Mainnet public streams (no credentials needed)
@@ -53,18 +53,86 @@ uv run python -m scalping_bot collect --symbol BTCUSDT --depth 50
 uv run python -m scalping_bot collect --testnet
 ```
 
-Data layout:
+### Running in the background on your PC
+
+**Linux / macOS** — one-liner with `nohup`:
+
+```bash
+mkdir -p logs
+nohup uv run python -m scalping_bot collect \
+  > logs/collector_$(date +%Y%m%d_%H%M%S).jsonl 2>&1 &
+echo $! > logs/collector.pid
+```
+
+To stop: `kill $(cat logs/collector.pid)`.
+
+More robust: use `tmux` (survives SSH disconnects):
+
+```bash
+tmux new -d -s collector "uv run python -m scalping_bot collect"
+tmux attach -t collector   # to watch
+# Ctrl-b d to detach, leaves it running
+```
+
+**Windows** — PowerShell:
+
+```powershell
+Start-Process -WindowStyle Hidden -FilePath "uv" `
+  -ArgumentList "run","python","-m","scalping_bot","collect" `
+  -RedirectStandardOutput "logs\collector.jsonl"
+```
+
+Or Task Scheduler for autorun on boot.
+
+## Downloading historical data
+
+```bash
+# Trades only (~33 MB/day compressed, no date limit)
+uv run python -m scalping_bot download \
+  --kind trades --start 2025-06-01 --end 2025-12-31
+
+# Orderbook only (~290 MB/day zip, available since May 2025)
+uv run python -m scalping_bot download \
+  --kind orderbook --start 2025-06-01 --end 2025-06-30
+
+# Both (default)
+uv run python -m scalping_bot download \
+  --start 2025-06-01 --end 2025-06-07
+```
+
+Files go under `data/archives/` (raw zip/csv.gz), then get converted and
+written to `data/raw/` in the same hourly Parquet layout the live
+collector uses. Archives are deleted after conversion unless you pass
+`--keep-archives`.
+
+Sources:
+- Trades:    `public.bybit.com/trading/SYMBOL/SYMBOLYYYY-MM-DD.csv.gz`
+  (from March 2020)
+- Orderbook: `quote-saver.bycsi.com/orderbook/linear/SYMBOL/YYYY-MM-DD_SYMBOL_ob200.data.zip`
+  (from May 2025, ~290 MB/day zipped)
+
+## Data layout (live collector + historical downloader)
 
 ```
 data/raw/
 ├── trades/date=YYYY-MM-DD/BTCUSDT_HH.parquet
-├── orderbook/date=YYYY-MM-DD/BTCUSDT_HH.parquet                (deltas)
+├── orderbook/date=YYYY-MM-DD/BTCUSDT_HH.parquet           (deltas)
 ├── orderbook_snapshots/date=YYYY-MM-DD/BTCUSDT_HH.parquet
 └── tickers/date=YYYY-MM-DD/BTCUSDT_HH.parquet
 ```
 
 Compressed with snappy. Approx storage for BTCUSDT mainnet:
 ~10 MB/hour, ~240 MB/day, ~7 GB/month at depth=50.
+
+## Disk budget
+
+| Data type | Per day | 1 month | 6 months |
+|---|---|---|---|
+| Trades (historical) | 33 MB gz | 1 GB | 6 GB |
+| Trades (Parquet) | ~15 MB | 450 MB | 2.7 GB |
+| Orderbook (historical zip) | 290 MB | 8.7 GB | 52 GB |
+| Orderbook (Parquet) | ~100 MB | 3 GB | 18 GB |
+| Live collector | — | 7 GB | — |
 
 Risk subsystem is the foundation. It will be extended in later phases
 with pre-trade checks, but the constants in `risk/limits.py` never
