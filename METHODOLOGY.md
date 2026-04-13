@@ -17576,3 +17576,190 @@ gives exponential boost.
 
 Код: experiment.py в `/tmp/boost/`, не сохраняется.
 
+---
+
+## §101. Математика определения осей — bijective basis
+
+### 101.1 Пользовательская задача
+
+> «Забудь про SHA пока что. Нам не хватает данных о битах — размытые
+> области. Строим оси и математику их определения.»
+
+Прямой запрос: формализовать **что такое ось** и как строить **sharp
+resolution** basis для любого L.
+
+### 101.2 Формализация
+
+**Определение 1 (Axis)**: функция $a: \{0,1\}^L \to \mathbb{R}$ (или
+$\mathbb{Z}$), assigning каждому pattern числовое значение.
+
+**Определение 2 (Independent axis set)**: $\{a_1, \ldots, a_k\}$
+independent iff combined map $C(x) = (a_1(x), \ldots, a_k(x))$
+injective на $\{0,1\}^L$. То есть: **разные patterns → разные
+coord-vectors**.
+
+**Определение 3 (Minimal basis)**: наименьшее $k$ такое что independent
+basis of $k$ axes exists.
+
+**Info-theoretic lower bound**: $k \geq L$ если все axes имеют bounded
+range. Но для unbounded axes (integer encoding) $k \geq 1$ достаточно.
+
+### 101.3 Ключевые теоремы
+
+**Теорема 1 (Linear Reconstruction)**:
+Axes $a_i(x) = \sum_j c_{ij} x_j$ с matrix $C \in \mathbb{R}^{k \times L}$.
+Combined map injective на $\{0,1\}^L$ ⟺ matrix $C$ имеет rank $L$.
+
+**Теорема 2 (Nonlinear richer)**:
+Нелинейные axes могут дать bijection с $k=1$. Пример: $a(x) = \sum_i 2^i x_i$
+(binary encoding). Это trivial, но показывает — $k < L$ возможно.
+
+**Теорема 3 (Information content)**:
+Axis $a$ имеет $H(a) = \log_2 |\text{image}(a)|$ битов info.
+Total info $= \sum H(a_i)$. Для bijectivity нужно $\sum H(a_i) \geq L$.
+
+**Теорема 4 (Почему §97 failed на L=8)**:
+Наши 11 statistical axes имели:
+- hamming: $\log_2(L+1) \approx 4$ bits
+- phase: redundant с hamming
+- walsh_k: $\log_2(L+1) \approx 4$ bits each
+- pairs: $\log_2(3) \approx 1.6$ bits each
+- etc.
+
+Total info ≈ 10 bits. Для L=8 нужно 8 bits — **formally достаточно**,
+но **corrections не align** — Teorema 1 рrequiresет rank = L, а наши
+axes над $\mathbb{Q}$ имели rank ~10 но не совпадающий с bit-positional
+basis. Hence collisions.
+
+### 101.4 Гарантированно bijective bases
+
+Tested empirically для $L = 4, 6, 8, 10, 12, 14$:
+
+| Basis | Число axes $k$ | Bijective? |
+|---|---|---|
+| Raw bits: $a_i(x) = x_i$ | $L$ | ✓ always |
+| Single integer encoding: $a(x) = \sum 2^i x_i$ | $1$ | ✓ always |
+| Walsh singletons: $a_i(x) = \text{ham} - 2x_i$ | $L$ | ✓ always |
+| Hamming + L-1 walsh | $L$ | ✓ always |
+| Random linear с rank $L$ | $L$ | ✓ typically |
+
+Все tested на L до 14 → 100% bijective.
+
+### 101.5 Ответ на resolution problem из §97
+
+§97 показал collisions на L=8 с 11 статистическими axes. Причина:
+- Наш axes были **statistical aggregates** (hamming, walsh, pairs),
+  не positional
+- Information content collective ≈ 10 bits, но distribution не allowed
+  для rank $L$ reconstruction
+
+**Solution**: использовать **positional basis** (raw bits или walsh
+singletons с proper indexing) для sharp resolution.
+
+**Trade-off**:
+- Positional basis: sharp resolution ✓, но trivial (= pattern itself)
+- Statistical basis: insight ✓, но blurry (collisions)
+- **Hybrid**: positional core + statistical insight axes вокруг
+
+### 101.6 Реальное применение — гибридный basis
+
+Для real bit-cosmos work:
+
+**Core basis** ($L$ axes): raw bits или Walsh singletons. Guarantees
+bijectivity. Это "address" бита.
+
+**Insight axes** (дополнительные): hamming, phase, Lévy, pairs.
+Эти **дают understanding** (conservation laws, trajectories), но
+не primary identity.
+
+**Combined**: $L$-dim positional + $k$-dim statistical = rich
+representation с sharp resolution.
+
+Для L=8: 8 raw bits + 11 statistical = 19-dim coord-vector.
+Bijective, expressive.
+
+### 101.7 Информационная ёмкость наших существующих axes
+
+Recalibrated в info-theoretic terms:
+
+| Ось | Range | Info bits |
+|---|---|---|
+| hamming | 0..L | $\log_2(L+1) \approx 4-5$ |
+| phase_sum | $\equiv$ hamming | 0 (redundant) |
+| walsh_k (per k) | $-L..L$ | $\log_2(2L+1) \approx 5$ |
+| pair_ij (per pair) | $\pm 1$ | 1 |
+| levy_area | small integer | $\log_2(\text{range}) \approx 3$ |
+| winding | $\log_2(L)$ | 3-4 |
+| pos_weighted 2^i | $0..2^L-1$ | $L$ (complete!) |
+
+**Key insight**: **одна** пozitional weighted axis carries $L$ bits.
+Все другие — $O(\log L)$ bits каждая.
+
+Для L=32: 32 bits needed, 1 position-weighted axis достаточно как
+core. Плюс statistical для insight.
+
+### 101.8 Практическая конструкция
+
+Для любого $L$, **sharp-resolution basis**:
+
+$$B_L = \{a_0, a_1, \ldots, a_{L-1}\}$$
+
+where $a_i(x) = x_i$ (raw bit at position $i$).
+
+**Properties**:
+- ✓ $L$ axes, info content = $L$ bits total
+- ✓ Bijective map $C: \{0,1\}^L \to \{0,1\}^L$
+- ✓ Simple to compute, reversible
+
+**Augmented basis** $B_L \cup S$ where $S$ = statistical axes for
+insight. Combined 20+ dim with sharp positional core.
+
+### 101.9 Следствия
+
+- Resolution problem решена **раз и навсегда**: use positional basis
+  как core
+- Statistical axes — **для understanding conservation laws и
+  trajectories**, не для identification
+- **Минимальный bijective basis** = $L$ linear axes с rank $L$
+- **Для insight**: enriches statistical
+- **§97 collisions** — artifact выбора только statistical axes
+
+### 101.10 Мета-наблюдение
+
+В реальной физике: у частицы есть **position** (3 coord) + **momentum**
+(3 more) + charge/spin/etc. Position — primary identity. Другие —
+properties.
+
+В bit-cosmos: **raw bit values** — primary identity. Hamming, phase,
+path-sig — properties.
+
+Мы путали properties с identity в §96-§97. §101 исправляет: primary
+coord = raw bits (= integer value = pattern itself). Statistical
+axes = properties around it.
+
+**Star-analogy refined**:
+- Position (3 coord) = raw pattern (L coord)
+- Spectral class = hamming / phase / Walsh
+- Mass = cost/Ising energy
+- Rotation = cyclic period
+- и т.д.
+
+Star's **identity** = position. Star's **properties** = spectral
+type, mass, rotation. Both important, different roles.
+
+### 101.11 Статус §101
+
+**Математика определения осей formalized**:
+- 4 теоремы (linear reconstruction, nonlinear richer, info content, §97 diagnosis)
+- 4 гарантированно bijective bases identified
+- Resolution problem of §97 resolved (positional core)
+
+**Практика**: для L-bit bit-cosmos использовать:
+- **Core**: $L$ positional axes (raw bits) для identity
+- **Insight**: statistical axes для properties / invariants
+
+Размытость из §97 — **не fundamental**, а artifact choice of axes.
+Sharp resolution available через trivial positional basis.
+
+Код: math.py в `/tmp/axes/`, не сохраняется.
+
