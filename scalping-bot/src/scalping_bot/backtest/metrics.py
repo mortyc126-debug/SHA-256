@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 from scalping_bot.backtest.engine import CompletedTrade
 
-# Bars per trading year. Crypto is 24/7 → 365 days × 86400 sec.
+# Bars per trading year. Crypto is 24/7: 365 days * 86400 sec.
 SECONDS_PER_YEAR: float = 365 * 86_400
 
 

@@ -141,6 +141,28 @@ def _build_parser() -> argparse.ArgumentParser:
     train.add_argument("--n-splits", type=int, default=4)
     train.add_argument("--n-pairwise", type=int, default=10)
     train.add_argument("--enter-threshold", type=float, default=0.55)
+    train.add_argument(
+        "--save-model",
+        type=Path,
+        default=None,
+        help="If set, fit on the full range and save final model to this path.",
+    )
+
+    paper = sub.add_parser("paper-trade", help="Live paper trading on Bybit mainnet WS.")
+    paper.add_argument("--symbol", default=None)
+    paper.add_argument("--model", type=Path, required=True, help="Path to a saved model.")
+    paper.add_argument("--starting-capital", type=float, default=100.0)
+    paper.add_argument("--leverage", type=float, default=3.0)
+    paper.add_argument("--enter-threshold", type=float, default=0.45)
+    paper.add_argument("--exit-threshold", type=float, default=0.50)
+    paper.add_argument("--take-profit-bps", type=float, default=20.0)
+    paper.add_argument("--stop-loss-bps", type=float, default=30.0)
+    paper.add_argument("--max-hold-bars", type=int, default=300)
+    paper.add_argument("--kelly-fraction", type=float, default=0.20)
+    paper.add_argument("--feature-window-bars", type=int, default=600)
+    paper.add_argument("--duration", type=float, default=None)
+    paper.add_argument("--maker", action="store_true")
+    paper.add_argument("--testnet", action="store_true")
 
     backtest = sub.add_parser("backtest", help="Walk-forward backtest with realistic costs.")
     backtest.add_argument("--symbol", default=None)
@@ -425,6 +447,20 @@ def _cmd_train(args: argparse.Namespace) -> int:
         avg_directional_accuracy=round(avg_acc, 4),
         gate_passed=min(avg_auc_up, avg_auc_down) > 0.55,
     )
+
+    if args.save_model is not None:
+        from scalping_bot.live.model_io import save_model
+
+        log.info("cli.train.saving_full_fit", path=str(args.save_model))
+        d = Distinguisher(
+            feature_cols=feature_cols,
+            label_col=label_col,
+            n_pairwise=args.n_pairwise,
+        )
+        d.fit(fm)
+        save_model(d, args.save_model)
+        log.info("cli.train.model_saved", path=str(args.save_model))
+
     return 0
 
 
@@ -522,6 +558,61 @@ def _cmd_backtest(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_paper_trade(args: argparse.Namespace) -> int:
+    import signal as _signal
+
+    from scalping_bot.backtest.engine import FeeModel
+    from scalping_bot.backtest.strategy import StrategyConfig, ThresholdStrategy
+    from scalping_bot.live import PaperBroker, PaperTradingSession, load_model
+
+    settings = get_settings()
+    settings.ensure_dirs()
+    log: structlog.stdlib.BoundLogger = setup_logging(log_level=settings.log_level)
+
+    symbol = args.symbol or settings.symbol
+    log.info("cli.paper.starting", symbol=symbol, model=str(args.model))
+
+    model = load_model(args.model)
+    broker = PaperBroker(
+        starting_capital_usd=args.starting_capital,
+        leverage=args.leverage,
+        fee_model=FeeModel(),
+        use_taker=not args.maker,
+    )
+    strategy = ThresholdStrategy(
+        config=StrategyConfig(
+            enter_threshold=args.enter_threshold,
+            exit_threshold=args.exit_threshold,
+            take_profit_bps=args.take_profit_bps,
+            stop_loss_bps=args.stop_loss_bps,
+            max_hold_bars=args.max_hold_bars,
+            kelly_fraction=args.kelly_fraction,
+        )
+    )
+    session = PaperTradingSession(
+        symbol=symbol,
+        model=model,
+        broker=broker,
+        strategy=strategy,
+        feature_window_bars=args.feature_window_bars,
+        testnet=args.testnet,
+    )
+
+    def _handle_signal(signum: int, frame: FrameType | None) -> None:
+        log.info("cli.paper.signal", signum=signum)
+        session.stop()
+
+    _signal.signal(_signal.SIGINT, _handle_signal)
+    _signal.signal(_signal.SIGTERM, _handle_signal)
+
+    try:
+        session.run(duration_seconds=args.duration)
+    except Exception as exc:
+        log.error("cli.paper.failed", error=str(exc), error_type=type(exc).__name__)
+        return 1
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -534,6 +625,8 @@ def main(argv: list[str] | None = None) -> int:
         return _cmd_train(args)
     if args.command == "backtest":
         return _cmd_backtest(args)
+    if args.command == "paper-trade":
+        return _cmd_paper_trade(args)
 
     parser.print_help()
     return 2
