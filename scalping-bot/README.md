@@ -3,8 +3,8 @@
 BTC perpetual scalping bot on Bybit. Risk-first architecture,
 5s–10min timeframe. Python 3.12 + pybit + uv.
 
-> Status: **Phase 0** — risk framework + kill switch only.
-> No data collection or trading logic yet.
+> Status: **Phase 1** — risk framework + market data collector (live WebSocket
+> ingest → Parquet). No trading logic yet.
 
 ## Quick start
 
@@ -28,14 +28,43 @@ cp .env.example .env
 
 ## Architecture
 
-Three independent layers, each with its own tests:
+Independent layers, each with its own tests:
 
 ```
 scalping_bot/
 ├── risk/          # Hardcoded limits, kill switch, P&L accounting
+├── market_data/   # WebSocket ingest, orderbook reconstruction, Parquet recorder
 ├── config/        # Runtime settings via pydantic-settings
-└── utils/         # Structured logging (structlog JSON)
+├── utils/         # Structured logging (structlog JSON)
+├── cli.py         # CLI dispatcher
+└── __main__.py    # `python -m scalping_bot`
 ```
+
+## Running the data collector
+
+```bash
+# Mainnet public streams (no credentials needed)
+uv run python -m scalping_bot collect --duration 3600
+
+# Custom symbol and depth
+uv run python -m scalping_bot collect --symbol BTCUSDT --depth 50
+
+# Testnet (lower activity; not representative of real microstructure)
+uv run python -m scalping_bot collect --testnet
+```
+
+Data layout:
+
+```
+data/raw/
+├── trades/date=YYYY-MM-DD/BTCUSDT_HH.parquet
+├── orderbook/date=YYYY-MM-DD/BTCUSDT_HH.parquet                (deltas)
+├── orderbook_snapshots/date=YYYY-MM-DD/BTCUSDT_HH.parquet
+└── tickers/date=YYYY-MM-DD/BTCUSDT_HH.parquet
+```
+
+Compressed with snappy. Approx storage for BTCUSDT mainnet:
+~10 MB/hour, ~240 MB/day, ~7 GB/month at depth=50.
 
 Risk subsystem is the foundation. It will be extended in later phases
 with pre-trade checks, but the constants in `risk/limits.py` never
