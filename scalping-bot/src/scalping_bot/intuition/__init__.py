@@ -16,6 +16,7 @@ yesterday's microstructure regime is gone.
 from scalping_bot.intuition.engine import IntuitionConfig, IntuitionEngine
 from scalping_bot.intuition.pattern_match import PatternMatcher, PatternPrediction
 from scalping_bot.intuition.super_state import SuperStateEngine, SuperStatePrediction
+from scalping_bot.intuition.trader import Action, IntuitionTrader, IntuitionTraderConfig
 from scalping_bot.intuition.trailing import TrailingStopConfig, TrailingStopState
 from scalping_bot.intuition.voters import (
     VoterResult,
@@ -26,8 +27,11 @@ from scalping_bot.intuition.voters import (
 )
 
 __all__ = [
+    "Action",
     "IntuitionConfig",
     "IntuitionEngine",
+    "IntuitionTrader",
+    "IntuitionTraderConfig",
     "PatternMatcher",
     "PatternPrediction",
     "SuperStateEngine",
