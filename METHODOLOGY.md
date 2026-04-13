@@ -16594,3 +16594,138 @@ Program's path forward:
 
 Код: probe.py в `/tmp/erasure/`, не сохраняется.
 
+---
+
+## §95. Построение bit-cosmos math toolkit с нуля — уровень 0
+
+### 95.1 Переориентация по пользовательской методологии
+
+Пользователь справедливо заметил: я прыгнул на SHA-256 со **стандартными
+инструментами**, которые не работают в bit-cosmos среде. Он напоминает:
+начинать с **простых мини-задач**, постепенно усложнять, строить
+**собственные алгоритмы и математику**.
+
+§95 исправляет курс. Начинаем с уровня 0 — 4-битные patterns, минимальные
+операции, собственные formulas для coord-space arithmetic.
+
+### 95.2 Координатное пространство на L=4
+
+Для patterns длины 4 определили coord-vector из 11 координат:
+- `hamming`, `phase` (2 sum-like)
+- `walsh_1, walsh_2, walsh_3` (3 Walsh coefs)
+- `pair_01, pair_02, pair_03, pair_12, pair_13, pair_23` (6 pairs)
+
+**Bijection проверена**: 16 patterns → 16 unique coord-vectors (0 collisions).
+Это значит **coord-vector содержит всю информацию** о pattern, которую
+можно извлечь.
+
+### 95.3 Формула для ROTATE
+
+`ROTATE_k(P)` = bit $P_i$ идёт на position $(i+k) \mod L$.
+
+**Coord-transformation**:
+- $\text{hamming} \to \text{hamming}$ (invariant)
+- $\text{phase} \to \text{phase}$ (invariant)
+- $\text{walsh}_m \to \text{walsh}_{m'}$ (permutation по частотам)
+- $\text{pair}_{i,j} \to \text{pair}_{(i-k)\%L, (j-k)\%L}$ (permutation по индексам)
+
+**Verified empirically**: для $P = [1,0,1,1]$ и ROT_1:
+- hamming 3 → 3 ✓
+- pair_01 = -1 → pair_12 = -1 ✓
+
+**Это первая native формула** bit-cosmos arithmetic.
+
+### 95.4 Формула для NOT
+
+`NOT(P)` = каждый бит flipping.
+
+**Coord-transformation**:
+- $\text{hamming} \to L - \text{hamming}$
+- $\text{phase} \to -\text{phase}$
+- $\text{pair}_{i,j} \to \text{pair}_{i,j}$ (**INVARIANT** — $(-1)(-1) = +1$)
+
+**Verified**: $P = [1,0,1,1]$, NOT $P = [0,1,0,0]$:
+- hamming 3 → 1 = 4-3 ✓
+- phase 2 → -2 ✓
+- все pairs invariant ✓
+
+### 95.5 XOR с константой — table lookup
+
+$P \oplus C$: bit-level операция не имеет simple formula через одну
+координату $P$. Нужны либо:
+- Joint information (pair coords, walsh coords) — частично работает
+- Lookup table (coord(P), C) → coord(P⊕C)
+
+**Построена полная lookup table** на $16 \times 16 = 256$ пар.
+
+**Это пока проба**: для 4-бит table feasible. Для больших L table растёт
+экспоненциально. Нужно найти **structural formula** для XOR, используя
+Walsh transform (который linear under XOR) или другую координату.
+
+### 95.6 Композиция — trajectory
+
+Sequence ROT_1 → XOR_0101 → NOT → ROT_2 → XOR_1010 на start = [0,1,1,0].
+
+Через bits trajectory: [0,1,1,0] → [0,0,1,1] → [0,1,1,0] → [1,0,0,1] →
+[0,1,1,0] → [1,1,0,0].
+
+**Hamming всегда 2**, потому что:
+- ROT invariant
+- XOR с const: hamming меняется предсказуемо через count
+- NOT: hamming → L - hamming
+
+Можем track hamming **не вычисляя биты**. Это микро-Laplace-demon
+в действии.
+
+### 95.7 Что это даёт
+
+**Впервые у программы есть свой минимальный math toolkit**:
+- ROT формула ✓
+- NOT формула ✓
+- XOR через lookup (temporary)
+- Композиция работает
+
+**На L=4 это маленький игрушечный игр — но это НАША математика**, не
+заимствованная. Дальше строим level 1 — scale to L=8, L=16, потом
+к SHA state.
+
+### 95.8 План progression
+
+**Уровень 1**: L=8, 12, 16. Формулы для ROT, NOT scale линейно. XOR
+требует либо structural formula (через Walsh) либо compressed tables.
+
+**Уровень 2**: добавить operations — AND, OR, ADD mod $2^L$.
+- AND: нелинейна, нужны coord-formulas для pair-products
+- ADD: carry-chain structure — §51 findings directly applicable
+
+**Уровень 3**: small circuits с memory, регистрами.
+
+**Уровень 4**: simplified hash-like functions (2-3 rounds of XOR+ROT).
+
+**Уровень 5**: MD5-like, reduced SHA.
+
+**Уровень 6+**: full SHA-256.
+
+Каждый уровень — свои **новые formulas, новые invariants**. Programма
+**не standard classical math**, a purpose-built for bit-cosmos.
+
+### 95.9 Следующий шаг
+
+**Q95.1**: scale level 1 до L=8. Проверить что все formulas (ROT, NOT)
+остаются valid. Extend XOR — найти structural formula вместо table.
+
+**Q95.2**: добавить AND operation. Найти formula через pair/triple
+coords.
+
+**Q95.3**: связать с §51 pair-products для ADD mod $2^L$ (carry-chain).
+
+### 95.10 Статус §95
+
+**Начало собственного toolkit для bit-cosmos math**. L=4, 3 базовые
+операции (ROT, NOT, XOR), 2 прямые формулы + 1 table.
+
+Это MICRO beginning, но впервые правильное: **строим с нуля**, не
+заимствуем standard tools. Следующие разделы — scale up systematically.
+
+Код: level0.py в `/tmp/tools/`, не сохраняется.
+
