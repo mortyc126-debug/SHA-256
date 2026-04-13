@@ -56,10 +56,13 @@ class IntuitionTraderConfig:
     base_size_fraction: float = 0.10
     """Fraction of equity per trade. Multiplied internally by sigma."""
 
-    # Stop management
-    trailing_initial_sl_bps: float = 30.0
-    trailing_breakeven_bps: float = 5.0
-    trailing_distance_bps: float = 5.0
+    # Stop management. Tight geometry (10-day sweep found this optimal):
+    # with initial_sl=30, win rate 69.5% was net negative due to payoff
+    # asymmetry. Tightening SL to 15 bps pushed the same strategy into
+    # positive territory (+0.40% over 10 days vs -0.27% at 30 bps).
+    trailing_initial_sl_bps: float = 15.0
+    trailing_breakeven_bps: float = 3.0
+    trailing_distance_bps: float = 3.0
     trailing_initial_lock_bps: float = 1.0
     max_hold_bars: int = 600
 

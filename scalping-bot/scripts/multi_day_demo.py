@@ -98,20 +98,9 @@ def main() -> None:
     print(f"Strategy: σ-conviction (4 voters + super-state) + trailing stop")
     print(f"Leverage cap: 10x, fees: maker (-0.005% rebate)\n")
 
-    cfg = IntuitionTraderConfig(
-        sigma_enter=0.50,
-        sigma_exit=0.25,
-        confirm_bars=10,
-        cooldown_bars=60,
-        base_size_fraction=0.10,
-        trailing_initial_sl_bps=30.0,
-        trailing_breakeven_bps=5.0,
-        trailing_distance_bps=5.0,
-        trailing_initial_lock_bps=1.0,
-        max_hold_bars=600,
-        use_super_state=True,
-        super_state_n_archetypes=12,
-    )
+    # Use tuned defaults from IntuitionTraderConfig. Override only what's
+    # specific to this demo (leave trailing, sigma, etc. at tested optima).
+    cfg = IntuitionTraderConfig(use_super_state=True, super_state_n_archetypes=12)
     trader = IntuitionTrader(config=cfg)
 
     print(f"{'Date':12s}  {'Bars':>6}  {'Trades':>6}  {'Win%':>6}  "
