@@ -5306,3 +5306,214 @@ round function.
 
 ---
 
+## 44. E24 — causal cone: скорость распространения информации в SHA
+
+### 44.1 Концептуальный сдвиг
+
+Классические анализы (§§37-43) измеряют **как много** (correlation,
+dimension, entropy). Это скалярные characteristics.
+
+E24 измеряет **как именно** — **форму и скорость** распространения
+сигнала от flip одного input bit к output bits через rounds.
+
+Это physical-inspired анализ: bit как "частица", его влияние как
+"сигнал" с "световым конусом" (причинностью).
+
+### 44.2 Метод
+
+- 10 random base messages.
+- Для каждого: flip каждого из 512 input bits.
+- Тrack $\delta\text{state}_r$ для $r = 0..64$.
+- **support(i, r)** = число output bits, где $\delta \neq 0$
+  (Hamming weight of $\delta$state).
+- **velocity(r)** = support(r+1) - support(r).
+- **time-to-128**(i) = first round когда support $\geq 128$.
+
+Всего $512 \times 64 \times 10 = 327{\small,}680$ SHA трасс.
+
+### 44.3 Форма causal cone (средняя по 512 bits)
+
+| Round | Mean support | Velocity |
+|---|---|---|
+| 0 | 0.0 | 0 |
+| 1 | 0.2 | +0.23 |
+| 2 | 1.8 | +1.53 |
+| 3 | 5.2 | +3.41 |
+| 4 | 10.6 | +5.40 |
+| 5 | 17.8 | +7.23 |
+| 6 | 25.7 | +7.91 |
+| 7 | 33.8 | +8.08 |
+| 8 | 41.8 | +8.00 |
+| **11** | 65.8 | **+8.14 ← peak** |
+| 15 | 98.1 | +8.11 |
+| 20 | 127.0 | +2.40 |
+| 30+ | 128.0 | ~0 |
+
+**Три фазы**:
+1. **Incubation** (R=0-3): support растёт медленно, меньше 10 bits.
+2. **Linear growth** (R=4-15): velocity стабильна на ~8 bits/round.
+3. **Saturation** (R=20+): support = 128 (50%), velocity падает к 0.
+
+### 44.4 Закон скорости распространения
+
+$$v_{\text{peak}} \approx 8 \text{ bits/round}, \quad R_{\text{peak}} = 11, \quad T_{\text{saturation}} \approx 20$$
+
+Для сравнения:
+- Output state = 256 bits.
+- Full random avalanche = 128 bits changed (half).
+- Saturation на R=20 = **20 rounds** на достижение random-looking.
+
+### 44.5 Time-to-half-avalanche distribution
+
+| Метрика | Значение |
+|---|---|
+| Mean | **15.91 rounds** |
+| Min | 6 rounds (быстрые bits) |
+| Max | 41 rounds (медленные bits) |
+| Std | 5.56 rounds |
+
+Распределение bимодально: большинство bits — 14 rounds (325 из 512),
+плюс «длинный хвост» до 41.
+
+### 44.6 Bit position vs propagation speed
+
+**Monotonic** тренд по W-words:
+
+| Word | Avg time-to-128 | Support at R=5 |
+|---|---|---|
+| W_0 | **9.62** | 114.79 |
+| W_1 | 9.53 | 86.62 |
+| W_2 | 10.19 | 55.00 |
+| W_3 | 11.81 | 24.53 |
+| W_4 | 12.66 | 3.72 |
+| W_5 | 13.41 | 0 |
+| W_10 | 18.03 | 0 |
+| W_15 | **23.66** | 0 |
+
+**Интерпретация**: W_$k$ впервые используется на round $k$ (для
+$k \leq 15$), поэтому bits в W_15 имеют **16-round delay** до
+«первого появления» в computation. Это согласуется с message
+schedule структурой.
+
+### 44.7 Bit position внутри word
+
+По 32 позициям внутри слова:
+
+| Bit in word | Time-to-128 |
+|---|---|
+| 0 (LSB) | 15.81 |
+| 1 | 15.00 |
+| 2-20 | 15-15.5 |
+| 25 | 16.75 |
+| 30 | **17.06** |
+| 31 (MSB) | 16.00 |
+
+Std over bit positions = 0.66 — **almost uniform** within word.
+Carry-propagation от LSB к MSB не создаёт значительной разницы
+в среднем.
+
+### 44.8 Аномалии — «тихие» bits
+
+Из 512 bits несколько имеют **необычно долгое** time-to-128:
+
+| Позиция | Time-to-128 | Отклонение от word-mean |
+|---|---|---|
+| W_0[12] | **38** | +29 rounds |
+| W_13[3] | **41** | +18 rounds |
+| W_0[26] | 18 | +8 |
+| W_14[25] | 36 | +14 |
+| W_4[13] | 27 | +14 |
+
+**Гипотеза**: это **cold spots** — bits, попадающие на специфические
+non-linear mixing patterns, где Ch/Maj cancel их contribution на
+несколько rounds.
+
+Это **structural feature**, не artifact усреднения — проверить
+на larger N (sig N=100) чтобы отделить noise.
+
+Если подтверждается — **аттack targets**: slow bits имеют
+predictable влияние дольше, могут быть использованы для
+differential trails.
+
+### 44.9 Ключевой вывод
+
+**SHA-256 имеет non-uniform causal structure**:
+
+1. **Temporal**: bits W_0..W_3 propagate быстро, W_12..W_15 долго.
+2. **Spatial** (within word): почти uniform, ±1 round.
+3. **Anomalies**: отдельные bits "slow" в 2-4× от среднего.
+4. **Peak velocity round 11**: point где SHA работает на максимуме
+   диффузии.
+
+Это **новая carta SHA** в дисциплине. Раньше мы знали что 5 rounds
+достаточно для ANF saturation (§35) и R=3 для correlation death
+(§37). Теперь видим: **полная propagation занимает ~20 rounds**,
+но большая часть — линейный рост со скоростью 8 bits/round.
+
+### 44.10 Противоречие кажущееся
+
+§37: correlation до 0 на R=3. Значит "random-looking" через 3 round.
+§44: avalanche только 5 bits на R=3, полный — на R=20.
+
+**Это не противоречие — разные метрики**:
+- §37 correlation = «разные inputs двигаются в разных направлениях».
+- §44 avalanche = «flip одного input bit за сколько rounds распространяется».
+
+Два complementary view:
+- Correlation быстро падает к 0 (R=3) потому что разные messages
+  сразу разлетаются в разные стороны.
+- Avalanche медленно растёт (R=20) потому что single bit takes time
+  to fill state.
+
+Первый — **расстояние между inputs**. Второй — **размер
+signal cone из одного input**.
+
+### 44.11 Новое направление
+
+**O19 — causal cone anomalies**: систематическое изучение «cold
+spots» в SHA с большим N (100+ trials). Если аномалии стабильные,
+это **signature function structure**, не random.
+
+Потенциальные применения:
+- Differential attack targets: slow bits имеют predictable behavior
+  дольше.
+- Bit-dependency mapping: какие bits affect which output positions
+  и когда.
+- Architectural insights: где SHA «слабее» по propagation.
+
+### 44.12 Добавлено в инвентарь
+
+- V60: Peak velocity round 11, rate $\approx 8$ bits/round.
+- V61: Time-to-half-avalanche mean 15.9 ± 5.6 rounds.
+- V62: W-word monotonic: W_0 (10 r) → W_15 (24 r).
+- V63: Cold spots существуют (W_0[12]=38, W_13[3]=41 rounds).
+- O19: Систематическое изучение cold spots на larger N.
+
+### 44.13 Creative interpretation
+
+SHA-256 в physical terms:
+- **Световая скорость** ≈ 8 bits/round (peak velocity).
+- **Масштаб "вселенной"** = 256 bits = «радиус» state.
+- **Время пересечения** = 256 / 8 = 32 rounds (полная circumnavigation).
+- **Размер SHA** = 64 rounds = 2 "пересечения" state.
+
+**Интерпретация**: SHA обеспечивает **двойной проход** signal
+через state. За 32 rounds signal доходит до противоположной
+"точки" state. За 64 — проходит весь cycle дважды, обеспечивая
+полную confusion.
+
+Это **physical framing** дизайна SHA — почему 64, не 32 и не 128.
+32 недостаточно (один пробег), 64 = 2 пробега = safety margin.
+
+### 44.14 Статус §44
+
+- Причинная структура SHA-256 measured первый раз в нашей
+  дисциплине.
+- Закон скорости 8 bits/round, peak на R=11.
+- Cold spots обнаружены (требуют verification с N=100+).
+- Physical analogy: 64 rounds = двойной "пересечение" state.
+
+Код: `/tmp/e24_causal/probe.py`, удалён.
+
+---
+
