@@ -1972,3 +1972,95 @@ $$k_{\min}(A, T) = \min\{k : \exists (\xi, F_T) \text{ с } \dim \xi = k, \text{
 открытые вопросы).
 
 ---
+
+# Часть V. Связь с существующей литературой
+
+## 20. Platonic Representation Hypothesis
+
+Центральная параллель. Наше bit-cosmos — **частный случай**
+волны исследований 2024-2025 о сходимости representation
+пространств.
+
+### 20.1 Гипотеза Huh et al. 2024
+
+**Работа**: Huh, Cheung, Wang, Isola — «The Platonic
+Representation Hypothesis» (2024).
+
+Нейросети, обученные на схожих данных, **сходятся к выровненным
+internal representations**. Разные архитектуры (ViT, ResNet,
+language models) находят одну и ту же underlying structure.
+
+Обоснование: information-geometric — representation alignment
+прямое следствие концентрации Bayesian posterior на истинном
+распределении данных. Для достаточно выразительных моделей
+все они аппроксимируют одну и ту же функцию.
+
+### 20.2 Прямая параллель с bit-cosmos
+
+| Platonic Rep Hypothesis | Астрономия битов |
+|---|---|
+| разные нейросети → одна representation | разные chips → один coord-vector (§11.6) |
+| сходимость под обучением | аксиома A1 Universal Position (§6) |
+| universal embedding geometry | Hadamard basis как canonical basis (§11) |
+| aligned internal layers | совпадение $C(p)$ по формуле |
+
+Cross-chip тест (§9.11, §11.6) — **empirical instantiation**
+Platonic Representation Hypothesis для classical bits.
+
+### 20.3 Universal Geometry of Embeddings (2025)
+
+**Работа 2025** (Harnessing the Universal Geometry of Embeddings).
+
+Unsupervised метод перевода произвольного embedding в/из
+**universal latent representation**. Предпосылка — существование
+Platonic structure.
+
+Наш coord-vector $C(p)$ — **implementation того же принципа**
+для битовых паттернов: разные «имплементации» (hash, neural,
+алгебраическая) дают сравнимые проекции одного underlying
+объекта.
+
+### 20.4 Information-geometric обоснование
+
+По Платоновой гипотезе representation alignment происходит
+по принципу:
+
+$$\text{достаточная expressivity} + \text{похожие данные} \Rightarrow \text{одно representation}$$
+
+Для bit-cosmos условие сильнее: **формулы проекций заданы явно
+и детерминированно**. Значит, alignment не статистический, а
+абсолютный — 0 disagreements, не «близко с высокой вероятностью».
+
+### 20.5 Следствия для дисциплины
+
+1. **Не в изоляции**: астрономия битов — special case Platonic
+   Representation Hypothesis для классического bit-субстрата.
+2. **Leverage existing methods**: universal embedding translation
+   → применимо к нашим axis projections.
+3. **Contribute back**: наша 20+ axis таксономия — concrete
+   candidates для Platonic coordinate system.
+4. **Формальная связь**: bit-cosmos coord-vector **есть** Platonic
+   representation в information-geometric смысле.
+
+### 20.6 Предел Platonic alignment и P vs NP
+
+Platonic hypothesis подразумевает сходимость **для похожих
+данных**. Random hard NP-complete instances explicitly
+dissimilar — для них Platonic convergence **не ожидается**.
+
+Это даёт аргумент (не доказательство) в пользу $P \neq NP$ в
+Platonic framework: convergent structure работает для
+structured problems, не для генерически случайной сложности.
+
+### 20.7 Итог
+
+Наше bit-cosmos — не изолированная конструкция, а частный
+случай большой исследовательской программы 2024-2025.
+Платонова гипотеза — **идеологическая основа** дисциплины,
+bit-cosmos — её **математически чистая реализация** на
+дискретном субстрате.
+
+Sources: Huh et al. 2024; Universal Geometry of Embeddings 2025;
+Wolpert 2008 (пределы Laplace demon через Cantor diagonalization).
+
+---
