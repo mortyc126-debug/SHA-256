@@ -22593,3 +22593,206 @@ SHA-256: **shortcut window crank-shifted to a single edge case**.
 - общая теория $\Omega_{\text{smooth}}$ как функция архитектуры
 
 Код: `/tmp/anf_T/probe.py`, не сохраняется.
+
+---
+
+## §129. Backward stepwise inversion — корректная программа
+
+### 129.1 Признание ошибки §125-§128
+
+§125-§128 измеряли forward correlation $\xi(x_0) \to \xi(x_T)$ для
+$T = 4$. Это требовало **знания $x_0$**, что в реальной задаче
+недоступно. Магия.
+
+Что они закрыли честно: **forward macro-law не существует**. Все
+scalar и R-vector координаты NULL для composition $T \geq 2$. Это
+ценное знание.
+
+Чего они не делали: **корректная задача — backward**. Дано $y = x_T$,
+найти $x_0$. Метод — **один раунд за раз с фиксацией**.
+
+### 129.2 Правильный протокол
+
+```
+Initialize: candidates = {x_T}
+for r = T-1 down to 0:
+    new_candidates = {}
+    for x_{r+1} in candidates:
+        preimgs = §113-inversion(x_{r+1}, K_r)
+        new_candidates += preimgs
+    candidates = new_candidates  # фиксация
+return candidates  # включает true x_0
+```
+
+На каждом шаге — **локальный** §113: $M \cdot x_r = x_{r+1} \oplus K_r \oplus C_r$,
+enumerate $C_r$ ($2^{L-1}$ candidates), verify $\text{round}(x_r, K_r) = x_{r+1}$.
+
+### 129.3 Эксперимент: $L = 16, T = 4$
+
+Probe `/tmp/backward/probe.py`. 5 случайных $x_0$, forward → $x_4$,
+затем backward inversion.
+
+Результаты:
+
+| trial | tree($x_3$) | tree($x_2$) | tree($x_1$) | tree($x_0$) | true в финале? | time |
+|---|---|---|---|---|---|---|
+| 1 | 2 | 2 | 2 | 4 | ✓ | 1.0s |
+| 2 | 1 | 3 | 3 | 3 | ✓ | 1.1s |
+| 3 | 3 | 1 | 3 | 5 | ✓ | 1.1s |
+| 4 | 2 | 2 | 2 | 6 | ✓ | 1.0s |
+| 5 | 3 | 2 | 3 | 4 | ✓ | 1.2s |
+
+**Главное**: дерево остаётся **малым** (3-6 в финале), true $x_0$
+**всегда** восстановлен.
+
+Branching factor на шаг: **1-3**, в среднем ~1.5. Никакого
+экспоненциального взрыва.
+
+### 129.4 Открытие 129-A: tree не explode'ит
+
+Гипотеза-страшилка была: каждый раунд × 2 preimages = $2^T$ trajectories,
+для T=64 → $2^{64}$. Невозможно.
+
+Реальность: branching factor variance $\sim 1.5$, tree size grows как
+$1.5^T$. Для T=64: $1.5^{64} \approx 2^{37}$. Это ПОЛИНОМИАЛЬНО в T,
+не экспоненциально.
+
+То есть backward inversion имеет cost $\sim T \cdot \text{branching}^T \cdot 2^{L-1}$.
+
+Для $L = 32, T = 64, \text{branching} = 1.5$:
+cost $\approx 64 \cdot 2^{37} \cdot 2^{31} \approx 2^{73}$ операций.
+
+Brute force $2^{32}$ для одного раунда. Полный SHA brute force preimage:
+$2^{256}$ (output 256 bits). Backward reduces к $2^{73}$ — **в $2^{183}$ раз быстрее**.
+
+Wait — это не корректно, полный SHA это 8 регистров и более сложный round.
+Наш simplified single-word model даёт честный $2^{73}$. Для real SHA нужна
+адаптация, но **тенденция** существенная.
+
+### 129.5 Cost-анализ для нашей модели
+
+Per-round:
+- Enumerate $C \in \{0,1\}^{L-1}$: $2^{L-1}$ candidates
+- Solve $M^{-1}$: $O(L^2)$ per candidate
+- Verify $\text{round}(x) = y$: $O(L)$ per candidate
+
+Total per-round per branch: $2^{L-1} \cdot O(L^2)$.
+
+Полная inversion T раундов:
+$$\text{cost} = T \cdot |\text{tree}| \cdot 2^{L-1} \cdot O(L^2)$$
+
+Для $L = 16, T = 4$, tree = 5: cost $\approx 4 \cdot 5 \cdot 32K \cdot 256 \approx 1.6 \cdot 10^8$.
+Brute force $x_0$: $2^{16} \cdot \text{round\_cost} \approx 65K \cdot 50 = 3.3 \cdot 10^6$.
+
+**Backward для L=16 в 50 раз дороже** brute force. На малых L brute force выигрывает.
+
+Но scaling в L: backward $\sim T \cdot 2^{L-1}$, brute force $\sim 2^L$. Equal at $T = 2$.
+Для $T > 2$ brute force всегда лучше **в нашей наивной модели**.
+
+### 129.6 Где shortcut возможен — переформулировка МС-принципа
+
+Настоящий backward shortcut требует уменьшить **per-round cost** ниже
+$2^{L-1}$. Это значит:
+
+**МС-принцип для backward**: на каждом шаге $r$, после фиксации
+$x_{r+1}, x_{r+2}, \ldots, x_T$, существует макро-координата $\xi_r$,
+**предсказывающая carry $C_r$** из накопленной информации, с
+$|\hat C_r| \cdot 2^{L-1} > $ enumeration after constraint.
+
+То есть: вместо enumerate всех $2^{L-1}$ carry-векторов, мы используем
+накопленную информацию, чтобы **сразу отсечь** большинство из них.
+
+Это новая, **не-магическая** формулировка МС-принципа, которая
+действительно может работать.
+
+### 129.7 Что нужно искать
+
+Конкретные кандидаты в $\xi_r$ (макро для disqualification):
+
+1. **Linear constraints от $x_{r+1}$**: бит $x_{r+1, 0} = (M x_r)_0 \oplus K_{r,0} \oplus 0 = (M x_r)_0 \oplus K_{r,0}$ (т.к. $C_{r,0} \equiv 0$). Это даёт прямое ограничение на $x_r$ на bit 0.
+
+2. **Carry-correlation** (§121, §122): $W$-аномалия, $M_1$-смещение —
+   characterize valid carry distribution. Можно отсечь $C_r$, не
+   удовлетворяющие наблюдаемой статистике.
+
+3. **Diagonal $\Phi_{Cx}$ (§119)**: $\phi(C_i, x_{r+1, i-1}) \sim 0.3$.
+   Это даёт **probabilistic prior** на каждый бит $C_r$ из известного
+   $x_{r+1}$. На $L = 32$: ~10 битов определены (через regression),
+   остаётся ~22 неизвестных. Сокращение от $2^{31}$ до $2^{22}$ —
+   **500× shortcut**.
+
+### 129.8 Подтверждение §128 в новом свете
+
+§128 показал: forward ANF для $y_0$ имеет $\deg = 1$ — exact GF(2)
+закон. В backward направлении это означает: **зная $y_0$, мы знаем
+$\bigoplus_{j \in S} x_j$** exactly. Это **одно линейное уравнение**
+в GF(2) на $x_r$.
+
+То есть для каждого выходного бита, backward даёт уравнение от $x$.
+Большинство (high $i$) дают полиномиальные уравнения высокой степени
+(дорогие). Но **bit 0** даёт линейное — **бесплатное** уравнение.
+
+Использование этого constraint:
+- $L$ бит $x_r$, $L$ уравнений $y_i$, но только $y_0$ дает linear.
+- Линейная подсистема для bit 0 → 1 уравнение на $x$, сокращает на 1 bit search space.
+
+Это **shortcut в 2× раза на каждый раунд**. Для T=64: $2^{64}$
+сокращений на полный путь.
+
+### 129.9 Карта shortcut'ов в backward
+
+| источник shortcut | механизм | $\log_2$ выигрыш per round |
+|---|---|---|
+| Verify round_K(x) = y | дисквалификация ложных | 0 (но tree не explode) |
+| §128 ANF для $y_0$ | linear constraint в GF(2) | 1 |
+| §128 ANF для $y_1$ | quadratic constraint | $\sim$ 1 |
+| §119 $\Phi$-diagonal | probabilistic prior | до log_2(10) ≈ 3 |
+| §122 W-bias | carry distribution | ~1 |
+
+Cumulative: $\sim 6$ бит per round. Для T=64: $6 \cdot 64 = 384$ бит
+shortcut над naive backward $2^{31 \cdot 64} = 2^{1984}$.
+
+То есть backward с накопленными shortcut'ами:
+$2^{1984} / 2^{384} = 2^{1600}$ — всё ещё астрономично.
+
+### 129.10 Реалистичный итог
+
+Backward stepwise работает как **процедура корректная**, но **не
+быстрая**. Главное достижение §129:
+
+- ✅ Method **корректно** invert'ит SHA-round.
+- ✅ Tree остаётся малым (1-3 на шаг, $\sim 1.5^T$ полная).
+- ✅ True $x_0$ всегда recovered (5/5 trials).
+- ✗ Cost в $T \cdot 2^{L-1}$ — НЕ выигрыш над brute force при больших T.
+- ⏳ Для shortcut нужны **накопленные дисквалификаторы** (§119, §122, §128)
+  + linear constraints от bit 0.
+
+### 129.11 Смена перспективы
+
+§125-§128 искали shortcut **forward** ($x_0 \to x_T$). Не существует.
+
+§129 показывает: реальный shortcut живёт в **backward** ($x_T \to x_0$),
+и измеряется как **сокращение per-round enumeration** через
+constraints от уже-фиксированных состояний.
+
+**Новая программа §130+**:
+- $\xi_r$ — disqualifier для round $r$ inverse, использует $\{x_{r+1}, x_{r+2}, \ldots, x_T\}$
+- Цель: cumulatively сократить per-round enumeration с $2^{L-1}$ до $2^k, k < L-1$.
+- Каждый источник shortcut (§119, §122, §128) дает свой $k$.
+
+### 129.12 Статус §129
+
+- ✅ Признана ошибка §125-§128 (forward magic).
+- ✅ Backward stepwise inversion корректно реализован.
+- ✅ Tree manageable (≤ 6 на L=16, T=4).
+- ✅ True $x_0$ recovered 5/5.
+- ✅ Reformulation МС-принципа: **disqualifier-based shortcuts**
+  per-round.
+- ⏳ §130: систематическая интеграция §119, §122, §128 как disqualifier'ов.
+- ⏳ §131: измерение реального cumulative speedup.
+
+**Курс выправлен**: больше нет "forward magic", есть "backward с
+накопленной информацией". Каждый шаг — local §113 inversion, но с
+constraints из всей доступной истории.
+
+Код: `/tmp/backward/probe.py`, не сохраняется.
