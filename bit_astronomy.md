@@ -899,3 +899,111 @@ rank L, uniform entropy, closed-form operations.
 Таким базисом является **Hadamard basis** (§11).
 
 ---
+
+## 11. Hadamard basis — правильный первичный базис
+
+### 11.1 Определение
+
+Для $L = 2^k$ матрица Адамара по Сильвестру:
+
+$$H_1 = [1], \qquad H_{2L} = \begin{pmatrix} H_L & H_L \\ H_L & -H_L \end{pmatrix}$$
+
+Coord-vector паттерна:
+
+$$W(p) = H_L \cdot (2p - 1) \in \mathbb{Z}^L$$
+
+где $2p - 1$ — покомпонентное signed-представление.
+
+Обратное преобразование: $p = \frac{1}{2}(1 + \frac{1}{L} H_L^T W)$,
+поскольку $H_L H_L^T = L \cdot I$.
+
+Для не-степеней-двойки: padding до ближайшей $2^k$ (§110.2.5).
+
+### 11.2 Восемь проверенных свойств (§110)
+
+| № | Свойство | Статус |
+|---|---|---|
+| 1 | **Invertibility** | $p = \frac{1}{2}(1 + \mathrm{sign}(H^{-1} W))$, 0 failures L=4,8,16 |
+| 2 | **Normalization** | $\tilde W_k = W_k / L \in [-1, +1]$ единый диапазон |
+| 3 | **Distance identity** | $d_{\text{Had}}(p_1, p_2) = 2\sqrt{H(p_1,p_2)/L}$, ratio = 1.00 на всех парах |
+| 4 | **Closed-form operations** | см. §11.3 |
+| 5 | **Non-power-of-2** | padding работает, bijectivity сохраняется |
+| 6 | **Scalability** | Fast WHT $O(L \log L)$ ≡ direct $O(L^2)$ coefficient-for-coefficient |
+| 7 | **Structural symmetries** | $W(\vec 0) = (-L, 0, \ldots, 0)$; $W(\vec 1) = (+L, 0, \ldots, 0)$; $H_0 = 2H(p) - L$ |
+| 8 | **Uniform entropy** | Каждая ось несёт 2.5442 бит на L=8, идентично; нет «сильных/слабых» осей |
+
+### 11.3 Формулы операций
+
+| Операция | Формула |
+|---|---|
+| NOT | $W(\neg p) = -W(p)$ — чистое отрицание координат |
+| ROT_k | $W(\mathrm{rot}_k p) = M_k \cdot W(p)$, $M_k = H R_k H^{-1}$ |
+| XOR с $c$ | $W(p \oplus c) = H \cdot (-s_p \odot s_c)$ (signed произведение) |
+| REVERSE | $|W_k|$ инвариантны, знаки перестроены |
+| AND | нелинейна: требует pair-products (2nd-order Walsh) |
+| ADD mod $2^L$ | полиномиальная степени $L$; $R^2 \approx 1 - 2^{-d}$ по степени $d$ (§104) |
+
+### 11.4 Bijectivity
+
+| L | Patterns | Unique coords | Collisions |
+|---|---|---|---|
+| 4 | 16 | 16 | 0% |
+| 8 | 256 | 256 | 0% |
+| 16 (sampled 5000) | 5000 | 4825 | ~0% |
+
+Сравнение на L=8: 11 физических осей — 165/256 (§10.1),
+Hadamard — **256/256**.
+
+### 11.5 Mode-концентрация
+
+Все $L$ координат Hadamard имеют **одно и то же** биномиальное
+распределение на $\{0,1\}^L$. На L=8: mode_fraction = **0.273**
+у каждой оси (binomial peak at 0). Сравнение:
+
+- Физические оси (§10.2): среднее mode 0.483, максимум **0.953** (winding)
+- Hadamard: среднее mode **0.273**, максимум **0.273**
+
+Ни одна ось не концентрирует > 27% паттернов в mode. Это
+предел, заданный самой природой биномиального распределения
+для осей с range $[-L, L]$ с шагом 2.
+
+### 11.6 Cross-chip verification
+
+8 SHA-256 hashes × 3 chips (Python list / NumPy / integer
+bit-manipulation) → **0 disagreements** (§97.4). Platonic
+identity (A1) выполняется.
+
+### 11.7 Связь с физическими осями
+
+Hadamard не заменяет физические оси, а **подчиняет**:
+
+- $H_0(p) = 2 H(p) - L$ ⇒ Hamming = $H_0 / 2 + L/2$
+- $H_0 = \Phi(p)$ ⇒ Phase = $H_0$
+- Walsh_1, Walsh_2, Walsh_3 из §9.3 = специфические $H_k$
+  для singleton / pair Walsh-индексов
+- Pair-products = 2nd-order Walsh (над Hadamard)
+
+Физические оси — функции Hadamard-координат или высших порядков
+над ними. Наоборот — не работает: нельзя восстановить полный
+$W(p)$ из одного hamming.
+
+### 11.8 Статус
+
+Hadamard basis удовлетворяет все 7 требований §10.8:
+
+| Требование | Hadamard |
+|---|---|
+| Ортогональность | ✓ $H H^T = L I$ |
+| Per-axis энтропия | ✓ 2.54 бит / ось L=8, uniform |
+| Bijectivity | ✓ 100% до L=16 |
+| Platonic | ✓ cross-chip 0 |
+| Closed-form ops | ✓ NOT, ROT, XOR (AND/ADD — степенная аппроксимация) |
+| $O(L \log L)$ | ✓ Fast WHT |
+| Invertibility | ✓ $H^{-1} = \frac{1}{L} H^T$ |
+
+**Вердикт**: Hadamard — primary basis астрономии битов.
+Все дальнейшие построения (операции, conservation laws,
+фазовое пространство, macro-coordinates) ведутся в Hadamard-
+координатах. Физические оси — secondary interpretive layer.
+
+---
