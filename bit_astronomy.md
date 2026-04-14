@@ -5517,3 +5517,198 @@ SHA-256 в physical terms:
 
 ---
 
+## 45. E25 — большие N проверки causal cone
+
+### 45.1 Цель
+
+Четыре направления из §44 на бóльшем N:
+- **A**: cold spots verification (N=500 скан + N=2000 re-verify).
+- **B**: reverse causality — inputs-per-output.
+- **C**: bit temperature по W-words.
+- **D**: light cone shape precise.
+
+Также закрываем философский вопрос пользователя: **«есть ли
+артефакты большой выборки?»** — да, но мы их тоже проверяем.
+
+### 45.2 A — COLD SPOTS ОПРОВЕРГНУТЫ
+
+**N=500 скан** (512 input bits × 64 rounds × 500 trials):
+
+| Метрика | Значение |
+|---|---|
+| Mean time-to-128 | 17.00 rounds |
+| Std | 6.00 |
+| Min | 7 rounds (fastest) |
+| Max | **47 rounds** (слowest) |
+
+Top-5 «cold spots» N=500: W_12[9] (47), W_12[23] (44), W_12[11]
+(40), W_8[13] (34), W_14[14] (33).
+
+**N=2000 независимая verification тех же 5 bits**:
+
+| Bit | N=500 | N=2000 | Разница |
+|---|---|---|---|
+| W_12[9] | 47 | **20** | −27 |
+| W_12[23] | 44 | **20** | −24 |
+| W_12[11] | 40 | **23** | −17 |
+| W_8[13] | 34 | **15** | −19 |
+| W_14[14] | 33 | **21** | −12 |
+
+**Все 5 cold spots коллапсировали** к средним значениям.
+
+**Вывод**: **V63 (cold spots из §44) — artifact малой выборки.**
+Переводится в F-список.
+
+### 45.3 Урок методологии
+
+**Философский вопрос пользователя**: «Есть ли артефакты большой
+выборки?» — **ДА**, и теперь знаем специфические случаи:
+
+Маленькая выборка (N=500):
+- **Выборочные outliers**: редкие события интерпретируются как
+  structural anomalies.
+- Fluctuations $\sim 1/\sqrt{N}$ заметны.
+
+Большая выборка (N=2000+):
+- Numerical drift в float accumulation.
+- Memory constraints.
+- Seed bias (если RNG имеет корреляции).
+- Time cost.
+
+**Золотое правило**: structural claim ОБЯЗАТЕЛЕН double-check
+на **independent seed** с N×2+.
+
+Добавляется к §4 как **правило 10**: «Structural anomalies
+всегда verified с минимум 2× sample size и independent RNG seed».
+
+### 45.4 C — Bit temperature (ПОДТВЕРЖДЕНО)
+
+Velocity per W-word в первые 10 rounds:
+
+| Word | Temperature (bits/round) |
+|---|---|
+| W_0 | **12.80** (hottest) |
+| W_1 | 12.79 |
+| W_2 | 12.79 |
+| W_3 | 12.80 |
+| W_4 | 12.65 |
+| W_5 | 11.56 |
+| W_6 | 8.75 |
+| W_7 | 5.57 |
+| W_8 | 2.50 |
+| W_9 | 0.39 |
+| W_10-W_15 | **0.00** (cold) |
+
+**Temperature monotonic**: W_$k$ ровно **не активен** в первые
+$k$ rounds (для $k \geq 10$). Это structural — **не artifact**.
+
+Эмпирическое правило:
+
+$$T(\text{W}_k, r \leq 10) \approx \begin{cases} 12.8, & k \leq 4 \\ 12.8 \cdot 2^{-(k-4)/2}, & 5 \leq k \leq 9 \\ 0, & k \geq 10 \end{cases}$$
+
+Approximate. Точно: W_$k$ «холодный» до round $k$.
+
+### 45.5 B — Reverse causality (ПОДТВЕРЖДАЕТ avalanche)
+
+Для каждого output bit среднее число входов, вызывающих flip:
+
+| Output bit | Mean flip prob | Top inputs (prob) |
+|---|---|---|
+| 0 | 0.500 | ~0.55 range |
+| 64 | 0.500 | ~0.55 range |
+| 127 | 0.499 | ~0.56 |
+| 255 | 0.499 | W_14[9]=0.564, W_5[3]=0.564, W_12[14]=0.560 |
+
+Mean flip prob ≈ 0.5 по всем output bits, std $\sim 0.02$. Это
+**полное avalanche** — каждый output зависит от каждого input с
+~50% вероятностью. Top-3 inputs имеют prob ~0.56 — лишь чуть-чуть
+выше среднего.
+
+**Ничего значительного не выделяется** — uniform avalanche
+подтверждает good design SHA.
+
+### 45.6 D — Light cone shape (подтверждено)
+
+Три фазы роста:
+
+| Фаза | Rounds | Growth |
+|---|---|---|
+| **Incubation** | 1-5 | Exponential: $\Delta \log \approx 1$ per round |
+| **Linear** | 5-15 | $\Delta \approx 8$ bits/round |
+| **Saturation** | 20+ | $\Delta \approx 0$ (достигли 128) |
+
+Эмпирический fit:
+
+$$\text{support}(r) = 128 \cdot (1 - e^{-(r-2)/5}) \text{ для } r \geq 2$$
+
+Не идеальный, но дает intuition: "exponential approach to saturation"
+с characteristic time ~5 rounds.
+
+### 45.7 Честный итог после N=2000
+
+| Claim из §44 | Статус |
+|---|---|
+| V60: Peak velocity 8 bits/round R=11 | ✓ подтверждено |
+| V61: Mean time-to-128 = 15.9 ± 5.6 | **Уточнено**: 17.0 ± 6.0 на N=500 |
+| V62: W-word monotonic | ✓ подтверждено — W_k активен с round k |
+| **V63: Cold spots структурны** | **✗ ARTIFACT — отвергнуто** |
+
+### 45.8 Новое знание
+
+Положительное:
+- Temperature W-word закон более жёстко сформулирован.
+- Reverse causality подтверждает uniform avalanche.
+- Light cone имеет exponential-to-saturation shape.
+
+Негативное:
+- Cold spots НЕ существуют (в пределах N=2000).
+- Артефакт малой выборки — универсальная опасность для любого
+  structural search.
+
+### 45.9 Новое методологическое правило
+
+**§4 правило 10**: Любое «structural anomaly» (outlier в
+distribution) — ОБЯЗАТЕЛЬНО верифицируется с **4× original N**
+на **independent RNG seed**. Если не survive — артефакт, отвергается.
+
+Это дополнение к правилу 9 (random baseline) из §39.
+
+### 45.10 Что делаем дальше
+
+Закрыты направления «cold spots» и «bit temperature anomalies».
+
+**Остаются creative directions** без данных-опровержения:
+- O14 Category-theoretic invariants.
+- O15 Dynamical systems view.
+- O16 Tensor network.
+- O17 Probabilistic Bayesian.
+- O18 Composition-specific weaknesses.
+
+Последние три требуют тяжёлой вычислительной работы. О14, О15 —
+теоретические.
+
+### 45.11 Добавлено в инвентарь
+
+- V64: Temperature W-word monotonic закон подтверждён N=500.
+- V65: Reverse causality uniform на всех 6 tested output bits.
+- F19: **Cold spots (V63) — artifact**, opened на N=500, closed
+  на N=2000.
+- O20: Правило 10 — structural anomalies × 4N verify.
+
+### 45.12 Рефлексия: что отличает § от §
+
+§44 нашло «необычное». §45 проверило и **отвергло**. Это
+**нормальный научный процесс** — гипотезы рождаются на малых
+данных и отсеиваются на больших.
+
+Наша дисциплина становится **более строгой** через такие
+коррекции. Методичка **не идеализирует** findings — она
+фиксирует и verified, и falsified.
+
+Из 60+ verified + 19 falsified items в инвентаре — более 20%
+ошибок. Это **здоровая статистика** для разведочной research.
+
+Код: `/tmp/e25_creative/probe.py`, удалён.
+
+---
+
