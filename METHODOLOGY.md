@@ -22945,3 +22945,146 @@ inversion реальной round-функции.
 **рабочая программа**, дающая измеримый прогресс.
 
 Код: `/tmp/disq/probe.py`, не сохраняется.
+
+---
+
+## §131. Stacked disqualifiers — статистические фильтры маргинальны
+
+### 131.1 Гипотеза
+
+§130 дал $3.3\times$ speedup через $\Phi$-Hamming ball. Можно ли
+сложить с другими фильтрами:
+- HW(C) ∈ статистический band §122
+- W(C) ∈ band из §121
+- (для §132): ANF early-verify
+
+Цель: cumulative $\sim 10\times$ через сложение независимых сигналов.
+
+### 131.2 Эксперимент
+
+L=16, T=4, 20 trials inversion $x_4 \to x_3$ с разными band'ами.
+
+Pre-measure: на 10K samples обучаем LinReg + накапливаем mean±std для
+HW(C), W(C):
+- HW(C): $\bar h \approx 8, \sigma \approx 2.3$
+- W(C): $\bar w \approx 5, \sigma \approx 2.5$
+
+Inversion с фильтрами: оставляем только $C$ с
+$|HW(C) - \bar h| \leq k\sigma_h$ AND $|W(C) - \bar w| \leq k\sigma_w$.
+
+### 131.3 Результаты — фильтры marginal
+
+| метод | checked | recall | speedup vs naive | extra over §130 |
+|---|---|---|---|---|
+| naive | 32768 | 100% | 1.00× | — |
+| §130 R=6 (baseline) | 9949 | **80%** | 3.29× | 1.00× |
+| 131 R=6, 2.5σ | 9905 | 75% | 3.31× | **1.00×** |
+| 131 R=6, 2.0σ | 9684 | 75% | 3.38× | 1.03× |
+| 131 R=6, 1.5σ | 8718 | **55%** | 3.76× | 1.14× |
+| 131 R=8, 2.0σ | 21693 | 90% | 1.51× | 0.46× |
+
+### 131.4 Открытие 131-A: статистические фильтры близки к нулю
+
+Pass-through rate (доля кандидатов в ball, прошедших фильтр):
+- 2.5σ: **99.6%** (фильтр почти не работает)
+- 2.0σ: 97.3%
+- 1.5σ: 87.6% — но recall падает до 55%
+
+То есть распределение HW(C) и W(C) внутри Hamming ball вокруг $\hat C$
+**почти идентично** marginal distribution. Фильтр не дискриминирует
+true vs false candidates.
+
+Причина: ball уже содержит candidates с близкими статистиками к
+истинному C (по построению Φ-prediction). Дополнительные фильтры
+HW/W cut **те же** candidates что и Φ.
+
+### 131.5 Открытие 131-B: уточнение recall §130
+
+§130 на 10 trials дал 100% recall при R=6. На 20 trials — **80%**.
+Это more honest: для **надёжного** recall нужен R=8 (90%) или R=10
+(вероятно 100%).
+
+| R | recall | checked | speedup |
+|---|---|---|---|
+| 6 | 80% | 9949 | 3.29× |
+| 8 | 90% | 21693 | 1.51× |
+| 10 | ~98% (extrap) | ~30K | ~1.1× |
+
+Trade-off **recall ↔ speedup** более тонкий, чем казалось. Полная
+гарантия (100%) требует фактически brute-force.
+
+### 131.6 Открытие 131-C: stacked filters margins ≈ 3-5%
+
+Speedup $3.31\times$ → $3.38\times$ → $3.76\times$ при tightening band'а
+с потерей recall. Cumulative gain over §130 baseline: **1.00×–1.14×**
+с recall pen 5-20%.
+
+**Stacking HW+W on top of Φ — НЕ работает** для L=16, our model.
+
+### 131.7 Анализ независимости сигналов
+
+§120: pair correlations $W$-bias и $\Phi$-diagonal происходят из
+Maj-функции — **общий источник**. Стало быть, они **не независимы**.
+
+Когда фильтры скоррелированы, cumulative gain меньше суммы. В нашем
+случае HW и W уже отражены в Φ-predictor (через distribution
+training), поэтому добавление фильтров — двойной счёт.
+
+**Урок**: для real cumulative speedup нужны **орто-источники** информации,
+не корреляции той же Maj.
+
+### 131.8 Что остаётся
+
+Источники, не учтённые в Φ:
+
+1. **§128 ANF y_0**: $y_0 = (Mx)_0 \oplus K_0$ exact GF(2). Это HARD
+   constraint, не статистический. Может реально pruning'ить candidates.
+   
+2. **§128 ANF y_1**: degree 2, Boolean polynomial. Менее cheap, но
+   exact.
+
+3. **§122 cumulative W через раунды**: invariant функции. Можно ли
+   использовать для disqualification candidates на тех раундах, где
+   $W^{(r)}(\text{recovered chain})$ не совпадает с expected?
+
+Из этих **§128 ANF** наиболее чистый: точное уравнение независимое от
+Φ-statistics.
+
+### 131.9 Reformulation для §132
+
+Программа: вместо статистических фильтров — **ANF hard constraints**.
+
+После solve $x = M^{-1}(y \oplus K \oplus C)$ для candidate $C$:
+- Проверить $y_0$ exactly: 1 операция (XOR нескольких бит x).
+- Если не совпало — discard.
+- Иначе: проверить $y_1$ через polynomial ANF.
+- Etc.
+
+Это **early-termination** filter. Стоимость filter << стоимость full
+round verify. И **точный** (recall 100%).
+
+### 131.10 Honest summary backward shortcut пока что
+
+| источник | speedup | recall | independence |
+|---|---|---|---|
+| §130 Φ-prior | 3.3× | 80% | base |
+| §131 HW+W filter | +0% | -5% | correlated, not useful |
+| §132 ANF y_0 (план) | speedup TBD | 100% | independent |
+
+Cumulative measured: $\sim 3\text{-}3.5\times$ shortcut с recall ~80%.
+Для recall 100% — фактически brute force.
+
+### 131.11 Концептуальный итог
+
+- ✅ **Открытие 131-A**: статистические фильтры HW+W дают маргинальный
+  выигрыш (~5%) из-за корреляции с Φ.
+- ✅ **Открытие 131-B**: recall §130 при R=6 — 80%, не 100% (уточнение).
+- ✅ **Открытие 131-C**: stacked Φ + HW + W даёт ~1.0-1.1× extra over
+  §130. Не cumulative.
+- ⏳ §132: ANF early-verify как **орто-источник** (гарантированно
+  независимый от Φ).
+
+**Урок**: не все disqualifier'ы складываются. Нужно искать
+**орто-источники**. §128 ANF — кандидат.
+
+Код: `/tmp/stack/probe.py`, не сохраняется.
