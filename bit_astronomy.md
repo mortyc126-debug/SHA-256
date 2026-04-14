@@ -1007,3 +1007,93 @@ Hadamard basis удовлетворяет все 7 требований §10.8:
 координатах. Физические оси — secondary interpretive layer.
 
 ---
+
+## 12. Иерархия координат: primary / secondary / extended
+
+После §10-§11 координаты астрономии битов делятся на три
+уровня.
+
+### 12.1 Primary — Hadamard core ($L$ осей)
+
+$$W_k(p) = \sum_{i=0}^{L-1} (-1)^{\mathrm{popcount}(k \wedge i) \bmod 2} \cdot (2p_i - 1)$$
+
+Ровно $L$ осей, $k = 0, \ldots, L-1$. Роль: **адрес** паттерна,
+bijective identity. Проверяется Fast WHT за $O(L \log L)$.
+
+### 12.2 Secondary — физические insight-оси (≈ 10 осей)
+
+Hamming, Lévy area, Cost, Autocorr, Cyclic period, Winding,
+PairSum (§9). Большинство — функции Hadamard-координат или
+высших моментов над ними.
+
+Роль: **интерпретация и семантика** — масса, энергия, топология.
+Носители conservation laws (§7.3) и физических аналогий. Не для
+идентификации паттернов.
+
+### 12.3 Extended — высшие моменты (до $L(L-1)/2$ осей и больше)
+
+Pair-products $s_i s_j$, triple-products $s_i s_j s_k$ и т.д.
+В Hadamard-терминах — $H_k$ с носителями из 2, 3, ... позиций.
+
+Роль: **глубокая структура**. Нужны для:
+- Инверсии carry-chain операций (§51, §105 — pair/triple для SHA R=1, R=2)
+- Нелинейных операций (AND, ADD) — §11.3
+- Locality-sensitive hashing с orthogonal random projections
+
+Cost: число pair-features $\binom{L}{2}$, triple $\binom{L}{3}$.
+Для L=32 — 496 pairs, 4960 triples. Практически допустимо.
+Для L=256 — 32640 pairs, ~2.7M triples — на границе.
+
+### 12.4 Пример полного coord-vector для L=8
+
+Для паттерна $p = [1,1,1,1,1,1,1,1]$:
+
+| Уровень | Координаты | Значение |
+|---|---|---|
+| Primary | $H_0$ | 8 |
+| Primary | $H_1 \ldots H_7$ | все 0 |
+| Secondary | hamming | 8 |
+| Secondary | Lévy area | 2.0 |
+| Secondary | cost | −8 (all aligned) |
+| Secondary | cyclic period | 1 |
+| Secondary | winding | 0 |
+| Extended | pair_ij (28 штук) | все +1 |
+
+Всего 8 + 6 + 28 = **42 координаты** — полный Platonic address
+(§102.6).
+
+### 12.5 Когда какой уровень использовать
+
+| Задача | Достаточный уровень |
+|---|---|
+| Различить два паттерна | Primary ($L$ осей) |
+| Верифицировать Platonic identity | Primary, cross-chip |
+| Найти conservation law для op | Primary + Secondary |
+| Инвертировать линейную op | Primary |
+| Инвертировать carry-chain (ADD/AND) | Primary + Extended (pairs) |
+| Инвертировать несколько rounds | Primary + Extended (triples и выше) |
+| Физическая интерпретация | Secondary |
+
+### 12.6 Правило выбора extended-уровня
+
+Из §104 степенного закона $R^2 \approx 1 - 2^{-d}$ для ADD:
+каждая добавленная степень polynomial features halves
+unexplained variance. Для conservation через $T$ rounds ADD
+нужна степень $d \geq T$.
+
+На практике:
+- R=1 SHA: pairs достаточно (§51 — 4.3M× speedup)
+- R=2 SHA: pairs дают 70%, triples — 80% (§105)
+- R=3 и выше: degree-4+, на границе вычислимости
+
+### 12.7 Итог
+
+**Primary** ($L$ Hadamard coords) — для identity.
+**Secondary** (~10 физических осей) — для interpretation.
+**Extended** ($\binom{L}{k}$ moments) — для инверсии нелинейных
+операций.
+
+Coord-vector паттерна — **многоуровневый объект**. Сколько
+уровней активно — зависит от задачи.
+
+---
