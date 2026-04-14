@@ -4408,3 +4408,213 @@ $V$ определяется 58 линейными уравнениями на b
 
 ---
 
+## 39. E14/E15/E16 — честная коррекция §38 + находки из v20
+
+### 39.1 Повторный эксперимент + random baseline
+
+Три параллельных эксперимента:
+- **E14**: извлечь явные 58 уравнений null-space (из §38 V44).
+- **E15**: нелинейная intrinsic dim через MLE Levina-Bickel.
+- **E16**: сравнение SHA с **random baseline** — критически
+  отсутствовавший в §38.
+
+### 39.2 E16 разрушает V44
+
+Random baseline: 1000 случайных 256-bit векторов, PCA 95%:
+
+| N | Random baseline PCA 95% | SHA R=10 |
+|---|---|---|
+| 500 | 199 | 198 (из §38) |
+| 1000 | 220 | **220** (тот же эксперимент) |
+| 2000 | 231 | — |
+| 5000 | 237 | — |
+
+**Критический факт**: PCA 95% растёт с $N$ для чисто random
+data, асимптотически к 0.95 × 256 = 243.
+
+**§38 V44 plateau at 198** был РАВЕН random baseline at N=500.
+Это был **не SHA-specific finding**, а **sampling artifact**:
+при данном $N$ случайные данные дают ровно этот PCA 95% cutoff.
+
+С N=1000 SHA PCA = 220, random = 220 — **identical**. PCA не
+различает SHA delta-vectors от random.
+
+### 39.3 Что это значит
+
+**V44 (PCA plateau 198) переводится в F-список как falsified.**
+
+Методологическая ошибка §38: не измерял random baseline.
+Правильная постановка всегда включает контроль.
+
+Однако не всё потеряно. R=0, 1, 2 имеют **реальную** структуру:
+
+| Round | SHA PCA 95% (N=500) | Random baseline N=500 | Есть ли structure? |
+|---|---|---|---|
+| 0 | 50 | 199 | **✓ реальная** (50 << 199) |
+| 1 | 103 | 199 | **✓** (103 << 199) |
+| 2 | 151 | 199 | **✓** (151 < 199) |
+| 3 | 194 | 199 | ≈ random |
+| 5+ | 198 | 199 | = random |
+
+Phase transition на R=3 подтверждается, но **не как «198-dim
+subspace»**, а как **point где структура исчезает в шум**.
+
+### 39.4 E15 — MLE intrinsic dim
+
+MLE Levina-Bickel оценка (нелинейная):
+
+| Round | MLE dim |
+|---|---|
+| 0 | 18.6 |
+| 2 | 51.4 |
+| 3 | 60.7 |
+| 5 | 66.1 |
+| 10 | 66.3 |
+| 20 | 66.9 |
+| 63 | 66.5 |
+
+**MLE выходит на плато ~66** для R ≥ 5.
+
+Но **MLE ненадёжен для bit-vectors**. Формула Levina-Bickel
+предполагает continuous smooth manifold. Для дискретных
+$\{0,1\}^{256}$ с Hamming-distance оценка может быть
+артефактом дискретизации.
+
+Для random baseline MLE на bit-vectors тоже не даст 256 —
+даст какое-то число, зависящее от geometry bit-cube. Без
+random-control MLE 66 **нельзя интерпретировать** как real
+structural dim.
+
+**V45 (MLE-based structural finding)**: пока под вопросом.
+Отдельный эксперимент с random baseline нужен для
+валидации.
+
+### 39.5 T_CH_LINEAR — verified из v20
+
+Одна из главных находок v20 методички:
+
+$$\delta\text{Ch}(\delta e, f, g) = \delta e \wedge (f \oplus g)$$
+
+Дифференциал Ch **линеен** в $\delta e$ при фиксированных $f, g$.
+
+**Вывод**: 
+$$\text{Ch}(e \oplus \delta e, f, g) = \text{Ch}(e, f, g) \oplus (\delta e \wedge (f \oplus g))$$
+
+Доказательство (использую тождество $\neg a \oplus \neg b = a \oplus b$):
+
+$\text{Ch}(e \oplus \delta e) \oplus \text{Ch}(e)$
+$= [(e \oplus \delta e)f \oplus (\neg e \oplus \neg \delta e)g] \oplus [ef \oplus \neg e \cdot g]$
+$= [(e \oplus \delta e)f \oplus ef] \oplus [(\neg e \oplus \neg \delta e \oplus \neg e)g]$
+
+Hmm, let me be more careful: $\neg(e \oplus \delta e) = \neg e \oplus \delta e$ (since $\neg x = 1 \oplus x$).
+
+$= (\delta e \wedge f) \oplus ((\neg e \oplus \delta e \oplus \neg e) \wedge g)$
+$= (\delta e \wedge f) \oplus (\delta e \wedge g)$
+$= \delta e \wedge (f \oplus g)$
+
+**Тест на 1000 random tuples**: 1000/1000 match → **formally
+verified**.
+
+Это готовая **формула дисциплины**, интегрируемая в bit-astronomy.
+Мы можем писать:
+
+| SHA operation | Differential form |
+|---|---|
+| XOR / ROT / Σ / σ | линейно (identity) |
+| Ch | $\delta$Ch = $\delta e \wedge (f \oplus g)$ — **линейно в $\delta e$** |
+| Maj | $\delta$Maj = ? (отдельная формула, open) |
+| ADD | $\delta$ADD = $\delta a \oplus \delta b \oplus \delta$carry — **нелинейно через carry** |
+
+**Значение**: в differential analysis Ch действует как
+линейный оператор. Это резко упрощает differential
+cryptanalysis.
+
+### 39.6 Что можно взять из v20 для нашей математики
+
+Найденные в v20 rank-теоремы связывают с нашей работой:
+
+| v20 theorem | Bit-astronomy connection |
+|---|---|
+| **k* = 5 = log_2(32)** | §35 ANF saturation at R=5 (**совпадает**) |
+| **T_GF2_BIJECTION**: rank=r at round r | Линейная часть расписания имеет rank = r |
+| **T_STATE17_STRUCTURE**: rank=160, MITM $O(2^{80})$ | Специфический differential subspace |
+| **T_STATE_STRUCT**: δstate rank=128 | Half-state structure |
+| **T_RANK_L_512**: schedule L rank=512 | Message expansion is full rank |
+| **T_KER_S1_EMPTY**: ker(Σ1) = {0} | Σ1 — bijection over GF(2)^32 |
+| **T_CH_LINEAR**: δCh = δe ∧ (f⊕g) | **Мы подтвердили эмпирически** |
+
+### 39.7 Важность random baseline — methodological lesson
+
+§38 — пример того, как **отсутствие random control** приводит
+к false positive в эмпирической науке. PCA dim на конечной
+выборке имеет естественную дисперсию, и interpreting её как
+«structure» без control — ошибка.
+
+**Добавлено правило методологии**: для любого claim о structural
+finding в bit-cosmos ОБЯЗАТЕЛЕН random baseline comparison.
+
+Это уточнение §4 (методологические правила). Раньше было 8
+правил, теперь 9.
+
+### 39.8 Переоценка инвентаря
+
+**Falsify**:
+- F14: V44 «PCA plateau at 198» — **artifact of sample size**.
+  Random baseline at N=500 даёт 199 — тот же результат.
+- F15: V47 «delta-vectors in 198-dim subspace» — same artifact.
+
+**Корректировка V45 (E13 no duplicates)**: валидно, но требует
+пересмотра — set size на R=0 бы ожидаемо < 2^32, что даёт
+duplicates at N ≈ 2^16 = 65K, не наш N=500.
+
+**Новые валидные**:
+- V48: **T_CH_LINEAR verified**: $\delta\text{Ch} = \delta e \wedge (f \oplus g)$
+  на 1000/1000 тестов.
+- V49: R=0, 1, 2 имеют **реальную** структуру (PCA SHA << random
+  baseline). R=3+ — уровень шума.
+
+### 39.9 Что реально есть для атаки
+
+После §39 корректировки, **реальные** инструменты для атаки:
+
+1. **R=0 structure** (PCA 50 << 199): при инверсии R=1 round
+   можем использовать эту структурную информацию.
+2. **R=1, R=2 частичная structure**: совпадает с known §51, §105.
+3. **T_CH_LINEAR**: differential Ch линейна — основа всех
+   дифференциальных атак.
+4. **v20 rank theorems**: дополнительные структурные constraints.
+
+Для **R ≥ 3** наш PCA anlysis **не нашёл** structure отличную
+от random. Но это **не значит её нет** — просто наш метод (линейный
+PCA) её не видит.
+
+### 39.10 Следующее направление
+
+Поскольку линейный PCA не работает выше R=3, нужны:
+
+- **Differential PCA**: анализ не consecutive deltas, а
+  input-differential: state(x) XOR state(x⊕Δ). Это то, с чем
+  работает v20 методичка.
+- **Walsh-domain PCA**: PCA на Hadamard-координатах вместо
+  raw bits. Возможно, структура видна там.
+- **Hierarchical analysis**: разбить state на 8 words по 32 бита,
+  анализировать per-word. Может быть word-level structure.
+
+Это три клеточки experimentations E17, E18, E19.
+
+### 39.11 Добавлено в инвентарь
+
+- V48: **T_CH_LINEAR** из v20 empirically verified
+  ($\delta$Ch = $\delta e \wedge (f \oplus g)$, 1000/1000).
+- V49: R=0, 1, 2 реальная structure (PCA 50, 103, 151) против
+  random baseline 199 at N=500.
+- F14: V44 PCA plateau 198 — sampling artifact, убран.
+- F15: V47 subspace V — same, убран.
+
+**Методологическая поправка**: §4 правило 9 — обязательный
+random baseline для всех structural claims.
+
+Код: `/tmp/e14_15_16/probe.py`, `/tmp/e14_15_16/verify.py`, удалены.
+
+---
+
