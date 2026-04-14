@@ -2177,3 +2177,92 @@ Descriptor Learning; Approximate Nearest Neighbor with LSH
 (Jan 2025); MOMENTS-SVD Fingerprint Identification 2024.
 
 ---
+
+## 22. Что уже сделано независимо, что стоит добавить
+
+Итоговая позиция Части V: астрономия битов — **самостоятельная
+дисциплина** со своей предметной областью (bit-cosmos, ARX
+round-функции, carry-geometry), но разделяющая фундаментальные
+принципы с несколькими смежными программами исследований.
+
+### 22.1 Что сделано независимо и хорошо
+
+| Компонент | Статус |
+|---|---|
+| Phase-space $(x, C)$ для ARX-раунда | §17 — оригинально для дисциплины |
+| Четыре закона carry (степень, 2/3, сопряжённость, спектр) | §18 — новые инварианты ARX |
+| МС-принцип как критерий shortcut | §19 — формализация, переформулировка P vs NP |
+| Hadamard basis с 8 verified свойствами | §11 — наш собственный путь к Super-Bit LSH |
+| Bit-астрономия как язык (дом, траектория, адрес) | §5-§8 — терминология дисциплины |
+| Cross-chip Platonic verification | §11.6 — empirical instantiation Platonic Rep |
+| Иерархия primary/secondary/extended | §12 — операционный каркас |
+| Степенной закон $R^2 \approx 1 - 2^{-d}$ | §14.3 — количественное описание нелинейности ADD |
+
+Эти компоненты — **вклад дисциплины**. Нет прямых аналогов
+в литературе по ARX-криптоанализу или computer vision.
+
+### 22.2 Что переоткрыто и совпадает с литературой
+
+| Наш результат | Литературный источник |
+|---|---|
+| Ортогональный bijective basis | Super-Bit LSH (NIPS 2012) |
+| Moments как координаты | Hu moments, Zernike (классика) |
+| Entropy + correlation критерий осей | BOLD descriptors |
+| Cross-implementation convergence | Platonic Rep Hypothesis (2024) |
+| Bit dependency tracking | VMCAI 2021 Approximate Bit Dependency |
+| Wolpert-диагональный предел Laplace demon | Wolpert 2008 |
+
+Переоткрытие — не потеря. Это подтверждение, что дисциплина
+идёт в корректном математическом направлении.
+
+### 22.3 Что стоит взять из литературы
+
+**Сразу применимое**:
+- Random orthogonal projections (расширение Hadamard-базиса).
+- Information-theoretic feature selection для secondary-осей.
+- Learned projections (Deep Hashing) для task-specific
+  discrimination.
+- Formal tooling из VMCAI для автоматического tracking
+  bit-dependencies.
+
+**Концептуально полезное**:
+- Теоретический аппарат information geometry (Amari 1985+) —
+  формальный язык для метрики в coord-space (O2).
+- BOLD methodology — алгоритмизация §10.8 критерия.
+- Platonic Representation theory — обоснование A1 через
+  expressivity + similarity.
+
+### 22.4 Позиционирование дисциплины
+
+Астрономия битов — **мост** между тремя областями:
+
+```
+          [ Platonic Representation, 2024+ ]
+                       |
+                       |
+      [ ARX-криптоанализ ] — БИТ-АСТРОНОМИЯ — [ LSH / Super-Bit / BOLD ]
+                       |
+                       |
+          [ Bit-dependency analysis, VMCAI ]
+```
+
+Ни одна из четырёх областей по отдельности не рассматривает
+задачу «описать классические биты как Platonic-объекты с
+полной алгеброй, геометрией и физикой». Bit-астрономия — это
+именно такое пересечение.
+
+### 22.5 Итог Части V
+
+Дисциплина:
+- Имеет **собственный вклад** (§22.1) — фазовое пространство,
+  законы carry, МС-принцип, язык астрономии битов.
+- **Переоткрыла** key принципы LSH/BOLD/Platonic-литературы
+  (§22.2), что подтверждает корректность.
+- Может **impoвezticь** готовыми tools из literature (§22.3).
+- Занимает **уникальную нишу** на пересечении четырёх областей
+  (§22.4).
+
+На этом Часть V закрыта. В Части VI — стены, открытые вопросы,
+направление дальнейшей работы.
+
+---
