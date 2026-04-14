@@ -2064,3 +2064,116 @@ Sources: Huh et al. 2024; Universal Geometry of Embeddings 2025;
 Wolpert 2008 (пределы Laplace demon через Cantor diagonalization).
 
 ---
+
+## 21. LSH, Super-Bit, BOLD — независимые переоткрытия
+
+Вторая параллель: методы вычисления «правильных» координат для
+различения похожих объектов существовали в литературе задолго
+до нашей работы. §109 показал, что мы переоткрыли их
+независимо.
+
+### 21.1 Locality-Sensitive Hashing (LSH)
+
+**Принцип**: проецировать паттерн через **random hyperplanes**,
+каждая проекция даёт один бит ответа:
+
+$$h_k(x) = \mathrm{sign}(w_k \cdot x)$$
+
+$w_k$ — случайный вектор. Свойства:
+- Similar patterns → similar hash bits (с высокой вероятностью).
+- Different patterns → different hash bits.
+- Каждая ось уникально разделяет pattern space пополам.
+
+Это точно то, что пользователь просил в §109.1 — «координаты,
+которые не путаются».
+
+### 21.2 Super-Bit LSH (NIPS 2012)
+
+Улучшение: **ортогональные** случайные проекции вместо
+независимых. Даёт лучшую discrimination при том же числе осей.
+
+**В случае $w_k$ = строки матрицы Адамара** Super-Bit LSH
+совпадает с нашим Hadamard basis (§11). Наш primary basis —
+частный случай Super-Bit с детерминированным выбором
+ортогональной матрицы.
+
+### 21.3 Invariant moments (Hu, Zernike)
+
+Из image recognition 2024-2025:
+
+- **Hu moments** (7 штук): инварианты translation, rotation, scale
+  через центральные моменты паттерна.
+- **Zernike moments**: orthogonal polynomial basis на диске.
+
+Наши physical axes (§9) — варианты моментов:
+- Hamming = 1-й момент,
+- PairSum = 2-й момент,
+- Lévy area = «curl» momentum,
+- Winding = топологический инвариант.
+
+Концепция идентична, разница — адаптация для bit patterns
+против изображений.
+
+### 21.4 BOLD descriptors
+
+**Balanced Local Descriptor** (computer vision):
+- Binary tests $\{f_i(x) > f_j(x)\}$ на pair pixels.
+- Select тесты, максимизирующие entropy при минимальной
+  correlation.
+
+**Критерий**: axes с высокой per-axis энтропией + низкой
+взаимной информацией. В §10.8 мы пришли к этому же требованию
+независимо, как к критерию «правильного базиса».
+
+§108 критика наших физических осей (winding 95% mode) —
+**BOLD-критерий в действии**: такие оси provaляют low entropy
+test и должны быть исключены из primary basis.
+
+### 21.5 Сводная таблица переоткрытий
+
+| Наша работа | Литературный аналог | Где |
+|---|---|---|
+| Hadamard basis | Super-Bit LSH | §11, NIPS 2012 |
+| Pair-products | 2nd-order BOLD descriptors | §14 |
+| Triple-products | Higher-order descriptors | §14 |
+| Cross-chip test | Universal embeddings | §11.6, 2025 |
+| Axis redundancy analysis | Mutual information | §10 |
+| Activity pattern | BOLD entropy criterion | §7 |
+| Mode-concentration critic | BOLD entropy critic | §10 |
+
+Мы **независимо переоткрыли** ключевые принципы, установленные
+в LSH, BOLD, Super-Bit communities. Это не означает, что работа
+бесполезна — наоборот, подтверждает, что мы движемся в
+mathematically correct направлении.
+
+### 21.6 Что можно добавить из литературы
+
+**1. Random orthogonal projections** (Super-Bit style):
+дополнительно к Hadamard, несколько случайных ортогональных
+базисов. Увеличивает discrimination.
+
+**2. Information-theoretic feature selection**: автоматический
+выбор осей, максимизирующих entropy при минимальной mutual
+information. Наша §10.8 критика становится алгоритмом.
+
+**3. Learned projections (Deep Hashing 2024)**: trained neural
+network projections для domain-specific задач. Сходятся к
+Platonic representations (§20), потенциально лучше fixed
+Hadamard для конкретных проблем.
+
+**4. Moments hierarchy**: 1st momentum = hamming, 2nd = pairs,
+3rd = triples — систематическая иерархия с ясным cost-анализом
+(§14.4).
+
+### 21.7 Итог
+
+Астрономия битов разделяет ключевые принципы с LSH/Super-Bit/BOLD
+литературой (2012–2025). Переоткрытие подтверждает корректность
+направления. Методы literature — готовые расширения для нашей
+дисциплины.
+
+Sources: Super-Bit LSH (NIPS 2012); Information-Theoretic Binary
+Descriptor Learning; Approximate Nearest Neighbor with LSH
+(Jan 2025); MOMENTS-SVD Fingerprint Identification 2024.
+
+---
