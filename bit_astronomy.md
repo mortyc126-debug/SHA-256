@@ -5712,3 +5712,172 @@ distribution) — ОБЯЗАТЕЛЬНО верифицируется с **4× o
 
 ---
 
+## 46. E26 — multi-granularity: bit vs byte vs word
+
+### 46.1 Вопрос пользователя
+
+Если представить SHA-256 не в битах, а в байтах (или 32-битных
+словах), что-то изменится?
+
+### 46.2 Три гранулярности
+
+| Уровень | Alphabet size | # unit per state | Applications |
+|---|---|---|---|
+| Bit | 2 | 256 | boolean operations |
+| Byte | 256 | 32 | chi-square, N-grams |
+| Word (32-bit) | $2^{32}$ | 8 | ring arithmetic |
+
+### 46.3 Статистические тесты ($N = 10000$ hashes)
+
+**Byte uniformity (chi-square, 256 buckets)**:
+
+| Метрика | Значение |
+|---|---|
+| $\chi^2$ | **259.43** |
+| Critical (df=255, p=0.05) | 293.25 |
+| Verdict | **UNIFORM** |
+
+**Byte pair uniformity (65536 buckets)**:
+
+| Метрика | Значение |
+|---|---|
+| $\chi^2$ | **65114.11** |
+| Critical (df=65535) | 66131.63 |
+| Verdict | **UNIFORM** |
+
+**Conditional entropy $I(\text{byte}_i; \text{byte}_{i+1})$**:
+
+$I = 0.158$ bits.
+
+Miller-Madow bias correction для 65536 bins при $N=310000$ pairs:
+$(65535) / (2 N \ln 2) \approx 0.152$ bits.
+
+Observed 0.158 - bias 0.152 = **0.006 bits true MI** — essentially
+zero. Consistent with independence.
+
+**Word-level mean**: $\mathtt{0x803e5db1}$ vs expected
+$\mathtt{0x80000000}$. Отклонение $\approx 4 \cdot 10^6$ при
+sample $\sigma / \sqrt{N} \approx 10^7$ — **в пределах шума**.
+
+### 46.4 Avalanche at different flip granularities
+
+| Flip type | mean HW($\delta h$) | std | min | max |
+|---|---|---|---|---|
+| 1 bit | 127.9 | 8.21 | 104 | 156 |
+| 8 bits (byte) | 127.9 | 7.80 | 105 | 149 |
+| 32 bits (word) | 127.9 | 7.65 | 109 | 146 |
+
+**Все три give identical mean 127.9** — полное mixing независимо
+от размера perturbation. Это strong confirmation **uniform
+avalanche**.
+
+### 46.5 Compression at different granularities
+
+| Representation | Size | Gzip | LZMA |
+|---|---|---|---|
+| Raw bytes | 320000 | 320106 | 320076 |
+| Hex string | 640000 | 364895 | — |
+
+Byte, bit, word — не меняют compression result (compression не
+учитывает alphabet granularity, работает на byte-sequences).
+
+### 46.6 Итог статистических тестов
+
+**На каждой granularity SHA-256 uniform**. Ни bit-, ни byte-,
+ни word-level не вскрывают structure.
+
+Это **не неожиданно**: SHA design target — uniform по всем
+statistics. Наш §41 hash audit показал то же на bit-level;
+§46 распространяет на byte и word.
+
+### 46.7 Но: концептуальная находка
+
+Переход к **word-level algebra** (работая в ring $\mathbb{Z}/2^{32}$)
+даёт новую картину:
+
+**В $\mathbb{Z}/2^{32}$**:
+- ADD $(a + b) \bmod 2^{32}$: **линейная** операция ring'а.
+- ROT ($a \to (a \gg k) | (a \ll (32-k))$): линейная.
+- XOR: линейная.
+- $\Sigma_0, \Sigma_1, \sigma_0, \sigma_1$: линейные комбинации ROT+XOR.
+
+**Нелинейные в $\mathbb{Z}/2^{32}$**:
+- Ch(e, f, g) = $(e \wedge f) \oplus (\neg e \wedge g)$ —
+  bitwise, не ring op.
+- Maj(a, b, c) = $(a \wedge b) \oplus (a \wedge c) \oplus (b \wedge c)$ —
+  bitwise.
+
+**Только Ch и Maj нелинейны** в ring-арифметике.
+
+### 46.8 Переформулирование нелинейности
+
+На bit-level (GF(2)):
+- Вся нелинейность = **carry-chain ADD + bitwise Ch/Maj**.
+- Carry — это GF(2)-воплощение ring ADD.
+
+На word-level ($\mathbb{Z}/2^{32}$):
+- Ring ADD линеен (нет carry, это просто addition).
+- Вся нелинейность = **Ch + Maj**.
+
+**Два разных "места" нелинейности в зависимости от алгебры**.
+Это согласуется с v20 T_RANK_L_512 и двумя алгебрами.
+
+### 46.9 Что это даёт
+
+**Word-level analysis** изолирует нелинейность в Ch+Maj. Если
+мы изучим **только эти две функции** (их Fourier transform,
+Walsh spectrum, cycle structure и т.д.) — возможно, найдём
+свойства, невидимые на bit-level где они перемешаны с carry.
+
+**T_CH_LINEAR** (из v20, §39 verified): $\delta\text{Ch}(\delta e, f, g) = \delta e \wedge (f \oplus g)$.
+Это **линейно в differential** — но исходно bitwise nonlinear.
+Word-level это более очевидно.
+
+**Maj** не имеет такого clean differential identity. Возможно
+заслуживает отдельного изучения в ring.
+
+### 46.10 Открытое направление
+
+**O21 — Maj analysis в ring $\mathbb{Z}/2^{32}$**:
+- Fourier / Walsh spectrum функции $a, b, c \mapsto \text{Maj}(a,b,c)$
+  в word-ring.
+- Fixed points: Maj(a, a, a) = a, Maj(a, a, b) = a, Maj(0, 0, 0) = 0,
+  Maj($2^{32}-1, 2^{32}-1, 2^{32}-1$) = $2^{32}-1$.
+- Cycle structure итерации Maj.
+
+Это чистая математика **одной функции** — concrete и feasible.
+
+### 46.11 Честный вывод
+
+**Granularity change ничего не меняет статистически**. SHA
+design specifically защищает все уровни.
+
+**Granularity change меняет формальную картину**: где именно
+нелинейность сидит. На bit-level она размазана (carry + Ch/Maj).
+На word-level концентрируется (Ch + Maj).
+
+Это **не пробивает wall**, но даёт **чистую мишень** —
+Ch и Maj как единственные источники нелинейности в ring
+world.
+
+### 46.12 Добавлено в инвентарь
+
+- V66: Byte-level uniformity подтверждена ($\chi^2 = 259.43$ < 293.25).
+- V67: Byte-pair uniformity ($\chi^2 = 65114 < 66131$).
+- V68: Avalanche identical across flip granularities (127.9 HW mean).
+- V69: **Word-level algebra**: нелинейность концентрируется в
+  Ch+Maj, ADD и ROT линейны в $\mathbb{Z}/2^{32}$.
+- O21: Maj analysis в ring — open concrete direction.
+
+### 46.13 Статус §46
+
+- Granularity change не вскрывает новую статистическую structure.
+- Но даёт **conceptual insight**: word-level = чистая
+  concentration нелинейности в Ch, Maj.
+- Это **target для deeper analysis** — изучение Ch, Maj как
+  самостоятельных объектов.
+
+Код: `/tmp/e26_granularity/probe.py`, удалён.
+
+---
+
