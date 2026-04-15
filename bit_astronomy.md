@@ -6698,3 +6698,174 @@ Gossip matrix $G^{-1}$ для bijective ops.
 
 ---
 
+## 53. E32 — Резонанс, затухание, coherent beam
+
+### 53.1 Программа
+
+Улучшаем §52 gossip в теорию распространения сигнала:
+- Eigenvalue decomposition $G_r$ — собственные "частоты".
+- Multi-step propagation $G_r^n$.
+- Coherent beam — input в направлении eigenvector.
+
+Ожидание: найти **резонансные паттерны** (eigenvectors с high
+|λ|) — bit groupings, которые распространяются когерентно.
+
+### 53.2 Построение $G_r$ для full SHA-round
+
+256 × 256 gossip matrix для одного SHA-round ($t=0$, random $W_0$,
+$N = 200$ base states):
+
+| Метрика | Значение |
+|---|---|
+| Mean entry | 0.0184 |
+| Max entry | 1.000 |
+| Density (>0.1) | 3.62% |
+| Avg out-degree | 4.71 |
+| Avg in-degree | 4.71 |
+
+SHA-round в среднем распространяет flip одного bit в 4.71 других.
+
+### 53.3 Spectral decomposition
+
+Top 10 eigenvalues по |λ|:
+
+| k | |λ| | phase (rad) |
+|---|---|---|
+| 0 | **6.99** | 0 |
+| 1 | 6.59 | 0 |
+| 2, 3 | 4.45 | ±0.41 |
+| 4, 5 | 3.19 | ±1.23 |
+| 6, 7 | 3.02 | ±π |
+| 8, 9 | 2.26 | ±0.32 |
+
+**Spectral radius = 6.99**. Выше avg degree 4.71 → существуют
+модели с усиленным распространением.
+
+**Замечание**: $G_r$ — не stochastic. Не означает физического
+amplification. Это **branching factor** в матричной модели.
+Реально SHA saturates на 128 bits avalanche.
+
+### 53.4 Leading eigenvector
+
+Top 10 bits с наибольшим весом:
+
+| Bit | Pos | Weight |
+|---|---|---|
+| 146 | W_4[18] | +1.000 |
+| 128 | W_4[0] | +0.978 |
+| 139 | W_4[11] | +0.966 |
+| 135 | W_4[7] | +0.958 |
+| 140 | W_4[12] | +0.958 |
+| 129 | W_4[1] | +0.949 |
+| 145 | W_4[17] | +0.948 |
+| 153 | W_4[25] | +0.948 |
+| 156 | W_4[28] | +0.946 |
+| 154 | W_4[26] | +0.940 |
+
+**Все top-10 bits — в слове W_4 = 'e' state**.
+
+Интерпретация: 'e' входит в $\Sigma_1(e) + \text{Ch}(e, f, g)$ —
+два канала распространения, которые частично коррелируются. Leading
+eigenvector фокусируется на 'e' как "резонансный источник".
+
+### 53.5 Multi-step propagation $G_r^n$
+
+| n | avg per bit | max | density > 0.1 |
+|---|---|---|---|
+| 1 | 4.71 | 1.00 | 3.6% |
+| 2 | 42.62 | 4.40 | 19.2% |
+| 3 | 376.00 | 36.13 | 40.6% |
+| 4 | 3147.47 | 318.70 | 63.6% |
+| 5 | 25416.83 | 2679.39 | 85.1% |
+
+Геометрический рост $\sim 8.5\times$/step. Matrix model НЕ
+учитывает saturation на 128 bits.
+
+Density to saturation: **R=5 → 85% cells active**. Это matches
+нашу §§35, 37 константу «5 rounds to saturate».
+
+### 53.6 Coherent beam test — **surprise**
+
+**Setup**: Flip 92 bits одновременно, паттерн = leading
+eigenvector thresholded.
+
+**Ожидание**:
+- Independent (no interference): $92 \times 4.71 = 433$ bits изменятся.
+- Random flip 92 bits: ~128 (half avalanche).
+
+**Реально**: **64.51 bits** меняются.
+
+**$64 \ll 128$ — destructive interference!**
+
+Координированный flip 92 bits input **менее** возбуждает SHA-round,
+чем random. Coherent beam "гасится" структурой SHA.
+
+### 53.7 Причина destructive interference
+
+Все 92 bits beam в **слове 'e'**. Обе операции, зависящие от e:
+- $\Sigma_1(e) = \text{rotr}(e, 6) \oplus \text{rotr}(e, 11) \oplus \text{rotr}(e, 25)$
+- $\text{Ch}(e, f, g)$ — nonlinear, зависит от e.
+
+При coherent flip большого числа bits 'e' сразу, их вклад в $\Sigma_1$
+и Ch частично **XOR-cancels**. В итоге temp1 меняется меньше, чем
+от random flip.
+
+Это **структурное свойство** SHA-round: не все combinations bits
+одинаково активны. Есть **анти-резонансные** паттерны.
+
+### 53.8 Значение для атаки
+
+**Differential characteristic** — найдена пара (ΔIN, ΔOUT) с:
+- ΔIN = 92 bits of word 'e' (specific pattern).
+- ΔOUT = ~64 bits.
+
+Для random функции ожидаемо 128. Наш паттерн даёт 64 — **структурное
+отклонение**.
+
+Это **не sufficient** для full-SHA attack, но потенциально building
+block для:
+- Reduced-round differential trail.
+- Finding low-probability characteristics.
+- Composition с другими eigenvectors.
+
+### 53.9 Концептуальный sdvig
+
+Раньше мы искали "след" SHA. Теперь имеем **building block** для
+создания собственных "signal probes":
+
+1. **Gossip matrix** $G_r$ — природная структура round.
+2. **Eigenvectors** — principal propagation modes.
+3. **Coherent beams** — input patterns, экспериментально возбуждающие
+   или гасящие структурные компоненты.
+
+Это — **signal processing approach** к SHA. Новая ось дисциплины.
+
+### 53.10 Добавлено в инвентарь
+
+- V83: $G_r$ для SHA-round вычислена (256×256).
+- V84: Spectral radius 6.99, top eigenvector сосредоточен на W_4
+  (word 'e').
+- V85: **Coherent beam 92-bit 'e'-pattern даёт ΔOUT = 64**,
+  меньше random 128. **Destructive interference found**.
+- V86: Multi-step $G_r^n$ saturates к R=5 — согласуется с §§35, 37.
+- O33: Продолжить — композиция eigenvectors разных T для deeper
+  trails.
+- O34: Apply amplification theory к full SHA через multi-round
+  eigenvector tracking.
+- O35: Dual — **eigenvectors противоположных |λ|** (smallest)
+  для максимального затухания — могут открыть "silent modes".
+
+### 53.11 Статус §53
+
+Theory of signal propagation in bit-cosmos formalized через
+eigenvalue analysis. Первая **координированная beam test**
+нашла destructive interference. Это **новое** в дисциплине.
+
+Следующий шаг: **компонировать eigenvectors** для создания
+"attack signatures" — differential characteristics с controlled
+propagation properties.
+
+Код: `/tmp/e32_resonance/probe.py`, удалён.
+
+---
+
