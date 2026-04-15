@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "N": 130816,
+    "feature": "bit5_max",
+    "HW": 2,
+    "target": "state2[bit 10]"
+  },
+  "target_vs_feature_z": -3.9150092601776123,
+  "top_state1_bits_A": [
+    {
+      "bit": 192,
+      "corr_with_target_z": -2.582357883453369,
+      "corr_with_feature_z": 0.702268660068512
+    },
+    {
+      "bit": 12,
+      "corr_with_target_z": 2.5270612239837646,
+      "corr_with_feature_z": 0.09400445967912674
+    },
+    {
+      "bit": 148,
+      "corr_with_target_z": -2.3445818424224854,
+      "corr_with_feature_z": 0.46449264883995056
+    },
+    {
+      "bit": 147,
+      "corr_with_target_z": -2.278225898742676,
+      "corr_with_feature_z": 0.8736885786056519
+    },
+    {
+      "bit": 145,
+      "corr_with_target_z": 2.2063400745391846,
+      "corr_with_feature_z": 0.07188576459884644
+    },
+    {
+      "bit": 164,
+      "corr_with_target_z": -2.15104341506958,
+      "corr_with_feature_z": 1.6533725261688232
+    },
+    {
+      "bit": 0,
+      "corr_with_target_z": 2.0072717666625977,
+      "corr_with_feature_z": 0.3926068842411041
+    },
+    {
+      "bit": 104,
+      "corr_with_target_z": 1.985153079032898,
+      "corr_with_feature_z": -0.569556474685669
+    },
+    {
+      "bit": 94,
+      "corr_with_target_z": -1.9519749879837036,
+      "corr_with_feature_z": -1.1557018756866455
+    },
+    {
+      "bit": 236,
+      "corr_with_target_z": 1.8911486864089966,
+      "corr_with_feature_z": 1.8469111919403076
+    },
+    {
+      "bit": 15,
+      "corr_with_target_z": -1.880089282989502,
+      "corr_with_feature_z": 0.0
+    },
+    {
+      "bit": 229,
+      "corr_with_target_z": -1.8579705953598022,
+      "corr_with_feature_z": -0.8626291751861572
+    },
+    {
+      "bit": 62,
+      "corr_with_target_z": 1.8469111919403076,
+      "corr_with_feature_z": -0.8626291751861572
+    },
+    {
+      "bit": 168,
+      "corr_with_target_z": -1.8358519077301025,
+      "corr_with_feature_z": 0.4976706802845001
+    },
+    {
+      "bit": 237,
+      "corr_with_target_z": -1.8358519077301025,
+      "corr_with_feature_z": -0.4313145875930786
+    }
+  ],
+  "top_pair_product_fraction": -0.02959861233830452,
+  "top_bits_product_fraction": 0.0019488062243908644
+}
