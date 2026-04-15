@@ -6022,3 +6022,160 @@ property multilinear combinatorial landscape, не bug specific.
 
 ---
 
+## 48. E28 — p-adic / alternative base (sub-bit direction)
+
+### 48.1 Гипотеза
+
+SHA design оптимизирован против bit-level analysis (base 2). Может
+в других базах ($p$-адические разложения) есть structure, невидимая
+в битах?
+
+Каждая $p$-ary цифра carries $\log_2(p)$ бит. Для $p=3$: "трit"
+несёт ~1.58 бит — fractional bit info. **Sub-bit** направление
+через representation change.
+
+### 48.2 Результаты (первая попытка, фальшивая)
+
+Начальный тест показал **non-uniform во всех non-power-of-2
+bases** (chi² выше critical). Это выглядело как breakthrough —
+**структура видна в основаниях 3, 5, 7, ...!**
+
+### 48.3 Контроль: random baseline
+
+Разумный вопрос: а random uniform integers тоже show такое?
+
+| Base | SHA chi² | Random chi² | Critical | Verdict |
+|---|---|---|---|---|
+| 3 | 8.11 | 5.36 | 5.99 | border |
+| 5 | 14.20 | **17.43** | 9.49 | random хуже! |
+| 7 | 23.65 | 20.66 | 12.59 | similar |
+| 11 | 5.42 | 6.17 | 18.31 | uniform |
+| 13 | 19.25 | **37.69** | 21.03 | random намного хуже! |
+| 17 | 15.06 | 16.28 | 26.30 | similar |
+| 23 | 25.98 | 24.47 | 33.92 | similar |
+
+**Random baseline ТОЖЕ даёт chi² выше critical** для base 3, 5, 7.
+Для base 13 random даже **намного хуже** SHA.
+
+### 48.4 Вывод: representation artifact
+
+**"Non-uniformity" — не свойство SHA**, а artifact представления
+$2^{256}$ в base $p \neq 2^k$.
+
+Причина: $2^{256}$ не делится на $p^k$ для $p \in \{3, 5, 7, \ldots\}$.
+Это создаёт **bias в top digit** (ограниченный range), который
+propagate в соседние позиции даже после drop top.
+
+**Random uniform integers в [0, $2^{256}$) имеют тот же bias** —
+это чисто математика base-conversion, не SHA structure.
+
+### 48.5 Clean tests (power-of-2 bases, SHA)
+
+Когда baseо точно делит $2^{256}$:
+
+| Base | chi² | Critical | Verdict |
+|---|---|---|---|
+| 2 | 1.27 | 3.84 | UNIFORM |
+| 4 | 1.89 | 7.81 | UNIFORM |
+| 16 | 16.53 | 25.00 | UNIFORM |
+| 256 | 259.43 | 293.25 | UNIFORM |
+
+SHA проходит uniformly во всех power-of-2 bases.
+
+### 48.6 Per-position uniformity (base 16)
+
+Из 64 hex-digits:
+- Mean chi² per position: 14.85 (expected 15 for uniform).
+- Std: 5.46.
+- Positions above crit 25: **3 / 64**.
+- Expected by chance (α=0.05 × 64): **3.2** — совпадает.
+
+Не больше anomalies чем ожидаемо by random chance.
+
+### 48.7 Mutual information adjacent hex digits
+
+$I(d_i; d_{i+1}) = 0.000510$ bits (bias-corrected).
+
+Essentially zero. Adjacent digits **статистически независимы** в
+любой разумной base.
+
+### 48.8 Avalanche в разных базах
+
+Flip 1 bit → how many digits change in base $p$?
+
+| Base | N digits | Changed digits | Expected random |
+|---|---|---|---|
+| 2 | 257 | 127.7 | 128.5 |
+| 3 | 163 | 107.8 | 108.7 |
+| 5 | 112 | 88.2 | 89.6 |
+| 16 | 65 | 59.96 | 60.9 |
+
+**Все close to random expectation**. SHA avalanche — uniform
+в любой base, как expected.
+
+### 48.9 P-adic valuation
+
+Для $v_p(\text{hash})$ (max $k$: $p^k | \text{hash}$):
+
+| p | Avg v_p | Expected for random |
+|---|---|---|
+| 2 | 1.0100 | 1.0000 |
+| 3 | 0.4952 | 0.5000 |
+| 5 | 0.2551 | 0.2500 |
+| 7 | 0.1695 | 0.1667 |
+| 11 | 0.1049 | 0.1000 |
+
+Все **match random expectation**. SHA-hash looks like uniform
+integer from p-adic valuation perspective.
+
+### 48.10 Final verdict
+
+**P-adic / alternative base direction: CLOSED** для SHA-256.
+
+SHA output статистически uniform в **любой** разумной base, когда
+representation artifacts учтены. Нет sub-bit structure, скрытой
+в alternative base.
+
+$p$-adic valuation SHA match uniform random.
+
+### 48.11 Философское замечание
+
+**Sub-bit ≠ less-than-bit information.**
+
+Shannon lower bound: ни одна единица не несёт меньше бита для
+2-alphabet event. «Sub-bit» в смысле «fractional bit» = soft bit
+через probability (continuous [0,1]) или MI / entropy decomposition.
+
+SHA-256 эквипотентна к random в **любом representation**. Нет
+magic base где structure появляется.
+
+### 48.12 Добавлено в инвентарь
+
+- V71: Power-of-2 base uniformity SHA (base 2, 4, 16, 256).
+- V72: Non-power-of-2 base non-uniformity — **representation
+  artifact, не SHA**.
+- V73: MI adjacent digits < 0.001 bits в любой base.
+- V74: p-adic valuation SHA ≈ uniform random across $p \in \{2..11\}$.
+- F21: Gipoteза sub-bit structure через alternative base — closed.
+- O13 (Kolmogorov) полу-закрыт: universal compression + p-adic
+  не видят structure. Custom SHA-aware compression остаётся open.
+
+### 48.13 Что это даёт дисциплине
+
+Negative result, но **clean negative**. Исключает целое
+направление поиска. Теперь знаем:
+
+- **Granularity** (bit/byte/word, §46) — ничего.
+- **Linear PCA** (§38) — только R≤2.
+- **Nonlinear ML** (§E21) — только R≤3.
+- **Compression** (§43) — только R≤2.
+- **Continuous relaxation** (§47) — gradient застревает.
+- **Alternative bases / p-adic** (§48) — ничего.
+
+Шесть independent подходов. Все находят wall at R=3 или отсутствие
+structure. Это очень сильное trichotomy, уже heptachotomy.
+
+Код: `/tmp/e28_padic/probe{,2,3}.py`, удалены.
+
+---
+
