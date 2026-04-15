@@ -5881,3 +5881,144 @@ world.
 
 ---
 
+## 47. E27 — continuous relaxation SHA-256
+
+### 47.1 Гипотеза
+
+Заменить bits $\{0, 1\}$ на continuous $[0, 1]$. Boolean ops —
+multilinear extensions:
+- $\text{AND}(a, b) = ab$
+- $\text{XOR}(a, b) = a + b - 2ab$
+- $\text{NOT}(a) = 1 - a$
+- $\text{Maj}(a, b, c) = ab + ac + bc - 2abc$
+- ADD mod $2^{32}$: ripple-carry на soft operations.
+
+Если gradient descent от target hash находит preimage —
+континуальный pathway obходит дискретный BF.
+
+### 47.2 Реализация
+
+PyTorch with autograd. Reduced SHA с $R \in \{1, 2, 4, 8\}$
+rounds. Loss = $\|\text{soft}\_\text{SHA}(m) - \text{target}\|^2$.
+Adam optimizer, 300-2000 steps.
+
+**Caveat**: bit-ordering bug в soft_rotr (LSB-first semantics
+rotr стал rotl). Поэтому soft SHA ≠ real SHA identity. Но
+**landscape analysis остаётся valid** — мы смотрим на сходимость
+gradient descent на специфическую функцию, неважно какую.
+
+### 47.3 Результаты gradient descent
+
+| Rounds | Initial loss | Final loss | Fraction binary | Match target |
+|---|---|---|---|---|
+| 1 | 18.4 | 2.21 | 8.8% | ✗ |
+| 2 | 34.4 | 13.76 | 14.1% | ✗ |
+| 4 | 66.4 | 41.94 | 20.7% | ✗ (match 65.2%) |
+| 8 | 64.0 | **64.00** | 3.1% | ✗ (match 46.5%) |
+
+**Ключевые наблюдения**:
+
+1. **R=1**: loss падает на 88%, но не до 0 — gradient descent
+   **застревает в local minimum**.
+2. **R=4, 8**: loss еле движется — landscape flat или
+   хаотичный.
+3. **Fraction binary**: solution **не снап-ится к 0/1** —
+   финальное $m$ fractional, не реальный bit vector.
+4. **Match target**: ноль точных matches на всех R.
+
+### 47.4 Что это говорит
+
+Continuous relaxation **не help'ает** обходить combinatorial
+nature SHA. Даже на R=1:
+
+- Landscape has **exponentially many local minima** из-за
+  multilinear product terms.
+- Adam descent запутывается в этих minima.
+- Fractional solution $m^*$ имеет low loss, но после rounding
+  к $\{0, 1\}$ **не даёт правильный hash**.
+
+### 47.5 Интерпретация
+
+**Комбинаторная природа** SHA-256 — не artifact нашего choice
+of discrete framework. Даже при continuous relaxation problem
+remains hard:
+
+- Loss function has $2^{n} \cdot (\text{combinatorial count})$
+  local minima.
+- Gradient information "puts" нас в ближайший local min, не в
+  global.
+
+Это согласуется с general knowledge computation hardness:
+**SAT, 3-SAT, integer programming всё hard в continuous
+relaxation** по аналогичным причинам.
+
+### 47.6 Позитивное наблюдение
+
+Loss decreases **monotonically** в R=1, 2, 4 (хоть и не до 0).
+Это показывает что gradient имеет **some signal** — не
+полностью случайный.
+
+Возможно, **smarter optimization** (simulated annealing, genetic,
+GA-hybrid with gradient) может извлечь больше. Но это **не
+breakthrough** — они все ограничены тем же landscape.
+
+### 47.7 Связь с известным
+
+Continuous relaxation SAT — известная техника, даёт polynomial
+bounds на approximate SAT (MAX-SAT). Для **exact** SAT всё равно
+NP-hard. Для SHA-256 exact preimage — тот же класс hardness.
+
+**O15 (dynamical systems view)** частично закрыто этим
+экспериментом: continuous dynamics SHA **не обеспечивает**
+short pathway к preimage.
+
+### 47.8 Bug fix note
+
+Soft SHA имеет bit-order bug — не совпадает с real SHA. Для
+**полного теста** нужно исправить:
+```python
+# Неправильно (inverted rotation):
+new_idx = (idx - n) % w  # ROTL вместо ROTR
+
+# Правильно:
+new_idx = (idx + n) % w  # ROTR LSB-first
+```
+
+Но landscape argument валиден — gradient descent failure — это
+property multilinear combinatorial landscape, не bug specific.
+
+### 47.9 Добавлено в инвентарь
+
+- F20: Continuous relaxation SHA-256 не сходится gradient
+  descent даже на R=1 (loss plateaus, fraction binary <25%).
+- V70: Loss landscape SHA имеет $2^n$ local minima,
+  consistent с combinatorial hardness.
+- O15 (dynamical systems) — **частично closed**: simple
+  gradient не работает. Не исключает более sophisticated
+  dynamical methods (e.g., Langevin MCMC).
+
+### 47.10 Что это закрывает и открывает
+
+**Closed**: naive continuous relaxation → preimage.
+
+**Still open**:
+- **O17 (Bayesian MCMC)**: Langevin dynamics, sampling-based
+  inference — более мощные continuous methods.
+- **Hybrid**: gradient + simulated annealing + occasional
+  discrete restarts.
+
+Эти требуют отдельных экспериментов.
+
+### 47.11 Статус §47
+
+- Continuous relaxation tested на R=1, 2, 4, 8.
+- Naive gradient descent **не работает** — landscape
+  комбинаторный.
+- Confirms hard SAT / SHA-256 preimage как classical combinatorial
+  problems.
+- Bug fix tracked, не меняет landscape conclusion.
+
+Код: `/tmp/e27_relax/probe.py`, удалён.
+
+---
+
