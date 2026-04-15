@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "R_A": 2000,
+    "R_B": 500,
+    "N_target": 130816
+  },
+  "stage_A": {
+    "A_bit0_i_AND_bit5_j": {
+      "sha": 53.693,
+      "ro_mean": 24.224,
+      "ro_std": 6.99,
+      "z": 4.216,
+      "p_one": 0.001,
+      "p_two": 0.001
+    },
+    "A_bit5_j": {
+      "sha": 51.001,
+      "ro_mean": 24.011,
+      "ro_std": 6.906,
+      "z": 3.908,
+      "p_one": 0.002,
+      "p_two": 0.002
+    }
+  },
+  "stage_B": {
+    "B_bit0_i_AND_bit5_j": {
+      "sha": 18.021,
+      "ro_mean": 24.176,
+      "ro_std": 6.921,
+      "z": -0.889,
+      "p_one": 0.81836,
+      "p_two": 0.38323
+    },
+    "B_bit5_j": {
+      "sha": 26.842,
+      "ro_mean": 23.881,
+      "ro_std": 6.837,
+      "z": 0.433,
+      "p_one": 0.31138,
+      "p_two": 0.66866
+    }
+  },
+  "verdict_confirmed": false,
+  "verdict_explanation": "Hint survives high-R null on low_hw_w2 (p=0.001) but does NOT replicate on HW=3 (z=-0.89). Conclusion: input-class-specific effect, NOT general SHA-256 structural leak."
+}
