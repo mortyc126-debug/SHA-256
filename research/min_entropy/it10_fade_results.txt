@@ -1,0 +1,57 @@
+=== IT-10: Block-2 round-by-round fade ===
+N pairs: 2000000 (random bit flip in 512-bit block 1 msg)
+
+Hash diff: mean HW = 128.005 (expected ~128 for random)
+
+  r  mean_hw_mid        std  corr_hash       z enrich_b1%
+  1      128.000      7.999  -0.000552   -0.78        109
+  2      128.009      7.996  -0.000876   -1.24        109
+  4      128.009      8.004  -0.000651   -0.92        109
+  8      127.990      8.004  +0.000771   +1.09        109
+ 12      128.004      8.003  -0.000785   -1.11        109
+ 16      127.994      7.998  -0.000387   -0.55        109
+ 20      128.009      7.995  +0.000339   +0.48        109
+ 24      128.006      8.003  +0.000630   +0.89        109
+ 28      127.997      8.002  -0.000704   -1.00        109
+ 32      128.003      8.000  +0.000679   +0.96        109
+ 40      128.002      7.999  +0.000908   +1.28        109
+ 48      127.999      8.005  +0.000449   +0.64        109
+ 52      128.002      7.999  +0.000289   +0.41        109
+ 56      127.996      8.003  +0.000049   +0.07        109
+ 60      128.004      8.007  +0.000990   +1.40        109
+ 62      127.997      8.000  +0.000505   +0.71        109
+ 64      127.989      7.997  -0.000541   -0.76        109
+
+Last round with |z|>5 for HW-HW corr: r = -1 (NEVER)
+Implication: HW-HW is flat at every round of block 2.
+
+--- INTERPRETATION ---
+
+This is exactly the thermostat warning from methodology_v20 §222:
+"Each metric-based approach (HW, carry-overlap, GPK-diff, autocorr, mod k) is
+controlled by the thermostat."
+
+HW(state_diff) is a FIRST-ORDER statistic. At full avalanche (which occurs
+after block 1 for random-bit-flip input — mean_hw block1 end ≈ 115 in c-world
+filter, but ≈ 128 in raw), it is already at equilibrium. No further information
+is carried in the first-order marginal.
+
+The signal that DOES survive (confirmed by IT-6: Ω_3 = +0.98 sign-test
+p ≈ 10⁻⁴⁰ on block-1; IT-7v2: max_dz = 25σ at block-2 r=16) lives in:
+  - 3rd-order Walsh spectrum (non-metric invariant)
+  - cross-bit alignment (not single-bit HW)
+  - chain-3/chain-4 directional Fourier coefficients
+
+IT-10 failure = reaffirms: we cannot route around the thermostat with HW.
+MITM meet-point analysis requires Walsh-score trained classifier, not HW.
+
+--- NEXT: IT-11 ---
+
+Must use TRAINED classifier (M_in matrix from IT-9) evaluated at each
+block-2 round, not raw HW. This is heavier compute: train once on
+block-1 c-world state_diff, then evaluate score at states_A[r] XOR states_B[r]
+for each r ∈ R_LIST. Correlation with HW(hash_diff) at each r = true fade curve.
+
+Alternative (aligned with methodology §5.1 Quiet Points, §5.2 Piecewise Newton):
+SA-search in c-world block-2 context for (state1_A, state1_B) pairs where
+block-2 arithmetic Q < 94. Structural, not statistical.
