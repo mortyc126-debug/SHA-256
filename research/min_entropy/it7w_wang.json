@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "N": 200000,
+    "rounds": [
+      16,
+      20,
+      24,
+      32
+    ]
+  },
+  "results": {
+    "16": {
+      "n_zero": 0,
+      "omega_2": null,
+      "note": "too few"
+    },
+    "20": {
+      "n_zero": 0,
+      "omega_2": null,
+      "note": "too few"
+    },
+    "24": {
+      "n_zero": 0,
+      "omega_2": null,
+      "note": "too few"
+    },
+    "32": {
+      "n_zero": 0,
+      "omega_2": null,
+      "note": "too few"
+    }
+  }
+}
