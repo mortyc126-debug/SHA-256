@@ -1,0 +1,69 @@
+=== IT-11: Walsh-2 score N-scaling through block 2 ===
+Train: M_in on N=3000000 block-1 c-world pairs, target=HW(b1_diff)
+Test: 5000000 candidate pairs (c-world filter applied)
+
+Actual c-world test pairs: ~720K (14.4% filter rate); snapshot rows with
+N >= 1M are padded with the final value of 720K.
+
+N              b1_r64         b2_r16         b2_r32         b2_r48          hash
+1000       +0.9684/+30.6   -0.1217/-3.8   +0.0803/+2.5   -0.0340/-1.1   +0.0320/+1.0
+3000       +0.9713/+53.2   -0.0689/-3.8   +0.0153/+0.8   -0.0159/-0.9   +0.0303/+1.7
+10000      +0.9725/+97.2   -0.0008/-0.1   +0.0139/+1.4   -0.0100/-1.0   +0.0141/+1.4
+30000      +0.9723/+168.4  +0.0089/+1.5   +0.0044/+0.8   -0.0103/-1.8   +0.0019/+0.3
+100000     +0.9720/+307.4  +0.0018/+0.6   +0.0030/+1.0   -0.0097/-3.1   +0.0013/+0.4
+300000     +0.9718/+532.3  -0.0057/-3.1   -0.0000/-0.0   -0.0043/-2.3   -0.0055/-3.0
+720000(fin)+0.9720/+825.1  -0.0027/-2.3   +0.0023/+1.9   -0.0010/-0.9   -0.0049/-4.1
+
+--- α fit on real range (K=1K to K=300K, log-log OLS) ---
+
+point    α    interpretation
+b1_r64   0.00  FLAT — real persistent signal c ≈ +0.972
+b2_r16   0.54  borderline null (1/√N)
+b2_r32   ~0.5  null after N=10K
+b2_r48   0.36  slower than null → residual tiny signal
+hash     0.31  slower than null, SIGN FLIP at N=30K
+
+--- Key observations ---
+
+1. b1_r64: z grows +30 → +825 as √N (×27.5 for √720 = 26.8 ✓).
+   CANONICAL real signal. Confirms IT-9 at full strength.
+
+2. b2_r16 and later: z stays bounded |z| ≤ 4 at all N.
+   Corr drops roughly as 1/√N (null behaviour).
+   No macroscopic linear signal from block-1-trained M_in at these rounds.
+
+3. hash: sign flips at N=30K (+0.0019 → -0.0055 at N=300K).
+   At N=720K: c = -0.0049, z = -4.1. p ≈ 4×10⁻⁵, Bonferroni-corrected
+   for 5 evaluation points: p ≈ 2×10⁻⁴.
+   Extrapolation: if c_∞ ≈ -0.005 is real (α = 0), then at N = 10M
+   c-world pairs we should see z ≈ -15σ. This is the testable claim.
+
+--- USER HYPOTHESIS TEST: "active dilution" (α > 0.5) ---
+
+NOT confirmed on linear Walsh-2 probe with HW target.
+α ≈ 0.5 (null) at b2_r16 and b2_r32.
+α < 0.5 at b2_r48 and hash: signal actually SLOWER-decaying than noise,
+suggesting tiny residual real signal.
+
+This means: the "dilution" we observe is consistent with
+standard 1/√N statistical noise + ~0.005 residual bias.
+
+BUT: the hypothesis remains alive for HIGHER-ORDER invariants.
+IT-6 showed Ω_3 = +0.98 with sign-test p ≈ 10⁻⁴⁰ — a 3rd-order
+Walsh-spectrum statistic. If Ω_3 scales with N differently than
+1/√N (e.g., converges to finite non-zero), that would be the
+missing "architectural persistence" at higher order.
+
+--- NEXT: IT-12 ---
+
+Re-run N-scaling on NON-LINEAR statistic:
+- chain_3(b) = directional 3rd-order correlation (IT-5g/IT-6)
+- Ω_3 = cross-bit alignment of chain vs direct (IT-6)
+- z_tail signal from IT-9B (bottom-1% percentile HW)
+
+If Ω_3 at block-1 end stays ≈ +0.98 while Ω_3 at hash → 0 with α > 0.5,
+then we have clean architectural dilution signature on the relevant
+higher-order statistic.
+
+Also: extend N to 50M candidates (~7M c-world pairs) to confirm
+the hash z=-4.1 keeps growing (real signal) vs plateaus (artifact).
