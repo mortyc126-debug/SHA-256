@@ -1,0 +1,16 @@
+{
+  "baseline_omega3": 0.85,
+  "results": [
+    {"label": "P1a: max_pos < 256",      "N": 32640,  "omega3": 0.9578, "ss": 228, "deviation": 0.108},
+    {"label": "P1b: max_pos >= 256",     "N": 98176,  "omega3": 0.8848, "ss": 220, "deviation": 0.035},
+    {"label": "P2a: distance < 64",       "N": 30240,  "omega3": 0.9568, "ss": 229, "deviation": 0.107},
+    {"label": "P2b: distance >= 64",      "N": 100576, "omega3": 0.8818, "ss": 215, "deviation": 0.032},
+    {"label": "P3b: diff byte",           "N": 129024, "omega3": 0.8514, "ss": 210, "deviation": 0.001},
+    {"label": "P4a: parity sum even",     "N": 65280,  "omega3": 0.9187, "ss": 229, "deviation": 0.069},
+    {"label": "P4b: parity sum odd",      "N": 65536,  "omega3": 0.9255, "ss": 217, "deviation": 0.076},
+    {"label": "P5a: max_pos & 1 = 0",     "N": 65280,  "omega3": 0.9209, "ss": 223, "deviation": 0.071},
+    {"label": "P5b: max_pos & 1 = 1",     "N": 65536,  "omega3": 0.9132, "ss": 226, "deviation": 0.063}
+  ],
+  "key_finding": "P1a (max_pos<256) and P2a (distance<64) give significantly elevated Omega_3 (~+0.96 vs baseline +0.85)",
+  "interpretation": "Identified weak message subclass with stronger Walsh-3 prediction power"
+}
