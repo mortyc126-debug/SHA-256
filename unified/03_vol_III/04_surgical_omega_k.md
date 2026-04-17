@@ -96,73 +96,37 @@ Magnitude на выходе: **~8·10⁻⁵ бит MI** — в 35 000× мень
 
 ## §III.4.5 IT-5G Theoretical formalisation chain-test
 
-**Setup** ✓DOK [IT-5G §1]: Y:X→{0,1}^n state map, f input feature,
-t output target. Chain_k = (1/√N)Σ_{|S|=k} z_S(f)·z_S(t).
-
-**Parseval** ✓DOK [IT-5G §2]: `Z_direct = Σ_k Chain_k`. Direct signal —
-сумма всех порядков.
-
-**Variance под H_0** ⚡VER [IT-5G §4]: std[Chain_k] ≈ √(M_k/N), M_k=C(n,k).
-Match within 10% по 3 порядкам (см. Гл. III.1 §1.4).
-
-**NP-оптимальность** ✓DOK [IT-5G §5]:
-- Chain_k = NP-optimal для **uniform-distributed** alternative.
-- max|z_S| = NP-optimal для **sparse** (single S* dominant).
-- Symmetric агрегаты strictly dominated Chain_k для distributed.
-
-**Теорема (informal)** ⚡VER [IT-5G §3]: signal ε distributed over M
-subsets with coherent sign:
-- Chain_k: signal ε√M, σ ~ √M ⇒ detectable.
-- max|z|: ε/√M per cell ⇒ undetectable.
-- Σz²: ε² total ⇒ обычно undetectable.
-
-**Empirical predictions verified** ⚡VER [IT-5G §7]:
-- P1: std growth 1:11.3:104 theoretical, 1:12.5:95 observed. ✓
-- P2: signal NOT uniformly distributed (z_3=−3.83, z_4=−6.40 растёт).
-- P3: Parseval Σ_k Chain_k = Z_direct ⇒ alternating signs across orders
-  (Chain_2≈−2, Chain_3=−83, Chain_4=−5275, higher must sum to +5356
-  to give Z_direct=−3.92).
+**Краткая сводка** (полная теория в Гл. III.1 §1.4-1.5):
+- ✓DOK Parseval: `Z_direct = Σ_k Chain_k`.
+- ⚡VER std[Chain_k] ≈ √(M_k/N), match within 10% (1:11.3:104 theory vs
+  1:12.5:95 observed).
+- ✓DOK NP-оптимальность: Chain_k для uniform-distributed; max|z_S| для
+  sparse; symmetric агрегаты strictly dominated.
+- ⚡VER Empirical [IT-5G §7]: signal NOT uniformly distributed (z_3=−3.83,
+  z_4=−6.40 растёт). Parseval Σ_k=Z_direct требует alternating signs:
+  Chain_2≈−2, Chain_3=−83, Chain_4=−5275, higher должны сумм. в +5356.
 
 ## §III.4.6 IT-5S Round × Walsh-order evolution
 
-**Метод** ⚡VER [IT-5S §1]: chain_k(r) для k=1,2,3 на state_r при
-r∈{4,8,12,16,20,24,32,48,64}. RO null R=30 vary state_r.
+**Метод** ⚡VER [IT-5S §1]: chain_k(r) для k=1,2,3 на state_r при r∈
+{4,8,12,16,20,24,32,48,64}. RO null R=30 vary state_r.
 
 **Raw chain magnitudes** ⚡VER [IT-5S §2]:
 ```
 r    |chain_1|  |chain_2|  |chain_3|
- 4      6.18      890        79 696
+ 4      6.18      890        79 696   baseline (signal на всех порядках)
  8      6.51      619        46 916
-12      0.17        3            110     ← phase transition
+12      0.17        3            110   ← phase transition (×−0.0023, sign flip)
 16      0.43       19            727
-20      0.02        1             88     ← stabilises
-64      0.00        2             83     ← saturated
-RO band: chain_3 mean=−83.54, std=3.79
+20      0.02        1             88   ← stabilises к RO
+64      0.00        2             83   ← saturated (RO band: −83.54 ± 3.79)
 ```
 
-**Два ключевых наблюдения** ✓DOK:
-
-**1. Сигнал на ВСЕХ порядках при малых r** [IT-5S §3.1]:
-r=4: chain_(k+1)/chain_k ≈ 100. Каждый дополнительный Walsh-порядок —
-256× больше subset-ов потенциально несущих информацию.
-
-**2. Фазовый переход r≈12** [IT-5S §3.2]:
-| r | chain_3 | изменение |
-|---|---|---|
-| 4 | −79 696 | baseline |
-| 8 | −46 916 | ×0.59 |
-| **12** | **+110** | ×−0.0023 (резкий + смена знака) |
-| 16 | +727 | ×6.6 |
-| 20 | −88 | стабилизация |
-| 64 | −83 | saturated |
-
-**Новый факт** ⚡VER [IT-5S §6]: **скорость затухания chain_k зависит от
-k немонотонно**. К r=64: |chain_3|/|chain_1| ≈ 41 500 (vs 12 900 при r=4).
-**chain_1 быстрее затухает чем chain_3** ⇒ информация **мигрирует в
-высокие порядки**.
-
-Это квантитативная формулировка миграции through round-функцию SHA-256.
-Соответствует S2 (max|z| в 1st-order saturates at r≈20).
+**Новый факт** ⚡VER [IT-5S §6]: к r=64 |chain_3|/|chain_1| ≈ 41 500 (vs
+12 900 при r=4). **chain_1 быстрее затухает чем chain_3** ⇒ информация
+**мигрирует в высокие порядки**. Квантитативная формулировка миграции
+через round-функцию SHA-256. Соответствует S2 (max|z| 1st-order
+saturates r≈20).
 
 ## §III.4.7 IT-6 Full output map: новый инвариант Ω_k
 
@@ -219,22 +183,13 @@ Binomial p (≥240 same-sign | p=0.5) ≈ 10⁻⁴⁰
   **Не проходит**.
 - Наш анализ: chain_3 + cross-bit correlation ⇒ p~10⁻⁴⁰.
 
-## §III.4.9 Compound подтверждение IT-4..IT-5
+## §III.4.9 Compound подтверждение и открытые
 
 ✓DOK [IT-6 §8]: Ω_3=+0.98 — **второе независимое подтверждение** что
-сигнал bit5_max→state2 **распределён когерентно** в 3rd-order Walsh.
-Q7d/Q7f показали это для bit10 и bit210 индивидуально. IT-6 — для
-**ВСЕХ 256 битов выхода** одновременно.
+bit5_max→state2 распределён когерентно в 3rd-order. Q7d/Q7f показали
+для bit10/bit210 индивидуально; IT-6 — для **всех 256 битов одновременно**.
+Качественный сдвиг: единое структурное свойство SHA-256 block-2 на HW=2.
 
-Качественный сдвиг: **единое структурное свойство** SHA-256 block-2
-compression на HW=2 inputs, не artefact конкретной (feature, target).
-
-## §III.4.10 Открытые
-
-?OPEN [IT-6 §11]:
-- IT-6b: Ω_k для k=1, 2, 4. Ω_4 > Ω_3? Полный спектр Ω_k.
-- Ω_k для других input features (не только bit5_max).
-- Ω_k for reduced-round SHA: эволюция dominance order vs r (связь с IT-5S).
-- Аналитика: ожидаемый Ω_k под H_0 с поправкой на конечный N.
-
-См. Гл. III.5 — bridges с Том I/II, общий статус закрытых вопросов.
+?OPEN [IT-6 §11]: IT-6b Ω_k для k=1,2,4 (полный спектр); Ω_k для других
+input features; Ω_k for reduced-round (связь IT-5S); аналитика E[Ω_k|H_0].
+См. Гл. III.5 — bridges с Том I/II.
