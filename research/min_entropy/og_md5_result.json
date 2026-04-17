@@ -1,0 +1,31 @@
+{
+  "hash": "md5",
+  "N": 130816,
+  "feature": "bit5_max",
+  "omega_spectrum": {
+    "1": {
+      "omega": 0.9976561931151686,
+      "same_sign": 184,
+      "time_sec": 0.5885076522827148
+    },
+    "2": {
+      "omega": 0.9976563364399738,
+      "same_sign": 185,
+      "time_sec": 2.3832406997680664
+    },
+    "3": {
+      "omega": 0.9976564546328095,
+      "same_sign": 184,
+      "time_sec": 30.8365535736084
+    }
+  },
+  "ro_null": {
+    "mean": 0.048215636902945246,
+    "std": 0.06969350238223512
+  },
+  "verdict": "BROKEN",
+  "reason": "\u03a9_k > 0.9 \u2014 strong structural bias (like MD5/SHA-1 at +0.998)",
+  "z_score": 13.623089459941918,
+  "runtime_sec": 235.57174444198608,
+  "version": "1.0.0"
+}
