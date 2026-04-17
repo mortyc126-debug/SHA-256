@@ -59,12 +59,12 @@ k∈[8,16] на 7 хэшах, 200 RO realizations:
 | sha1 | 9/9 | 0.002 | hyper-uniform |
 | md5 | 0/9 | 0.002 | concentration |
 | sha3_256 | 5/9 | 0.500 | noise |
-| blake2b | 5/9 | 0.500 | noise |
-| blake2s | 5/9 | 0.500 | noise |
+| blake2b | 6/9 | 0.508 | noise |
+| blake2s | 7/9 | 0.180 | noise |
 
 **Архитектурное разделение** ✓DOK:
 - SHA-MD-семейство (SHA-1/256/512): **26/27 negative**, p = **8·10⁻⁸**.
-- Sponge/HAIFA (SHA-3, BLAKE2): 15/27 negative, p = 0.70 (шум).
+- Sponge/HAIFA (SHA-3, BLAKE2): 18/27 negative, p ≈ 0.12 (шум).
 - MD5: 9/9 positive, p = 0.002 (слабая диффузия → концентрация).
 
 **Интерпретация** ✓DOK [SHARP §5]: SHA-2 семейство — **гиперравномернее
