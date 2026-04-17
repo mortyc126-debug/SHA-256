@@ -14,7 +14,7 @@
 7. **T_BARRIER_EQUALS_SCHEDULE** ✓DOK — барьер r=17 = schedule_barrier+1 [П-114]
 8. **T_CH_INVARIANT** ✓DOK — Ch[b30,b31]=0 при carry[63]=0 строго (0/1M) [П-966]
 9. **T_RANK5_INVARIANT** ✓DOK — rank_GF2(J_{5×15})=5 абсолютный [П-58]
-10. **T_INFINITE_TOWER** ✓DOK — slope=1.000 до k=24, height_2≥24 [П-59]
+10. **T_INFINITE_TOWER** ⚡VER — slope=1.000 до k=24 (200 сидов); height_2 ≥ **32** (финал, после П-67B) [П-59, П-67B]
 11. **T_BIRTHDAY_COST17** ✓DOK — оптимум 2¹²⁸ [П-27A]
 12. **T_SC_A1** ⚡VER — sufficient condition δa1=0x8000 (100000/100000) [П-24]
 13. **T_JOINT_SC** ✓DOK — [П-24]
