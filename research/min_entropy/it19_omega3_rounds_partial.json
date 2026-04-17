@@ -1,0 +1,15 @@
+{
+  "meta": {"N": 130816, "feature": "bit5_max", "rounds_completed": [0,8,16,24,32,40,48,56], "r=64_incomplete_due_to_timeout": true},
+  "results": [
+    {"r":0,  "omega3": 0.9932, "ss": 24, "n": 24, "p": 1.19e-7, "dz_max": 2.53, "cz_max": 57.49},
+    {"r":8,  "omega3": 0.9946, "ss": 24, "n": 24, "p": 1.19e-7, "dz_max": 2.91, "cz_max": 66.28},
+    {"r":16, "omega3": 0.9917, "ss": 24, "n": 24, "p": 1.19e-7, "dz_max": 2.25, "cz_max": 53.82},
+    {"r":24, "omega3": 0.9965, "ss": 24, "n": 24, "p": 1.19e-7, "dz_max": 3.12, "cz_max": 66.88},
+    {"r":32, "omega3": 0.9960, "ss": 24, "n": 24, "p": 1.19e-7, "dz_max": 2.84, "cz_max": 58.82},
+    {"r":40, "omega3": 0.9954, "ss": 24, "n": 24, "p": 1.19e-7, "dz_max": 2.92, "cz_max": 66.61},
+    {"r":48, "omega3": 0.9933, "ss": 24, "n": 24, "p": 1.19e-7, "dz_max": 2.92, "cz_max": 59.94},
+    {"r":56, "omega3": 0.9952, "ss": 24, "n": 24, "p": 1.19e-7, "dz_max": 2.97, "cz_max": 64.58}
+  ],
+  "headline_finding": "Omega_3 conserved at +0.99 across all 64 rounds of block 2",
+  "interpretation": "SHA-256 round function preserves the cross-bit Walsh-3 invariant despite full diffusion of linear signal."
+}

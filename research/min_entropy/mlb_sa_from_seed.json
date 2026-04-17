@@ -1,0 +1,17 @@
+{
+  "seed": {
+    "W0_a": 28954919,
+    "W0_b": 13417849,
+    "HW": 80
+  },
+  "best": {
+    "W0_a": 28954919,
+    "W0_b": 13417849,
+    "HW": 80
+  },
+  "improvement": 0,
+  "accept_rate": 0.0,
+  "n_improvements": 0,
+  "n_iters": 30000,
+  "runtime_sec": 104.3717520236969
+}
