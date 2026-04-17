@@ -14,7 +14,7 @@
 7. **T_BARRIER_EQUALS_SCHEDULE** ✓DOK — барьер r=17 = schedule_barrier+1 [П-114]
 8. **T_CH_INVARIANT** ✓DOK — Ch[b30,b31]=0 при carry[63]=0 строго (0/1M) [П-966]
 9. **T_RANK5_INVARIANT** ✓DOK — rank_GF2(J_{5×15})=5 абсолютный [П-58]
-10. **T_INFINITE_TOWER** ✓DOK — slope=1.000 до k=24, height_2≥24 [П-59]
+10. **T_INFINITE_TOWER** ⚡VER — slope=1.000 до k=24 (200 сидов); height_2 ≥ **32** (финал, после П-67B) [П-59, П-67B]
 11. **T_BIRTHDAY_COST17** ✓DOK — оптимум 2¹²⁸ [П-27A]
 12. **T_SC_A1** ⚡VER — sufficient condition δa1=0x8000 (100000/100000) [П-24]
 13. **T_JOINT_SC** ✓DOK — [П-24]
@@ -38,7 +38,7 @@
 27. **Δ_χ² vs Δ_I dissociation** ⚡VER [IT-3]
 28. **HW=2 exclusivity bit5_max** ⚡VER — exhaustive 130K [IT-4.1]
 29. **Directional chain-3 signal** ⚡VER — p=0.002 Bonferroni [IT-4.Q7DEF]
-30. **ρ(direct, chain_3) = +0.98** ⚡VER — same-sign 240/256 (p~10⁻⁴⁰) [IT-6]
+30. **ρ(direct, chain_3) = +0.98** ⚡VER — same-sign 240/256 (one-sided binomial p~10⁻⁵²) [IT-6]
 
 ## ЗАКРЫТО (не повторять)
 
@@ -70,7 +70,7 @@
 - **T_FREESTART_INFINITE_TOWER** ⊘ROLL → исправл. П-67 (DW=0 тривиально)
 - **T_FULLSTATE_FREESTART_TOWER** ⊘ROLL [П-63-64]
 - **T_DA_ODD_BIAS** ⊘ROLL → П-108 (T_DA_BIAS_ZERO)
-- **T_HEIGHT_SHA256=6** ⊘ROLL — опровергнута, height≥11 [П-52→П-53]
+- **T_HEIGHT_SHA256=6** ⊘ROLL — опровергнута; пересмотр: height₂ ≥ 11 (П-53) → ≥ 24 (П-59) → **≥ 32** (финал, П-67B)
 
 ## ОТКРЫТО (направления для работы)
 

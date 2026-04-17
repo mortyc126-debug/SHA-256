@@ -70,7 +70,7 @@ G7 (G5<4 → взломан) ✗NEG [П-110]: ОПРОВЕРГНУТА.
 
 ## §II.6.5 Distinguisher v5..v6 — серия НС
 
-**T_CH_INVARIANT** ★★★★★ ✓DOK [П-966] (0/1M): Ch[b30,b31]=0 при carry[63]=0 строго аналитически. Distinguisher v5.1 AUC=0.914, Adv=+0.829.
+**T_CH_INVARIANT** ★★★★★ ✓DOK [П-966] (0/1M): Ch[b30,b31]=0 при carry[63]=0 строго аналитически. **Примечание**: переменная `carry[63]` — специфический внутренний carry-trace Distinguisher v5.1, определение см. в оригинальном коде П-966 (не `carry(T1+T2)` финального раунда). Distinguisher v5.1 AUC=0.914, Adv=+0.829.
 
 **T_G62_INVARIANT** ★★★★★ ✓DOK [П-996]: Distinguisher v5.2 AUC=0.960, Adv=+0.921.
 

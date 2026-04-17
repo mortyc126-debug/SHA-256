@@ -35,7 +35,7 @@
 | **Найденная пара (полный цикл)** | W0 = **c97624c6** | ⚡VER (518 s, 12 CPU, 8685M итер.) | П-97 |
 | **\|Sol_17\|** (neutral bits) | ≥ 2⁹⁶ | ∆EXP | П-101 |
 | **Birthday bound** | оптимален **2¹²⁸** | ✓DOK | П-27, П-32 |
-| **Distinguisher v6.0 (нейросеть)** | **AUC = 0.980** | ⚡VER | П-1000..П-1035 |
+| **Distinguisher v6.0 (нейросеть)** | **AUC = 0.980** (как classifier при уже известной carry[63]=0; **НЕ** применима как pre-filter для случайных W[0] — замкнутость, см. §II.6.5) | ⚡VER | П-1000..П-1035 |
 | **MITM через state[16]** | O(2⁸⁰) | ∆EXP (теория) | П-210 |
 | **MILP наивная стоимость** | ~2¹⁴⁴ | ∆EXP | П-142 |
 | **Carry-rank (image)** | **589/592** | ✓DOK | §191 |
@@ -44,7 +44,7 @@
 | **DW⊥ norm advantage** | ~**1500×** больше нелинейных | ⚡VER | П-88 |
 | **T_SC_A1 verification** | 100000/100000 | ⚡VER | П-24 |
 | **T_WANG_ADAPTIVE** | 50000/50000 | ⚡VER | П-25 |
-| **height_2 (p-adic tower)** | **≥ 11** (slope=1.000 до k=24) | ✓DOK | П-53, П-59 |
+| **height_2 (p-adic tower)** | **≥ 32** (финальная оценка; slope=1.000 до k=24 на 200 сидах; расширено до k=32 после исправления freestart артефакта) | ⚡VER | П-53, П-59, П-67B |
 | **Rank_GF2(J_{5×15})** | **5** (абсолютный инвариант) | ✓DOK | П-58 |
 | **GF2 bijection free-start** | rank=r для r=1..64 | ⚡VER | П-61 |
 | **Word saturation** | bit 63% → word 94% | ⚡VER | П-79 |
@@ -72,7 +72,7 @@
 | **Round decay (S2)** | signal ~2× за 4 раунда, RO-clean к r=20 | ⚡VER | IT-4.S2 |
 | **chain_3 round evolution** | затухает медленнее chain_1 | ⚡VER | IT-5S |
 | **Correlation ρ(direct, chain_3)** | **+0.98** | ⚡VER | IT-6 |
-| **Same-sign бит** | **240/256** (p ~ 10⁻⁴⁰) | ⚡VER | IT-6 |
+| **Same-sign бит** | **240/256** (one-sided binomial p ~ 10⁻⁵²) | ⚡VER | IT-6 |
 | **bit5_max magnitude** | ~8×10⁻⁵ бит MI | ⚡VER | IT-4 seq |
 
 ## Мосты (кросс-томные численные совпадения)

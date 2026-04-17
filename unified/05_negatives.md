@@ -31,7 +31,7 @@
 | T_FREESTART_INFINITE_TOWER | DW=0 тривиально (П-62) | → П-67 корректировка |
 | T_FULLSTATE_FREESTART_TOWER | Артефакт (П-63-64) | отозвана |
 | T_DA_ODD_BIAS | Stat. fluke (П-106) | → П-108 T_DA_BIAS_ZERO |
-| T_HEIGHT_SHA256=6 | Опровергнута (П-52) | → П-53 height_2≥11 |
+| T_HEIGHT_SHA256=6 | Опровергнута (П-52) | → П-53 height_2 ≥ 11 → П-59 ≥ 24 → **П-67B ≥ 32** (финал) |
 
 ## Том I — Математика бита
 
