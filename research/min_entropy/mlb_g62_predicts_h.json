@@ -1,0 +1,17 @@
+{
+  "K": 2000000,
+  "N_close": 10000,
+  "N_far": 10000,
+  "close_mean": 118.9324,
+  "close_std": 7.815032803115504,
+  "far_mean": 128.0241,
+  "far_std": 8.088650185054464,
+  "diff": -9.091700000000003,
+  "z_diff": -80.83475349893438,
+  "methodology_close": 109.0,
+  "methodology_far": 127.2,
+  "agreement": {
+    "close": false,
+    "far": true
+  }
+}
