@@ -1,0 +1,31 @@
+{
+  "hash": "md5",
+  "N": 130816,
+  "feature": "bit5_max",
+  "omega_spectrum": {
+    "1": {
+      "omega": -0.05689996464557936,
+      "same_sign": 56,
+      "time_sec": 0.2620244026184082
+    },
+    "2": {
+      "omega": -0.05648788659435507,
+      "same_sign": 57,
+      "time_sec": 1.3684017658233643
+    },
+    "3": {
+      "omega": -0.05612365296562388,
+      "same_sign": 56,
+      "time_sec": 15.551375150680542
+    }
+  },
+  "ro_null": {
+    "mean": 0.048215636902945246,
+    "std": 0.06969350238223512
+  },
+  "verdict": "RO-LIKE",
+  "reason": "\u03a9_k 1.5\u03c3 \u2014 within RO null band",
+  "z_score": 1.497116464262603,
+  "runtime_sec": 123.08386564254761,
+  "version": "1.0.0"
+}
