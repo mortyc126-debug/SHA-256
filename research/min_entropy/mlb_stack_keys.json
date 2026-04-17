@@ -1,0 +1,24 @@
+{
+  "K": 2000000,
+  "N_PAIRS": 10000,
+  "results": {
+    "g62 (methodology)": {
+      "n_close": 6,
+      "n_far": 10000,
+      "close_mean": 122.5,
+      "far_mean": 127.8503,
+      "gap": -5.350300000000004,
+      "z": -1.352173737947521
+    },
+    "d63 (best from scan)": {
+      "n_close": 7,
+      "n_far": 10000,
+      "close_mean": 119.28571428571429,
+      "far_mean": 128.041,
+      "gap": -8.755285714285705,
+      "z": -2.0862527519578817
+    }
+  },
+  "best_stack": "d63 (best from scan)",
+  "best_gap": -8.755285714285705
+}
