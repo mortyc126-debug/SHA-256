@@ -127,7 +127,7 @@
 - П-42-44: T_HENSEL_INAPPLICABLE, T_NONLINEAR_MATRIX_FAILS ✗NEG
 - П-45-48: Якобиан, Hensel — исчерпаны
 - П-49-52: **p-адическая башня** — T_HEIGHT_SHA256=6 ⊘ROLL
-- П-53: **height_2≥11** (slope=1.000 до k=24) ✓DOK ⭐
+- П-53: **height_2 ≥ 11** (slope=1.000 до k=24) ✓DOK — впоследствии расширено П-59: ≥24 → **П-67B: ≥32 (финал)** ⭐
 
 ### П-54..П-66 — GF(2), биекция
 - П-57: **T_RANK5_INVARIANT = 5** абсолютный ✓DOK ⭐

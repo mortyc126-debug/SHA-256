@@ -70,7 +70,7 @@
 - **T_FREESTART_INFINITE_TOWER** ⊘ROLL → исправл. П-67 (DW=0 тривиально)
 - **T_FULLSTATE_FREESTART_TOWER** ⊘ROLL [П-63-64]
 - **T_DA_ODD_BIAS** ⊘ROLL → П-108 (T_DA_BIAS_ZERO)
-- **T_HEIGHT_SHA256=6** ⊘ROLL — опровергнута, height≥11 [П-52→П-53]
+- **T_HEIGHT_SHA256=6** ⊘ROLL — опровергнута; пересмотр: height₂ ≥ 11 (П-53) → ≥ 24 (П-59) → **≥ 32** (финал, П-67B)
 
 ## ОТКРЫТО (направления для работы)
 
