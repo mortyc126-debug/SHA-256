@@ -72,7 +72,7 @@
 | **Round decay (S2)** | signal ~2× за 4 раунда, RO-clean к r=20 | ⚡VER | IT-4.S2 |
 | **chain_3 round evolution** | затухает медленнее chain_1 | ⚡VER | IT-5S |
 | **Correlation ρ(direct, chain_3)** | **+0.98** | ⚡VER | IT-6 |
-| **Same-sign бит** | **240/256** (p ~ 10⁻⁴⁰) | ⚡VER | IT-6 |
+| **Same-sign бит** | **240/256** (one-sided binomial p ~ 10⁻⁵²) | ⚡VER | IT-6 |
 | **bit5_max magnitude** | ~8×10⁻⁵ бит MI | ⚡VER | IT-4 seq |
 
 ## Мосты (кросс-томные численные совпадения)

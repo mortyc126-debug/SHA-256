@@ -313,7 +313,7 @@
 | **Round decay (S2)** | signal ~2× за 4 раунда, RO-clean к r=20 | ⚡VER | IT-4.S2 |
 | **chain_3 round evolution** | затухает медленнее chain_1 | ⚡VER | IT-5S |
 | **Correlation ρ(direct, chain_3)** | **+0.98** | ⚡VER | IT-6 |
-| **Same-sign бит** | **240/256** (p ~ 10⁻⁴⁰) | ⚡VER | IT-6 |
+| **Same-sign бит** | **240/256** (p ~ 10⁻⁵²) | ⚡VER | IT-6 |
 | **bit5_max magnitude** | ~8×10⁻⁵ бит MI | ⚡VER | IT-4 seq |
 
 ## Мосты (кросс-томные численные совпадения)
@@ -379,7 +379,7 @@
 27. **Δ_χ² vs Δ_I dissociation** ⚡VER [IT-3]
 28. **HW=2 exclusivity bit5_max** ⚡VER — exhaustive 130K [IT-4.1]
 29. **Directional chain-3 signal** ⚡VER — p=0.002 Bonferroni [IT-4.Q7DEF]
-30. **ρ(direct, chain_3) = +0.98** ⚡VER — same-sign 240/256 (p~10⁻⁴⁰) [IT-6]
+30. **ρ(direct, chain_3) = +0.98** ⚡VER — same-sign 240/256 (p~10⁻⁵²) [IT-6]
 
 ## ЗАКРЫТО (не повторять)
 
@@ -3741,7 +3741,7 @@ multi-seed; Q7j аналитика chain-z growth.
 > block-2 регенерирует low-order bias из high-order state1. IT-5G даёт
 > теорию chain-test (Parseval, NP-оптимальность). IT-5S: round×Walsh-order
 > map с фазовым переходом r≈12, низкие порядки затухают быстрее высоких.
-> IT-6: новый инвариант **Ω_3=+0.98** — sign-test 240/256 битов, p~10⁻⁴⁰.
+> IT-6: новый инвариант **Ω_3=+0.98** — sign-test 240/256 битов, p~10⁻⁵².
 
 ## §III.4.1 IT-4 Surgical S1: full output 256 бит
 
@@ -3883,7 +3883,7 @@ saturates r≈20).
 ```
 ρ(z_direct_norm, z_chain_norm) over 256 bits = +0.9795
 Same-sign bits: 240 / 256 = 93.75%
-Binomial p (≥240 same-sign | p=0.5) ≈ 10⁻⁴⁰
+Binomial p (≥240 same-sign | p=0.5) ≈ 10⁻⁵² (one-sided, точное вычисление в log-пространстве; ранее писалось ~10⁻⁴⁰, что занижало силу сигнала на 12 порядков)
 ```
 
 **Самый сильный сигнал из всех IT-1..IT-6**.
@@ -3913,12 +3913,12 @@ Binomial p (≥240 same-sign | p=0.5) ≈ 10⁻⁴⁰
 **Свойства**:
 - |Ω_k| ≤ 1 по def.
 - RO: E[Ω_k] = 0.
-- SHA-256 на (HW=2, bit5_max): **Ω_3 = +0.98**, sign-test p ≈ 10⁻⁴⁰.
+- SHA-256 на (HW=2, bit5_max): **Ω_3 = +0.98**, sign-test p ≈ 10⁻⁵².
 
 **Почему классика не видит** ✓DOK [IT-6 §7]:
 - Classical max|z|: max|direct_z|=3.24, Bonferroni-256 требует |z|>3.7.
   **Не проходит**.
-- Наш анализ: chain_3 + cross-bit correlation ⇒ p~10⁻⁴⁰.
+- Наш анализ: chain_3 + cross-bit correlation ⇒ p~10⁻⁵².
 
 ## §III.4.9 Compound подтверждение и открытые
 
@@ -4046,7 +4046,7 @@ round-функции. Не зависит от выбора S или output bit 
 который:
 1. Имеет clean ИТ-интерпретацию (через Parseval).
 2. Численно вычислим в 13.5 min на CPU для k=3.
-3. Даёт astronomical detection (p~10⁻⁴⁰) на сигналах, невидимых
+3. Даёт astronomical detection (p~10⁻⁵²) на сигналах, невидимых
    classical bit-by-bit Bonferroni (p>0.05).
 
 **Применение к design-анализу**:
@@ -4099,7 +4099,7 @@ SHA-256.
 ✓DOK 12: birthday formula, IT-1.3 family-fingerprint, IT-2 attribution,
 IT-3 dissociation, IT-4 Q7-line completeness, IT-4.S2 round decay, IT-4.S3
 SHA-256 specificity, IT-4.S4 block-2 mechanism, IT-5G NP-optimality,
-IT-5S phase transition, IT-6 Ω_3=0.98 (p~10⁻⁴⁰), 6 bridges с T-I/II.
+IT-5S phase transition, IT-6 Ω_3=0.98 (p~10⁻⁵²), 6 bridges с T-I/II.
 
 ⚡VER 8: Ĥ_∞ formula, χ² hyper-uniformity, σ/Σ chimera reduction,
 HW-exclusivity, chain-3 R=500 amplification, chain-4 z=-6.40,
@@ -4676,7 +4676,7 @@ Any AI session продолжая работу должна помнить: пе
 
 ### IT-6 — Full-output map
 - **ρ(direct, chain_3) = +0.98** ⭐⭐⭐
-- Same-sign 240/256 (p~10⁻⁴⁰)
+- Same-sign 240/256 (p~10⁻⁵²)
 - **Ω_k инвариант** по output битам
 
 ## Ключевые кросс-томные моменты

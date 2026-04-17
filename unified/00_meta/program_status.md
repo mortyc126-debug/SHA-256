@@ -38,7 +38,7 @@
 27. **Δ_χ² vs Δ_I dissociation** ⚡VER [IT-3]
 28. **HW=2 exclusivity bit5_max** ⚡VER — exhaustive 130K [IT-4.1]
 29. **Directional chain-3 signal** ⚡VER — p=0.002 Bonferroni [IT-4.Q7DEF]
-30. **ρ(direct, chain_3) = +0.98** ⚡VER — same-sign 240/256 (p~10⁻⁴⁰) [IT-6]
+30. **ρ(direct, chain_3) = +0.98** ⚡VER — same-sign 240/256 (one-sided binomial p~10⁻⁵²) [IT-6]
 
 ## ЗАКРЫТО (не повторять)
 

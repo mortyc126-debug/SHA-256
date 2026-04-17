@@ -214,7 +214,7 @@
 
 ### IT-6 — Full-output map
 - **ρ(direct, chain_3) = +0.98** ⭐⭐⭐
-- Same-sign 240/256 (p~10⁻⁴⁰)
+- Same-sign 240/256 (one-sided binomial p~10⁻⁵²)
 - **Ω_k инвариант** по output битам
 
 ## Ключевые кросс-томные моменты

@@ -5,7 +5,7 @@
 > block-2 регенерирует low-order bias из high-order state1. IT-5G даёт
 > теорию chain-test (Parseval, NP-оптимальность). IT-5S: round×Walsh-order
 > map с фазовым переходом r≈12, низкие порядки затухают быстрее высоких.
-> IT-6: новый инвариант **Ω_3=+0.98** — sign-test 240/256 битов, p~10⁻⁴⁰.
+> IT-6: новый инвариант **Ω_3=+0.98** — sign-test 240/256 битов, p~10⁻⁵².
 
 ## §III.4.1 IT-4 Surgical S1: full output 256 бит
 
@@ -147,7 +147,7 @@ saturates r≈20).
 ```
 ρ(z_direct_norm, z_chain_norm) over 256 bits = +0.9795
 Same-sign bits: 240 / 256 = 93.75%
-Binomial p (≥240 same-sign | p=0.5) ≈ 10⁻⁴⁰
+Binomial p (≥240 same-sign | p=0.5) ≈ 10⁻⁵² (one-sided binomial, точное вычисление в log-пространстве)
 ```
 
 **Самый сильный сигнал из всех IT-1..IT-6**.
@@ -177,12 +177,12 @@ Binomial p (≥240 same-sign | p=0.5) ≈ 10⁻⁴⁰
 **Свойства**:
 - |Ω_k| ≤ 1 по def.
 - RO: E[Ω_k] = 0.
-- SHA-256 на (HW=2, bit5_max): **Ω_3 = +0.98**, sign-test p ≈ 10⁻⁴⁰.
+- SHA-256 на (HW=2, bit5_max): **Ω_3 = +0.98**, sign-test p ≈ 10⁻⁵² (one-sided binomial, точное вычисление в log-пространстве).
 
 **Почему классика не видит** ✓DOK [IT-6 §7]:
 - Classical max|z|: max|direct_z|=3.24, Bonferroni-256 требует |z|>3.7.
   **Не проходит**.
-- Наш анализ: chain_3 + cross-bit correlation ⇒ p~10⁻⁴⁰.
+- Наш анализ: chain_3 + cross-bit correlation ⇒ p~10⁻⁵².
 
 ## §III.4.9 Compound подтверждение и открытые
 
