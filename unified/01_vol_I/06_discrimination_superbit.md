@@ -4,18 +4,31 @@
 
 ## §I.6.1 Phase hierarchy (§43-48)
 
-**Sparse phase bits** [§43]: базовая sparse-репрезентация фаз, O(sparse) память, phase-only encoding без амплитуд.
+**Sparse phase bits** [§43]: базовая sparse-репрезентация фаз.
+- **§43.2** ⚡VER: **GHZ discrimination at n=10⁶ в 2 ms**, O(1) time/space.
+- **§43.3** ⚡VER: **W-state exponential discrimination: 2^(n-1) advantage**; таблица до n=8 (128×).
+- **§43.4** ✓DOK: **Computation-robustness trade-off principle** — более точная дискриминация ↔ менее устойчива к шуму.
+- **§43.5**: W-state memory ≈ quadratic kernel (honest reduction).
 **MPS phase bits** [§44] ⚡VER: 10,000 qubits DJ/BV @ 11 ms, bond dim малый, phase-MPS контракция линейна.
-**General Discrimination Theorem** [§45] ★ЦЕНТРАЛЬНЫЙ: любая task с бинарным выходом (accept/reject) разрешима phase-sampling + classical discrimination за poly(n), если оракул имеет групповую структуру.
-**Z/m hierarchy** [§46]: глубина k даёт mощность m^(k-1); рекурсия фаз — экспонента в показателе.
-**Z/4 unlocks Clifford** [§47]: m=4 → Clifford gates достижимы через phase-only; T-gate остаётся вне.
-**DJ scaling** [§48] ⚡VER: 1,000,000 qubits DJ @ 0.9 s — линейный рост phase-bit метода.
+**General Discrimination Theorem** [§45] ★ЦЕНТРАЛЬНЫЙ ✓DOK: любая task с бинарным выходом разрешима phase-sampling + classical discrimination за poly(n), если оракул имеет групповую структуру.
+- **§45.11 Extension** ✓DOK: full 2^k discrimination достижимо через ОДИН triple observable — существенное усиление.
+**Z/m hierarchy** [§46] ✓DOK: глубина k даёт мощность **m^(k-1)**; рекурсия фаз экспонента в показателе.
+**Z/4 unlocks Clifford** [§47]: m=4 → Clifford gates (Y, S) достижимы через phase-only; T-gate остаётся вне.
+**DJ scaling** [§48] ⚡VER: **1,000,000 qubits DJ @ 0.9 s** — линейный рост phase-bit метода.
 
-## §I.6.2 Task-specificity & SHA (§49-52)
+## §I.6.2 Task-specificity & SHA full circle (§49-52) ⭐
 
 **Task-Specificity Conjecture** [§49]: phase-sampling решает лишь задачи с согласованной групповой симметрией; generic BQP вне досягаемости.
-**SHA full circle** [§50-51] ⚡VER: 646× pairwise features SHA-256 round function, phase-extraction полного цикла, all-pairs correlation map. 646 нетривиальных парных корреляций bit-positions.
+
+**SHA full circle** [§50-51] ⚡VER — применение §45 Discrimination Theorem обратно к §4.2 SHA:
+- **§50.2** ⚡VER: W[1] correlation **от 0.018 → 1.000** через ОДНУ pairwise feature. Qualitative jump: от случайности к точному предсказанию.
+- **§51.5 KEY RESULT** ⚡VER: **4,323,415× speedup на 32-bit SHA-256 R=1 inversion** (pairwise features). Это **2449× улучшение над §4.2 (HDV 1765× на 16-bit)**.
+- **§51 также 646× на 16-bit pairwise** (2.1× над Hamming baseline).
+- **Это ГЛАВНЫЙ численный результат Тома I на реальной криптофункции** (§9.1 P2).
+
 **Executive summary** [§52]: phase-bit → poly-time для симметричных oracle tasks; SHA reverse-engineering через pairwise feature extraction — первый non-toy результат.
+
+**GHZ± strongest claim** [§9.1 P5] ⚡VER: ⟨ZZZ⟩ через |c|² даёт 0/0 (slepота), ⟨XXX⟩ через амплитуды даёт ±1 — прямое доказательство что phase-bit амплитуды несут информацию, **принципиально недоступную вероятностным моделям**.
 
 ## §I.6.3 P-bit & synergy (§53-59)
 
@@ -47,6 +60,8 @@
 
 ## §I.6.7 Order parameter & RG (§72-74)
 
+**§72 Теорема 8 (σ-gap lower bound)** ✓DOK: существует нижняя граница на σ-gap через Cheeger-like inequality для phase-coherence.
+**§72 Теорема 9 (Self-tuning Lyapunov stability)** ✓DOK: self-tuning σ-map стабильна по Ляпунову при Z/m-совместимых возмущениях.
 **Order param** [§72]: φ := ⟨phase-coherence⟩, phase-transition при critical m_c.
 **RG flow** [§73]: Z/m hierarchy как RG-flow, fixed points в m→∞, Z/4 как non-trivial attractor.
 **Critical exponents** [§74]: ν, η для phase-coherence transition; универсальность на structured oracles.

@@ -35,6 +35,9 @@
 - [06_diffuzia_distinguisher.md](02_vol_II/06_diffuzia_distinguisher.md) — AUC=0.980, MITM O(2⁸⁰)
 - [07_nova_mathematics.md](02_vol_II/07_nova_mathematics.md) — ★-Algebra, BTE, GPK, carry-rank=589
 - [08_otkrytye_i_zakrytye.md](02_vol_II/08_otkrytye_i_zakrytye.md) — Итоги Тома II
+- [09_praktiki_distinguisher_v6.md](02_vol_II/09_praktiki_distinguisher_v6.md) — Практические атаки (ECDSA/HMAC/Merkle), Distinguisher v6.0 φ=+0.414, Φ-manifold, Cycle dynamics
+- [10_nonlinear_algebra_ALG.md](02_vol_II/10_nonlinear_algebra_ALG.md) — Серия XVII, SAA, T_UNIVERSAL_76, ALG 53 опр., Carry-Web, NK Framework
+- [11_gpu_ctt_tlc_unified.md](02_vol_II/11_gpu_ctt_tlc_unified.md) — CTT, TLC, SCF, Unified hash theory, Carry Theory axioms, Beyond the Wall
 
 ### 03_vol_III/ — Том III «Info-theory fingerprinting»
 - [01_framework.md](03_vol_III/01_framework.md) — Ĥ_∞, Rényi, Δ_χ²/Δ_I/Ω_k, chain-test theory

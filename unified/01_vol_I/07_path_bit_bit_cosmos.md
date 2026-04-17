@@ -51,12 +51,14 @@
 
 ## §I.7.6 Cosmic-bit raid (§88)
 
-**C1-C5**: physics-inspired primitives.
-- **C1**: supersymmetry-bit (fermi/bose superposition).
-- **C2**: spinor-bit (SU(2) projective).
-- **C3**: gauge-bit (locally Yang-Mills).
-- **C4**: holographic-bit (bulk/boundary).
-- **C5**: stringy-bit (oscillator modes).
+**C1-C5** — cosmological-scale primitives (правильная нумерация из §88.2-88.6):
+- **C1**: wormhole-bit (connection bit between regions).
+- **C2**: black-hole-bit (event-horizon boundary).
+- **C3**: holographic-bit (bulk/boundary duality).
+- **C4**: dark-matter-bit (non-interacting computational substrate).
+- **C5**: galaxy-bit (large-scale structure).
+
+**§88.9** ⚡VER: **12 practical advantages из 20 wild attempts** (Q3/Q4/Q6/Q7/Q9/Q10/Q12/Q13/Q15 + C2/C3/C5). Не все wall, positive findings конкретны.
 
 Иерархический поиск: некоторые сводятся к phase/holonomy, некоторые — кандидаты новых осей.
 
@@ -94,14 +96,16 @@
 - Независимо построенная структура совпадает с современной гипотезой.
 - Метафизический контекст: mathematical objects are "real" independently of implementation.
 
-## §I.7.12 Тест на SHA-256 (§94) ⚡VER ⭐
+## §I.7.12 Тест на SHA-256 (§94) ⚠ ИСПРАВЛЕНО (гипотеза ОПРОВЕРГНУТА)
 
-**Экспериментальная верификация**: биты не стираются при SHA round.
-- Подсчёт уникальных состояний по раундам.
-- **Conservation law эмпирически подтверждён** на SHA-256 transformation.
-- Информация о входе сохраняется (хотя не доступна полиномиально — связь с collision resistance).
+**Экспериментальная проверка гипотезы «bits трансформируются, не стираются»**:
+- **§94.5** ✗NEG: **гипотеза в общем случае ОПРОВЕРГНУТА через 2 rounds SHA**. Попарное распределение bit-trajectories сильно рассыпается.
+- **§94.7**: сохраняется **только на single operations** (R=1) и **через triple-products** — последняя линия защиты.
+- **§94.8 HONEST answer**: conservation НЕ универсален; Bit-cosmos conservation law (§91) — локальное свойство, не глобальное.
 
-**⇒BRIDGE с Том II**: SHA трансформирует, но не теряет информацию — consistent с T_SCHEDULE_FULL_RANK (П-23) и T_GF2_BIJECTION (П-61).
+**⇒BRIDGE с Том II**: это ОБЪЯСНЯЕТ avalanche wall (§I.8 §111) — информация о входе распыляется за 2R, делая reverse невозможным без W-bits. Согласуется с T_SCHEDULE_FULL_RANK (bijection на уровне уравнений, но НЕ на уровне доступной информации).
+
+**Уточнение Тома I итога**: conservation laws (§91) — формальное утверждение для ИЗОЛИРОВАННЫХ operations; на композиции R≥2 ломается.
 
 ## Cross-refs
 

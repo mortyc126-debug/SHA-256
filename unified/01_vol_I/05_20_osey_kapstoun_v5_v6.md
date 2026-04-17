@@ -19,13 +19,15 @@
 
 ## §I.5.3 Capstone v5 — consolidation (§25)
 
-**20 осей → 5 клеток**:
-1. thermo_reversible (OP×OP)
+**20 осей → 8 клеток (cell catalogue v2, исправлено §25.3)**:
+1. thermo_reversible (OP×OP, reversible×cost)
 2. modal_quotient (REL×VAL)
 3. causal_cost (REL×OP)
 4. stream_linear (TIME×OP)
-5. hybrid_automata (TIME×OP)
-6. phase-neurobit (triple: phase × stream × cost) — см. §I.4
+5. tropical_neurobit (OP×OP, tropical×cost)
+6. hybrid_automata (TIME×OP, timed×cost)
+7. phase-neurobit (triple: phase × stream × cost) — см. §I.4
+8. triple_rlc (triple: reversible × linear × cost) [§12.6] — первая тройная клетка
 
 Обновлённая иерархия закрывает разрыв между bit primitive и composite primitive.
 
@@ -34,16 +36,19 @@
 Структурная математика (не таксономия):
 - **Native simulation matrix** [i,j] = true если i эмулируется на j без накладных расходов.
 - **Транзитивное замыкание** вычислено.
-- **Minimal bases**: несколько базисов покрывают матрицу.
-- Depth по poset'у: 4.
+- **Minimal bases** — ключевой результат [§26.6]: несколько базисов покрывают матрицу.
+- **7 "native-зависимых" осей понижены** [§26.7] — не все оси equal.
+- Height poset'а: **3 edges** (4 nodes), Width ≥ 13.
 
 ## §I.5.5 Category of axes (§27)
 
-Формальная структура:
+Формальная структура [§27]:
 - **ЧУМ на native simulations** (partial order).
 - Antisymmetry: X ≺ Y ∧ Y ≺ X ⇒ X ≈ Y.
 - **Hasse-диаграмма** строится, но не unique.
-- Глубина 4 (максимум native-простых шагов).
+- **Глубина DAG = 3 edges (4 nodes)**. Максимальная цепь: `ebit → phase → prob → binary`.
+- **5 "структурных островов"** [§27.8-27.10]: cost, fuzzy, linear, reversible, selfref — одновременно minimal и maximal (isolated).
+- **Три структурных класса**: isolated / hub / derived.
 
 ## §I.5.6 Аксиомы D1-D5 (§28) ⭐
 
@@ -70,10 +75,15 @@
 
 Следствие: нельзя redукция 13 → 1, но можно 13 → 6.
 
-## §I.5.8 Triple closure — D5, D6 (§30)
+## §I.5.8 Triple closure — три потока Q29.1 + D5 + D6 (§30)
 
-**D5 upper bound**: N = ∞ под D1-D5 (нет конечной верхней границы).
-**D6 minimal substrate**: нет вычислительно-значимого минимального субстрата (mixed result).
+**Thread 1 — Q29.1 intra-framework** [§30.2]: 6 sub-frameworks закрыты изнутри.
+
+**Thread 2 — D5 upper bound theorem** [§30.3] ✓DOK: **N = ∞** под текущими аксиомами D1-D5. Нет конечной верхней границы на число осей. Аксиоматика открыта вверх.
+
+**Thread 3 — D6 minimal substrate** [§30.4] (mixed): нет вычислительно-значимого минимального субстрата. Smooth embeddings существуют, но сильный claim не проходит.
+
+**Вывод**: программа НЕ замыкается в finite axes — bottom-up открытия §37-38 законны.
 
 **Вывод**: аксиоматика D1-D5 открыта вверх, что объясняет bottom-up открытия §37-38.
 
@@ -98,7 +108,7 @@
 
 **§35** ✗NEG: scipy C-level correction. Против scipy не воспроизводится → 6.25× был **python artifact**.
 
-**§36** ⚡VER: Apples-to-apples Bellman-Ford own C-level. **187× vs scipy** (dense graph). Реальный C-level win.
+**§36** ⚡VER: Apples-to-apples Bellman-Ford own C-level. **187× vs scipy** (на dense graph **density=0.9**, не универсально). Реальный C-level win.
 
 ## §I.5.12 Bottom-up оси (§37-40)
 

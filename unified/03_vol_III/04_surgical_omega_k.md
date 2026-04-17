@@ -18,7 +18,8 @@ bit5_max на HW=2.
 max|z| over 256 bits = 3.92 at bit 10  vs RO 3.04 ± 0.37 (q99=4.13) → z=+2.41, p=0.024
 ```
 Сигнал **sparse** — локализован в ~2 битах. **Bit 10** главный, **bit 210**
-второй (z=−3.02). Оба в bit-in-byte position 2 (наблюдение).
+второй (z=−3.02). Оба в bit-in-byte position 2.
+**CAVEAT** [SURG §S1] ⚠: ожидаемое число bit-in-byte=2 совпадений = 0.7 (из 256), наблюдаемое = **excess 1.3**; эффект **неустойчив** и требует replication. Это НЕ закреплённая структурная находка — скорее observation-hint.
 
 ## §III.4.2 IT-4 Surgical S2: round-by-round emergence
 
