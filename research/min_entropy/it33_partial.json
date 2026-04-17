@@ -1,0 +1,12 @@
+{
+  "meta": {"N_SAMPLES": 20000, "N_ITERS_completed": 120, "N_ITERS_planned": 200,
+           "incomplete": "timed out at iter=160", "snapshots_completed": [0, 40, 80, 120]},
+  "trend": {
+    "iter=0": {"SS_mean": 1.718e10, "omega3": 0.9711, "ss": 243, "max_z": 2.74},
+    "iter=40": {"SS_mean": 9.909e9, "omega3": 0.9746, "ss": 237, "max_z": 3.89},
+    "iter=80": {"SS_mean": 9.229e9, "omega3": 0.9700, "ss": 238, "max_z": 2.67},
+    "iter=120": {"SS_mean": 8.938e9, "omega3": 0.9687, "ss": 237, "max_z": 3.05}
+  },
+  "interpretation": "Omega_3 is FLAT under HC pressure at N=20K. Range 0.9687-0.9746, spread 0.006 (sampling noise level). No phase transition. HC does not amplify Omega_3. Earlier IT-32 interpretation (0.85->0.97 amplification) was a sample-size artifact; true per-N=130K value is ~0.85, N=20K baseline is naturally ~0.97 due to smaller-sample estimator behavior.",
+  "retracted_claim": "IT-32 amplification interpretation is WRONG. Omega_3 is stable under HC."
+}
