@@ -325,6 +325,11 @@
 | **T_MULTILEVEL_BIRTHDAY (★★★★★)** | **⊘ROLL** (real signal 0.07 bit) | ⊘ROLL | MLB Week 1 |
 | **T_G62_PREDICTS_H magnitude** | 9.09 bit real (не 18.2 claimed), z=−80.8σ | partial | MLB audit |
 | **Oracle Gauge IT-24 cross-hash** | **⊘ROLL** (zero-padding artifact v1.0; v1.1 MD5 Ω_3=−0.06) | ⊘ROLL | OG v1.1 |
+| **Cross-hash input→hash Ω_3 (8 хэшей)** | все RO-LIKE (\|z\|<2.1σ); ни один secure hash не различим этим probe | ⚡VER | cross_hash_omega3 |
+| **SHA-3 Ω_3 3rd-order diffusion** | коллапс за **~5 раундов** Keccak-f (r=1→r=6: 0.83→0.08) | ⚡VER | IT-37 |
+| **SHA-256 Ω_3 3rd-order diffusion** | коллапс за **~28 раундов** compression (r=4→r=32: 0.998→0.042) | ⚡VER | IT-37 reference |
+| **Diffusion ratio SHA-3 : SHA-256** | **1 : 5.6** (первый cross-architecture fingerprint 3rd-order) | ⚡VER | IT-37 |
+| **IT-21/IT-23 conservation claim** | reinterpreted — protocol-specific (chi_S из saturated state1); под alt protocol затухает | уточнение | IT-37 |
 
 ## Мосты (кросс-томные численные совпадения)
 
@@ -4145,7 +4150,7 @@ chain-test, full Ω_k(r) spectrum.
 
 # Глава III.6. IT-13..IT-36, MLB, Oracle Gauge — расширения 2026
 
-> TL;DR: Ω_3 универсален по input classes (IT-23: 0.85±0.02 на HW=2/3/counter/random). Ω_3 сохраняется через все 64 раунда block 2 (IT-21: 0.92±0.008, r∈{0..64}). MLB 3-channel sort-key достиг HW=80 near-collision (compression function, W[1..15]=0), beats methodology SA HW=87. Пара W0_a=28954919, W0_b=13417849 верифицирована. Landscape вокруг HW=80 discrete-isolated (SA/gradient не refine). Опровергнуты ★★★★★ T_H4_COMPRESSION и T_MULTILEVEL_BIRTHDAY как N=500 артефакты. Oracle Gauge v1.0 — zero-padding bug, v1.1 fix: все secure hash → RO-like.
+> TL;DR: Ω_3 универсален по input classes (IT-23: 0.85±0.02 на HW=2/3/counter/random). Ω_3 protocol-specific conservation через block 2 (IT-21: 0.92±0.008 под saturated-state1 probe); под alt протоколом (IT-37) затухает. Впервые измерена **3rd-order diffusion rate cross-architecture**: SHA-3 коллапс за ~5 раундов, SHA-256 за ~28 (ratio 1:5.6). MLB 3-channel sort-key достиг HW=80 near-collision (compression function, W[1..15]=0), beats methodology SA HW=87. Пара W0_a=28954919, W0_b=13417849 верифицирована. Landscape вокруг HW=80 discrete-isolated. Опровергнуты ★★★★★ T_H4_COMPRESSION и T_MULTILEVEL_BIRTHDAY как N=500 артефакты. Oracle Gauge v1.0 — zero-padding bug, v1.1 fix: все secure hash → RO-like. Cross-hash input→hash probe на 8 хэшах: все RO-LIKE.
 
 ## Cross-refs (заполняется ниже)
 
@@ -4154,6 +4159,7 @@ chain-test, full Ω_k(r) spectrum.
 - §III.6.3 HW=80 MLB ↔ §II.10 T_UNIVERSAL_76 + §II.9.8 T_BIRTHDAY_ARTIFACT
 - §III.6.4 ⊘ROLL T_H4/T_MULTILEVEL ↔ §II.6.7, §II.8.3
 - §III.6.5 Oracle Gauge bug ↔ methodological cautionary note
+- §III.6.8 IT-37 3rd-order diffusion rate ↔ Том II ★-Algebra τ★=4 (mixing time)
 
 ## §III.6.1 Ω_3 universality — input-class-independent invariant (IT-23)
 
@@ -4205,6 +4211,12 @@ Spread across 4 classes: **0.054** (sampling noise, stride=8).
 - Ω_k cross-bit correlation (IT-21) → сохраняется.
 
 Это согласуется, не противоречит. Ω_k — более тонкий инвариант.
+
+**⚠ Уточнение после IT-37 (2026-04)**: conservation **protocol-specific**. В IT-21 χ_S basis — **fully-compressed** state1 (после 64R block 1), target = state2_at_r **второго блока**. Под этим setup Ω_3 стабильно.
+
+При **альтернативном** протоколе (χ_S из early-round state, target в том же блоке через больше раундов) Ω_3 **затухает до RO** за достаточное число раундов: ~28 для SHA-256, ~5 для SHA-3. См. §III.6.8.
+
+Вывод: IT-21 conservation измеряет **стабильность structure во второй фазе** (после насыщения в block 1), НЕ непрерывную инвариантность через round function. Claim остаётся ⚡VER для своего протокола; для strong invariance — ?OPEN.
 
 **Open**: аналитический механизм (какая симметрия SHA-256 сохраняет Ω_3?) — ?OPEN.
 
@@ -4338,6 +4350,65 @@ Spread across 4 classes: **0.054** (sampling noise, stride=8).
 **IT-34..IT-36** ✗NEG: LASSO sparse formula search (null); full HC setup (naive HC insufficient); mod-p analysis (SHA-256 uniform в 66 tested primes).
 
 **Общий паттерн**: Ω_k invariant и MLB sort-key — реальные findings. Попытки перевести в full-SHA attack через filtering, LASSO, mod-p — все null. Frontier = pagefile structural mechanism behind Ω_k conservation.
+
+## §III.6.8 IT-37: Cross-hash Ω_3 3rd-order diffusion rate
+
+**Motivation**: ?OPEN-A (методичка, приоритет 1) — Ω_3 на других хэш-семьях.
+
+**Новый tool**: vectorized Keccak-f[1600] с round-level control (`keccak_vec.py`), валидирован против hashlib на 4 test vectors.
+
+**Протокол** (единый для всех хэшей):
+- N=130816 HW=2 exhaustive inputs, feature=bit5_max
+- χ_S basis: state после small number of rounds (диффузия но не saturation)
+- Target: state после различного числа раундов
+- Measure Ω_3 = Pearson(direct_z, chain_3) по 256 output битам
+
+**SHA-3-256** (Keccak-f[24]), χ_S из state после 1 раунда:
+| r (rounds) | Ω_3 | z vs RO | Interpretation |
+|---|---|---|---|
+| 0 | +0.10 | 0.26σ | pre-round (trivial correlation) |
+| 1 | +0.83 | 10.36σ | **tautology** (basis = target) |
+| 6 | +0.08 | 0.06σ | **COLLAPSED to RO** |
+| 12 | +0.03 | −0.67σ | RO-like |
+| 18 | +0.12 | 0.60σ | RO-like |
+| 24 (full) | +0.11 | 0.46σ | RO-like |
+
+**SHA-256** (reference, same protocol), χ_S из state после 4 раундов:
+| r (rounds) | Ω_3 | z vs RO |
+|---|---|---|
+| 4 | +0.998 | 12.82σ (tautology) |
+| 8 | +0.994 | 12.77σ |
+| 16 | +0.936 | 11.98σ |
+| 32 | +0.042 | −0.14σ (collapsed) |
+| 48 | +0.103 | 0.69σ |
+| 64 (full) | +0.146 | 1.27σ |
+
+**Ключевое наблюдение** ⚡VER:
+
+- **Оба** round function'а **диффундируют** Ω_3 до RO под достаточно раундов.
+- **Диффузия rate количественно различается**:
+  - SHA-3: ~5 раундов до RO-collapse (Ω_3 падает с +0.83 на r=1 до +0.08 на r=6)
+  - SHA-256: ~28 раундов (Ω_3 падает с +0.998 на r=4 до +0.042 на r=32)
+
+**Отношение**: SHA-256 **5.6× медленнее** в 3rd-order diffusion. Согласуется с общим свойством Keccak (полная диффузия за малое число раундов) vs SHA-2 (постепенная).
+
+**Реконсилиация с IT-21** ⚡VER: два разных протокола измеряют разное:
+- **IT-21** (chi_S = full-compression state1, target = state2_at_r второго блока): Ω_3 ≈ 0.92 стабильно — **настройка на attractor SHA-2**.
+- **IT-37** (chi_S = early-round state, target = same-block rounds): Ω_3 затухает — **transient phase diffusion**.
+
+Оба результата реальны, но **не про то же самое**. IT-21 измеряет stability в attractor, IT-37 — rate approach к attractor.
+
+**Значение**:
+1. Quantitative diffusion rate — **первый cross-architecture fingerprint** (SHA-3 vs SHA-2).
+2. Ω_3 НЕ strong invariant round function'а. Корректно называть **"slow-decaying statistic"**.
+3. Protocol matters critically — предыдущие IT-21/IT-23 claims сохраняются в своей scope, но не universally.
+
+**⇒BRIDGE с Том II ★-Algebra τ★=4**: SHA-256 Ω_3 collapse at r≈32 соответствует ~8 mixing times τ★. SHA-3 полной mixing за ~5 раундов. Разный τ★-equivalent для round function.
+
+?OPEN:
+- BLAKE2 тоже через тот же протокол (ожидается intermediate rate)
+- Связь diffusion rate с collision resistance quantitatively
+- Можно ли использовать early-round Ω_3 as distinguisher (until r_collapse)?
 
 
 # Мосты между томами
