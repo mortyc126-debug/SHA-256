@@ -82,10 +82,10 @@ def main():
     out = {
         'N': N,
         'K': K,
-        'sha_alignment_5x5': align_sha.tolist(),
-        'ro_alignments_5x5': [a.tolist() for a in ro_aligns],
+        'sha_alignment_5x5': [[float(x) for x in row] for row in align_sha],
+        'ro_alignments_5x5': [[[float(x) for x in row] for row in a] for a in ro_aligns],
         'sha_d1_c1': float(sha_val),
-        'ro_d1_c1_values': ro_d1c1,
+        'ro_d1_c1_values': [float(v) for v in ro_d1c1],
         'ro_d1_c1_mean': float(np.mean(ro_d1c1)),
         'ro_d1_c1_max': float(max(ro_d1c1)),
         'runtime_sec': time.time() - t0,
