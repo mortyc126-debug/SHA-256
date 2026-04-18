@@ -1,5 +1,17 @@
 # IT-24: Cross-Hash Ω_3 Discriminator — BROKEN vs SECURE
 
+> **⚠ RETRACTED (2026-04)**: результаты ниже являются **zero-padding artifact**
+> Oracle Gauge v1.0 (короткие digests MD5/SHA-1 дополнялись нулями до 256 bit,
+> что создавало искусственную high correlation Ω_3 → +0.998).
+> После bug fix в Oracle Gauge v1.1 (probe truncated to actual digest size):
+> MD5 Ω_3 = −0.0569 (z=1.5σ, RO-LIKE).
+> **BROKEN vs SECURE discriminator НЕ существует** на input→hash probe.
+> См. UNIFIED_METHODOLOGY.md §III.6.6, og_md5_v11_fixed.json.
+>
+> Сохраняется как cautionary example методологии. Ω_3 на INTERNAL state
+> (IT-21/IT-23) НЕ затронут этим bug'ом — там probe на HW=2 inputs
+> через bit5_max feature, не digest bit extraction.
+
 ## Headline
 
 **Ω_3 (input→hash) cleanly discriminates known-broken from secure hashes.**

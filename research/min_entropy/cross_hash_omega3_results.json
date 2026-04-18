@@ -1,0 +1,89 @@
+{
+  "N": 130816,
+  "truncate_bits": 128,
+  "feature": "bit5_max",
+  "ro_null": {
+    "mean": 0.03872794163359641,
+    "std": 0.10039901606273362,
+    "omegas": [
+      0.023749554667210866,
+      -0.008842507599982672,
+      -0.12241479132410392,
+      0.1477725188275992,
+      0.10453043161259093,
+      -0.09725424999812478,
+      0.11006718517072307,
+      0.18547951558513373,
+      0.008403277720649112,
+      0.035788481674268575
+    ]
+  },
+  "hashes": [
+    {
+      "hash": "md5",
+      "omega3": -0.05612365296562388,
+      "same_sign": 56,
+      "n_const_filtered": 0,
+      "z_score": 0.9447462566759912,
+      "verdict": "RO-LIKE"
+    },
+    {
+      "hash": "sha1",
+      "omega3": 0.24812756251113582,
+      "same_sign": 76,
+      "n_const_filtered": 0,
+      "z_score": 2.0856740343620253,
+      "verdict": "RO-LIKE"
+    },
+    {
+      "hash": "sha256",
+      "omega3": -0.11965621504730012,
+      "same_sign": 61,
+      "n_const_filtered": 0,
+      "z_score": 1.5775469012757188,
+      "verdict": "RO-LIKE"
+    },
+    {
+      "hash": "sha512",
+      "omega3": 0.016615060218993276,
+      "same_sign": 56,
+      "n_const_filtered": 0,
+      "z_score": 0.22024998134230778,
+      "verdict": "RO-LIKE"
+    },
+    {
+      "hash": "sha3_256",
+      "omega3": -0.16798756343967317,
+      "same_sign": 64,
+      "n_const_filtered": 0,
+      "z_score": 2.058939551201427,
+      "verdict": "RO-LIKE"
+    },
+    {
+      "hash": "sha3_512",
+      "omega3": 0.09562072466398078,
+      "same_sign": 72,
+      "n_const_filtered": 0,
+      "z_score": 0.5666667389930924,
+      "verdict": "RO-LIKE"
+    },
+    {
+      "hash": "blake2b",
+      "omega3": -0.07159655692950359,
+      "same_sign": 66,
+      "n_const_filtered": 0,
+      "z_score": 1.0988603563023418,
+      "verdict": "RO-LIKE"
+    },
+    {
+      "hash": "blake2s",
+      "omega3": 0.17302463466786316,
+      "same_sign": 72,
+      "n_const_filtered": 0,
+      "z_score": 1.3376295734845889,
+      "verdict": "RO-LIKE"
+    }
+  ],
+  "version": "1.1.0",
+  "runtime_sec": 205.95627737045288
+}
