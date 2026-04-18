@@ -52,9 +52,10 @@
 | `it4_validate_and_classify.py` | Validation & classify | IT-4 |
 | `it4_walsh.py` | Walsh full scan | IT-4 |
 | `it5s_round_order_map.py` | Round × Walsh order map | IT-5S |
-| `it6_full_output_map.py` | Ω_k inv., full output map | IT-6 ⭐ |
-| `it6b_fast.py` + `it6b_omega_spectrum.py` | Ω_k spectrum | IT-6 |
-| `it6c_cross_feature.py` | Cross-feature analysis | IT-6 |
+| `it6_full_output_map.py` | ~~Ω_k inv.~~ chi_arr-basis probe | IT-6 ⊘ROLL [§III.7] |
+| `it6b_fast.py` + `it6b_omega_spectrum.py` | ~~Ω_k spectrum~~ artifact | IT-6 ⊘ROLL |
+| `it6c_cross_feature.py` | ~~Cross-feature analysis~~ artifact | IT-6 ⊘ROLL |
+| `phase8c_proper_audit.py` + `it4_q7d_chain3_local` | PROPER audit with per-target RO null — reveals artifact | Phase 8C ⭐ |
 
 ### Collision probes (IT-7 serie)
 
@@ -97,7 +98,8 @@
 - `sharp_results.json` (24KB): **χ²-fingerprint всех 7 хэшей**
 - `it4_walsh.json` (49KB): **64-feature Walsh scan**
 - `it4_q7d_r500_results.json` (24KB): **Q7D amplified R=500 p=0.002 Bonferroni**
-- `it6_full_output_map.json` (25KB): **Ω_k + ρ=+0.98 данные**
+- `it6_full_output_map.json` (25KB): ~~Ω_k + ρ=+0.98 данные~~ ⊘ROLL [§III.7]: chi_arr artifact
+- `phase8c_proper_audit.json`: **PROPER audit showing IT-6 claim is artifact** (SHA Ω=0.979, RO Ω=0.978 same protocol)
 - `it3_results.json` (87KB): **Δ_χ² / Δ_I full**
 - `chimera_results.json`: Mixed hash families
 - `it7_cumulative_output.csv`: Cumulative distinguisher trace
@@ -158,11 +160,11 @@
 **Готово к использованию:**
 1. **superbit/** — полный SAT engine с σ-feedback
 2. **it4_walsh.py + q7d_chain3** — directional Walsh chain-test
-3. **it6_full_output_map.py** — Ω_k для любого хэша (универсальный инструмент)
+3. ~~**it6_full_output_map.py** — Ω_k для любого хэша (универсальный инструмент)~~ ⊘ROLL [§III.7]: инструмент работает, но измеряет artifact (chi_arr-basis alignment, not SHA invariant). Для proper probe нужен отдельный new tool.
 4. **sharp_analysis.py** — χ² fingerprint любой hash family
 5. **sha256_chimera.py** — смешанные хэш-семьи для контроля
 
 **Требуется написать (TODO):**
 - MITM O(2⁸⁰) реализация [П-210]
-- Ω_k для SHA-3/BLAKE benchmark
+- ~~Ω_k для SHA-3/BLAKE benchmark~~ ⊘ROLL [§III.7]: direction closed
 - Chain-test orthogonal to ANF — extension §132 beyond 7.6×

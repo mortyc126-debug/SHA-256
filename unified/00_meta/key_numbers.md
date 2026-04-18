@@ -71,8 +71,8 @@
 | **Cross-hash (S3)** | signal ONLY в SHA-256 (не SHA-1/512) | ⚡VER | IT-4.S3 |
 | **Round decay (S2)** | signal ~2× за 4 раунда, RO-clean к r=20 | ⚡VER | IT-4.S2 |
 | **chain_3 round evolution** | затухает медленнее chain_1 | ⚡VER | IT-5S |
-| **Correlation ρ(direct, chain_3)** | **+0.98** | ⚡VER | IT-6 |
-| **Same-sign бит** | **240/256** (one-sided binomial p ~ 10⁻⁵²) | ⚡VER | IT-6 |
+| **Correlation ρ(direct, chain_3)** | ⊘ROLL: +0.9795 SHA, **+0.9778 RO** same protocol | ⊘ROLL | IT-6 / §III.7 |
+| **Same-sign бит** | ⊘ROLL: SHA 234/256, **RO 248/256** — binomial null неверен | ⊘ROLL | IT-6 / §III.7 |
 | **bit5_max magnitude** | ~8×10⁻⁵ бит MI | ⚡VER | IT-4 seq |
 
 ## Мосты (кросс-томные численные совпадения)
@@ -89,11 +89,11 @@
 | Том-III | Том-II/I | Совпадение |
 |---|---|---|
 | IT-2 σ₀/σ₁ = 88% | T_SCHEDULE_SPARSE (63% нулей HW=2) | Схема объясняет χ²-fingerprint |
-| IT-6 ρ=0.98 | max\|z\| классика недостаточна | Новый инструмент chain-test |
+| ~~IT-6 ρ=0.98~~ ⊘ROLL [§III.7] | max\|z\| классика недостаточна (valid) | Chain-test framework valid; magnitude artifact |
 | IT-4.Q7 state1 чист на low-order | ANF degree barrier | Сигнал только в \|S\|≥3 |
 
 ## Сводные числа программы
 
 - **Всего теорем** (именованных): ~60+ (~40 ✓DOK, ~15 ⚡VER, ~10 ✗NEG, ~5 ⊘ROLL)
 - **Всего экспериментов**: П-1..П-1300+ (Том II), ~130 §§ (Том I), 6 итераций (Том III)
-- **Ключевые моменты**: Wang-pair найдена; Distinguisher AUC=0.980; ρ(direct,chain_3)=0.98; axioms D1-D5 (20/20 осей pass)
+- **Ключевые моменты**: Wang-pair найдена; Distinguisher AUC=0.980; ~~ρ(direct,chain_3)=0.98~~ ⊘ROLL [§III.7]; axioms D1-D5 (20/20 осей pass)

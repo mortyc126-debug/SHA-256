@@ -141,10 +141,10 @@ strictly dominated chain-test. На (HW=2, bit5_max, state1, |S|=3): max|z|
 
 ## §III.5.8 Открытые вопросы Том III
 
-?OPEN-A [IT-6 §11]: **Ω_k для других хэш-семейств**.
-Compute Ω_3 для SHA-3 (sponge), BLAKE3 (compression+merkle tree).
-Гипотеза: SHA-3 даст Ω_3 ≈ 0 (RO-like spectrum); BLAKE2/3 — промежуточное.
-Это даст первую spectral fingerprint таксономию hash families.
+~~?OPEN-A [IT-6 §11]: **Ω_k для других хэш-семейств**.~~ ⊘ROLL [Phase 8C
+audit, UNIFIED §III.7]: IT-6 foundation claim artifact. Cross-hash extension
+of artifact даст те же artifact values. Направление dead-end, требует
+new probe (не chi_arr-from-state1).
 
 ?OPEN-B [SURG §S4]: **Signal amplification mechanism в block-2**.
 Точный алгебраический механизм, как block-2 compression «читает»
@@ -166,7 +166,7 @@ SHA-256.
 ✓DOK 12: birthday formula, IT-1.3 family-fingerprint, IT-2 attribution,
 IT-3 dissociation, IT-4 Q7-line completeness, IT-4.S2 round decay, IT-4.S3
 SHA-256 specificity, IT-4.S4 block-2 mechanism, IT-5G NP-optimality,
-IT-5S phase transition, IT-6 Ω_3=0.98 (p~10⁻⁵²), 6 bridges с T-I/II.
+IT-5S phase transition, ~~IT-6 Ω_3=0.98 (p~10⁻⁵²)~~ ⊘ROLL [UNIFIED §III.7], 6 bridges с T-I/II.
 
 ⚡VER 8: Ĥ_∞ formula, χ² hyper-uniformity, σ/Σ chimera reduction,
 HW-exclusivity, chain-3 R=500 amplification, chain-4 z=-6.40,

@@ -75,7 +75,7 @@
 - **Том III IT-5G**: **max\|z\| линейный = недостаточен** для распределённых сигналов ✗NEG
 - **Том III IT-5G**: **directional chain-test = NP-optimal** для distributed (Parseval)
 - **Том III IT-4.Q7D**: chain-3 z=-3.87 на R=50 — невидим для max\|z\|
-- **Том III IT-6**: **ρ(direct, chain_3)=+0.98** — chain-3 ПРЯМО видит то, что max\|z\| размазывает
+- ~~**Том III IT-6**: ρ(direct, chain_3)=+0.98~~ ⊘ROLL [Phase 8C audit, UNIFIED §III.7]: RO=+0.978 same protocol, chi_arr artifact
 
 **Единый вывод**: нейросеть (Том II) и chain-test (Том III) — комплементарные инструменты. Chain-test даёт теоретическую гарантию (NP-оптимальность), нейросеть — эмпирический максимум. Комбинация может дать новый фронтир.
 

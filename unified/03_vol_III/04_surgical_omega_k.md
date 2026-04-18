@@ -1,11 +1,16 @@
 # Глава III.4. Surgical Decomposition и Ω_k Invariant
 
+> **⚠ CORRIGENDUM (Phase 8C audit, 2026-04)**: §III.4.7-4.9 (IT-6 Ω_k claims) ⊘ROLL
+> как chi_arr-basis artifact. RO даёт Ω=0.978 under same protocol vs SHA 0.979.
+> См. UNIFIED_METHODOLOGY.md §III.7 для полной ретракции.
+> §III.4.1-4.6 (Surgical S1-S4, chain-test theory IT-5G/S) сохраняются.
+
 > TL;DR: Surgical S1-S4 локализовали bit5_max signal: signal max|z|=22.7
 > при r=4, exp(-0.25r) decay, RO-clean при r=20, ОНО SHA-256-only,
 > block-2 регенерирует low-order bias из high-order state1. IT-5G даёт
 > теорию chain-test (Parseval, NP-оптимальность). IT-5S: round×Walsh-order
 > map с фазовым переходом r≈12, низкие порядки затухают быстрее высоких.
-> IT-6: новый инвариант **Ω_3=+0.98** — sign-test 240/256 битов, p~10⁻⁵².
+> ~~IT-6: новый инвариант Ω_3=+0.98 — sign-test 240/256 битов, p~10⁻⁵².~~ ⊘ROLL
 
 ## §III.4.1 IT-4 Surgical S1: full output 256 бит
 
@@ -129,7 +134,14 @@ r    |chain_1|  |chain_2|  |chain_3|
 через round-функцию SHA-256. Соответствует S2 (max|z| 1st-order
 saturates r≈20).
 
-## §III.4.7 IT-6 Full output map: новый инвариант Ω_k
+## §III.4.7 IT-6 Full output map: новый инвариант Ω_k ⊘ROLL
+
+> **⊘ROLL (Phase 8C audit, 2026-04)**: Phase 8C replication with full
+> C(256,3)=2.76M triples and proper per-target RO null:
+>   SHA: Ω_3=+0.9795, same-sign=234/256
+>   RO#1 (BLAKE2b keyed): Ω_3=+0.9778, same-sign=248/256 (higher than SHA!)
+> Binomial null (p=0.5, indep. bits) неверен. Содержимое сохранено как
+> исторический референс. См. UNIFIED_METHODOLOGY.md §III.7.
 
 **Метод** ⚡VER [IT-6 §1]: для каждого из 256 output битов b:
 - direct_z(b) = √N·⟨σ(bit5_max), σ(state2[bit b])⟩
@@ -166,7 +178,10 @@ Binomial p (≥240 same-sign | p=0.5) ≈ 10⁻⁵² (one-sided binomial, точ
 
 Для идеального RO: corr ≈ √(M_3/2^n) = √(2.76M/2^256) ≈ 0.
 
-## §III.4.8 Определение Ω_k
+## §III.4.8 Определение Ω_k ⊘ROLL as detection tool
+
+> **⊘ROLL**: определение остаётся formal, но "Ω_3 = +0.98" claim — artifact.
+> RO гарантированно даёт similar magnitudes под same protocol (Phase 8C audit).
 
 **Новый ИТ-инвариант** ✓DOK [IT-6 §6]:
 ```
@@ -184,7 +199,10 @@ Binomial p (≥240 same-sign | p=0.5) ≈ 10⁻⁵² (one-sided binomial, точ
   **Не проходит**.
 - Наш анализ: chain_3 + cross-bit correlation ⇒ p~10⁻⁵².
 
-## §III.4.9 Compound подтверждение и открытые
+## §III.4.9 Compound подтверждение и открытые ⊘ROLL
+
+> **⊘ROLL**: "второе независимое подтверждение" невалидно — тот же artifact
+> в обеих точках. См. §III.7.
 
 ✓DOK [IT-6 §8]: Ω_3=+0.98 — **второе независимое подтверждение** что
 bit5_max→state2 распределён когерентно в 3rd-order. Q7d/Q7f показали
