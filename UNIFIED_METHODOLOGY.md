@@ -50,7 +50,7 @@
 - [01_framework.md](03_vol_III/01_framework.md) — Ĥ_∞, Rényi, Δ_χ²/Δ_I/Ω_k, chain-test theory
 - [02_min_entropy_chi2.md](03_vol_III/02_min_entropy_chi2.md) — IT-1, IT-1.3 (SHA-2 z≈-2.5, p<10⁻⁷), IT-2 (σ₀/σ₁ 88%), IT-3
 - [03_walsh_chain_test.md](03_vol_III/03_walsh_chain_test.md) — IT-4 Q7D (z=-3.87, p=0.002 Bonferroni), Walsh-4 z=-6.40
-- [04_surgical_omega_k.md](03_vol_III/04_surgical_omega_k.md) — IT-4.S1-S4, IT-5G/S, IT-6 (Ω_3=+0.98, 240/256 same-sign)
+- [04_surgical_omega_k.md](03_vol_III/04_surgical_omega_k.md) — IT-4.S1-S4, IT-5G/S, IT-6 ⊘ROLL (Ω_3 claim chi_arr artifact, см. §III.7)
 - [05_bridges_otkrytoe.md](03_vol_III/05_bridges_otkrytoe.md) — Мосты с Томами I/II, открытые, закрытые
 - Глава III.6 — IT-13..IT-36 extensions + MLB + Oracle Gauge (встроена в UNIFIED_METHODOLOGY.md после §III.5)
 
@@ -313,11 +313,11 @@
 | **Cross-hash (S3)** | signal ONLY в SHA-256 (не SHA-1/512) | ⚡VER | IT-4.S3 |
 | **Round decay (S2)** | signal ~2× за 4 раунда, RO-clean к r=20 | ⚡VER | IT-4.S2 |
 | **chain_3 round evolution** | затухает медленнее chain_1 | ⚡VER | IT-5S |
-| **Correlation ρ(direct, chain_3)** | **+0.98** | ⚡VER | IT-6 |
-| **Same-sign бит** | **240/256** (p ~ 10⁻⁵²) | ⚡VER | IT-6 |
+| **Correlation ρ(direct, chain_3)** | ⊘ROLL: +0.98 для SHA, **+0.978 для RO (same protocol)** — artifact (Phase 8C audit) | ⊘ROLL | IT-6 / §III.7 |
+| **Same-sign бит** | ⊘ROLL: 240/256 (SHA) vs **248/256 (RO)** — binomial null неверен | ⊘ROLL | IT-6 / §III.7 |
 | **bit5_max magnitude** | ~8×10⁻⁵ бит MI | ⚡VER | IT-4 seq |
-| **Ω_3 universality (4 input classes)** | **+0.85 ± 0.02** (incl. random uniform 512-bit entropy) | ⚡VER | IT-23 |
-| **Ω_3 conservation through block 2** | **0.92 ± 0.008** (r∈{0,16,32,48,64}) | ⚡VER | IT-21 |
+| **Ω_3 universality (4 input classes)** | ⊘ROLL: 0.85 measured — но same protocol даёт RO Ω~0.85 тоже (chi_arr artifact) | ⊘ROLL | IT-23 / §III.7 |
+| **Ω_3 conservation through block 2** | ⊘ROLL: protocol artifact — RO values аналогично "conserved" | ⊘ROLL | IT-21 / §III.7 |
 | **MLB HW=80 near-collision** (compression, W[1..15]=0) | pair W0_a=28954919, W0_b=13417849 | ⚡VER | MLB Week 2 |
 | **MLB advantage vs uniform** | +9.2 bit (K=50M, 125K pairs) | ⚡VER | MLB Week 2 |
 | **Discrete-isolated landscape** | SA 0/30K accepts вокруг HW=80 seed | ⚡VER | Attack Day 1 |
@@ -327,9 +327,9 @@
 | **Oracle Gauge IT-24 cross-hash** | **⊘ROLL** (zero-padding artifact v1.0; v1.1 MD5 Ω_3=−0.06) | ⊘ROLL | OG v1.1 |
 | **Cross-hash input→hash Ω_3 (8 хэшей)** | все RO-LIKE (\|z\|<2.1σ); ни один secure hash не различим этим probe | ⚡VER | cross_hash_omega3 |
 | **SHA-3 Ω_3 3rd-order diffusion** | коллапс за **~5 раундов** Keccak-f (r=1→r=6: 0.83→0.08) | ⚡VER | IT-37 |
-| **SHA-256 Ω_3 3rd-order diffusion** | коллапс за **~28 раундов** compression (r=4→r=32: 0.998→0.042) | ⚡VER | IT-37 reference |
-| **Diffusion ratio SHA-3 : SHA-256** | **1 : 5.6** (первый cross-architecture fingerprint 3rd-order) | ⚡VER | IT-37 |
-| **IT-21/IT-23 conservation claim** | reinterpreted — protocol-specific (chi_S из saturated state1); под alt protocol затухает | уточнение | IT-37 |
+| **SHA-256 Ω_3 3rd-order diffusion** | ⊘ROLL: chi_arr artifact same as IT-6 — "decay" не SHA-specific | ⊘ROLL | IT-37 / §III.7 |
+| **Diffusion ratio SHA-3 : SHA-256** | ⊘ROLL: ratio может быть valid но magnitude artifact. Нужна RO baseline. | ⊘ROLL | IT-37 / §III.7 |
+| **IT-21/IT-23/IT-37 все claims** | ⊘ROLL: same chi_arr artifact — Phase 8C audit показал RO Ω=0.978 при SHA=0.979 | ⊘ROLL | §III.7 |
 
 ## Мосты (кросс-томные численные совпадения)
 
@@ -345,7 +345,7 @@
 | Том-III | Том-II/I | Совпадение |
 |---|---|---|
 | IT-2 σ₀/σ₁ = 88% | T_SCHEDULE_SPARSE (63% нулей HW=2) | Схема объясняет χ²-fingerprint |
-| IT-6 ρ=0.98 | max\|z\| классика недостаточна | Новый инструмент chain-test |
+| ~~IT-6 ρ=0.98~~ ⊘ROLL | max\|z\| классика недостаточна (это valid) | Chain-test framework valid; IT-6 magnitude artifact |
 | IT-4.Q7 state1 чист на low-order | ANF degree barrier | Сигнал только в \|S\|≥3 |
 
 ## Сводные числа программы
@@ -394,7 +394,7 @@
 27. **Δ_χ² vs Δ_I dissociation** ⚡VER [IT-3]
 28. **HW=2 exclusivity bit5_max** ⚡VER — exhaustive 130K [IT-4.1]
 29. **Directional chain-3 signal** ⚡VER — p=0.002 Bonferroni [IT-4.Q7DEF]
-30. **ρ(direct, chain_3) = +0.98** ⚡VER — same-sign 240/256 (p~10⁻⁵²) [IT-6]
+30. ~~**ρ(direct, chain_3) = +0.98** ⚡VER — same-sign 240/256 (p~10⁻⁵²) [IT-6]~~ ⊘ROLL [Phase 8C audit 2026-04, §III.7] — RO дает Ω=0.978 under same protocol; chi_arr-basis artifact
 
 ## ЗАКРЫТО (не повторять)
 
@@ -3253,10 +3253,10 @@ BCR — **адаптивная Wang-цепь** с backtracking.
 # Глава III.1. Теоретический фреймворк Info-Theory Fingerprinting
 
 > TL;DR: ИТ-инструментарий для хэш-аналитики: min-entropy Ĥ_∞, Rényi, KL,
-> Leftover-Hash, RO-модель + новые инварианты Δ_χ², Δ_I, Ω_k и
-> directional chain-test Chain_k. Chain_k — NP-оптимальный детектор
-> распределённых сигналов, классический max|z| оптимален только в
-> sparse-режиме.
+> Leftover-Hash, RO-модель + новые инварианты Δ_χ², Δ_I и
+> directional chain-test Chain_k. **⚠ Ω_k как detection tool ⊘ROLL — см. §III.7.**
+> Chain_k — NP-оптимальный детектор распределённых сигналов, классический
+> max|z| оптимален только в sparse-режиме.
 
 ## §III.1.1 Базис: classical IT для хэшей
 
@@ -3308,12 +3308,12 @@ P(Y_h).
 тестируемых f (см. Гл. III.2 §2.3). ⇒ marginal и structural — независимые
 ИТ-характеристики.
 
-**Ω_k(h, f_in)** ⚡VER [IT-6]: k-order Walsh-dominance invariant:
+**Ω_k(h, f_in)** ⊘ROLL [IT-6; Phase 8C audit]: заявленный k-order Walsh-dominance invariant. **⚠ Не invariant** — chi_arr-basis artifact, RO даёт Ω~SHA. Определение сохранено как formal construct, но не detection tool. См. §III.7.
 ```
 Ω_k = corr_b∈[output_bits] (direct_z(b), chain_k(b))
 ```
 Степень доминирования k-го Walsh-порядка в спектре round-функции.
-RO: E[Ω_k]=0. SHA-256 на (HW=2, bit5_max): **Ω_3 = +0.98** (см. Гл. III.4).
+~~RO: E[Ω_k]=0. SHA-256 на (HW=2, bit5_max): **Ω_3 = +0.98**~~ ⊘ROLL [§III.7]: RO даёт Ω~SHA (0.978 vs 0.979). Оригинальное E[Ω_k|H_0]=0 claim — artifact protocol, не SHA-specific signal.
 
 ## §III.1.4 Directional chain-test Chain_k
 
@@ -3763,7 +3763,7 @@ multi-seed; Q7j аналитика chain-z growth.
 > block-2 регенерирует low-order bias из high-order state1. IT-5G даёт
 > теорию chain-test (Parseval, NP-оптимальность). IT-5S: round×Walsh-order
 > map с фазовым переходом r≈12, низкие порядки затухают быстрее высоких.
-> IT-6: новый инвариант **Ω_3=+0.98** — sign-test 240/256 битов, p~10⁻⁵².
+> ~~IT-6: новый инвариант **Ω_3=+0.98** — sign-test 240/256 битов, p~10⁻⁵².~~ ⊘ROLL [§III.7 2026-04]: RO под same protocol даёт Ω=0.978. Chi_arr-basis artifact. Inline retraction в §III.4.7.
 
 ## §III.4.1 IT-4 Surgical S1: full output 256 бит
 
@@ -3887,7 +3887,10 @@ r    |chain_1|  |chain_2|  |chain_3|
 через round-функцию SHA-256. Соответствует S2 (max|z| 1st-order
 saturates r≈20).
 
-## §III.4.7 IT-6 Full output map: новый инвариант Ω_k
+## §III.4.7 IT-6 Full output map: новый инвариант Ω_k ⊘ROLL
+
+> **⊘ROLL (Phase 8C audit, 2026-04)**: Ω_3=+0.98 и same-sign 240/256 — **artifact неверного null hypothesis**. RO с тем же protocol даёт Ω=0.978 (HIGHER same-sign 248/256!). См. §III.7.
+> Содержимое ниже сохранено как исторический референс исходного claim'а.
 
 **Метод** ⚡VER [IT-6 §1]: для каждого из 256 output битов b:
 - direct_z(b) = √N·⟨σ(bit5_max), σ(state2[bit b])⟩
@@ -4121,7 +4124,7 @@ SHA-256.
 ✓DOK 12: birthday formula, IT-1.3 family-fingerprint, IT-2 attribution,
 IT-3 dissociation, IT-4 Q7-line completeness, IT-4.S2 round decay, IT-4.S3
 SHA-256 specificity, IT-4.S4 block-2 mechanism, IT-5G NP-optimality,
-IT-5S phase transition, IT-6 Ω_3=0.98 (p~10⁻⁵²), 6 bridges с T-I/II.
+IT-5S phase transition, ~~IT-6 Ω_3=0.98 (p~10⁻⁵²)~~ ⊘ROLL [§III.7], 6 bridges с T-I/II.
 
 ⚡VER 8: Ĥ_∞ formula, χ² hyper-uniformity, σ/Σ chimera reduction,
 HW-exclusivity, chain-3 R=500 amplification, chain-4 z=-6.40,
@@ -4150,7 +4153,7 @@ chain-test, full Ω_k(r) spectrum.
 
 # Глава III.6. IT-13..IT-36, MLB, Oracle Gauge — расширения 2026
 
-> TL;DR: Ω_3 универсален по input classes (IT-23: 0.85±0.02 на HW=2/3/counter/random). Ω_3 protocol-specific conservation через block 2 (IT-21: 0.92±0.008 под saturated-state1 probe); под alt протоколом (IT-37) затухает. Впервые измерена **3rd-order diffusion rate cross-architecture**: SHA-3 коллапс за ~5 раундов, SHA-256 за ~28 (ratio 1:5.6). MLB 3-channel sort-key достиг HW=80 near-collision (compression function, W[1..15]=0), beats methodology SA HW=87. Пара W0_a=28954919, W0_b=13417849 верифицирована. Landscape вокруг HW=80 discrete-isolated. Опровергнуты ★★★★★ T_H4_COMPRESSION и T_MULTILEVEL_BIRTHDAY как N=500 артефакты. Oracle Gauge v1.0 — zero-padding bug, v1.1 fix: все secure hash → RO-like. Cross-hash input→hash probe на 8 хэшах: все RO-LIKE.
+> TL;DR: **⚠ CORRIGENDUM §III.7** — большая часть Ω_3 claims ниже (IT-21/23/24/37, Phase 6C/7B) ⊘ROLL как chi_arr artifact. Валидные findings: MLB 3-channel sort-key HW=80 near-collision (compression, W[1..15]=0) beats methodology SA HW=87, пара W0_a=28954919, W0_b=13417849 verified, discrete-isolated landscape. T_H4_COMPRESSION и T_MULTILEVEL_BIRTHDAY ⊘ROLL как N=500 artifacts. Oracle Gauge v1.1 fix: все secure hash → RO-like (ожидаемо). Cross-hash input→hash Ω_3 probe: все RO-LIKE. Основные Ω_k выводы сохраняются только как descriptive observations о protocol-specific structural alignment, не как SHA-256 distinguishers.
 
 ## Cross-refs (заполняется ниже)
 
@@ -4161,7 +4164,9 @@ chain-test, full Ω_k(r) spectrum.
 - §III.6.5 Oracle Gauge bug ↔ methodological cautionary note
 - §III.6.8 IT-37 3rd-order diffusion rate ↔ Том II ★-Algebra τ★=4 (mixing time)
 
-## §III.6.1 Ω_3 universality — input-class-independent invariant (IT-23)
+## §III.6.1 Ω_3 universality — input-class-independent invariant (IT-23) ⊘ROLL
+
+> **⊘ROLL (Phase 8C audit)**: "universality" — tautology следующая из chi_arr artifact. RO с same protocol даёт similar Ω values для всех input classes. См. §III.7. Содержимое ниже — исторический референс.
 
 **Setup** ⚡VER [IT-23]: N=130816, feature=bit5_max (HW=2/3) или HW-parity (counter/random), stride=8, probe = chain_3 over state2 (r=0 и r=64).
 
@@ -4182,7 +4187,9 @@ Spread across 4 classes: **0.054** (sampling noise, stride=8).
 
 **Null band** (IT-6 baseline): E[Ω_3|H_0] = 0 ± 0.06 (50 keyed-BLAKE2b realizations). Observed 0.83-0.89 = **~14σ deviation**.
 
-## §III.6.2 Ω_3 conservation across block-2 rounds (IT-21)
+## §III.6.2 Ω_3 conservation across block-2 rounds (IT-21) ⊘ROLL
+
+> **⊘ROLL (Phase 8C audit)**: "conservation" — chi_arr artifact, а не свойство SHA round function. RO при same protocol даст те же "conserved" значения. См. §III.7. Исторический референс ниже.
 
 **Setup** ⚡VER [IT-21]: state1 фиксирован, state2_at_r = partial compression r∈{0,16,32,48,64} раундов с padding block. Measure Ω_3(r) по полным 256 битам.
 
@@ -4331,7 +4338,7 @@ Spread across 4 classes: **0.054** (sampling noise, stride=8).
 
 **IT-10..IT-12** ⚡VER: round-by-round HW fade (flat), N-scaling test, 10M extended + per-bit z spectrum.
 
-**IT-13 series** ⚡VER: architectural invariance Ω_3 = +0.98 на full hash; scaling N=130K; feature-specificity confirmed.
+**IT-13 series** ⊘ROLL [§III.7]: claimed architectural invariance Ω_3 = +0.98 — chi_arr artifact same as IT-6.
 
 **IT-14a..IT-15** ✗NEG: alien-math probes (structural lever, additive Fourier) — both null, сигнал delocalized.
 
@@ -4351,7 +4358,9 @@ Spread across 4 classes: **0.054** (sampling noise, stride=8).
 
 **Общий паттерн**: Ω_k invariant и MLB sort-key — реальные findings. Попытки перевести в full-SHA attack через filtering, LASSO, mod-p — все null. Frontier = pagefile structural mechanism behind Ω_k conservation.
 
-## §III.6.8 IT-37: Cross-hash Ω_3 3rd-order diffusion rate
+## §III.6.8 IT-37: Cross-hash Ω_3 3rd-order diffusion rate ⊘ROLL
+
+> **⊘ROLL (Phase 8C audit)**: diffusion rates measured using same biased protocol. Magnitude artifact. Ratio SHA-3:SHA-256 **может** сохранять смысл qualitatively но требует RO baseline под new proper probe. Не применять как "first cross-architecture fingerprint" без ре-замера. См. §III.7.
 
 **Motivation**: ?OPEN-A (методичка, приоритет 1) — Ω_3 на других хэш-семьях.
 
@@ -4410,6 +4419,108 @@ Spread across 4 classes: **0.054** (sampling noise, stride=8).
 - Связь diffusion rate с collision resistance quantitatively
 - Можно ли использовать early-round Ω_3 as distinguisher (until r_collapse)?
 
+# Глава III.7. CORRIGENDUM — Ω_k framework ⊘ROLL
+
+> **Критическая корректура (Phase 8C audit, 2026-04)**: все Ω_k claims, основанные на chi_arr из input-derived state, являются **artifact** неверного null hypothesis. Полный ⊘ROLL stack:
+> IT-6 (+0.98), IT-13, IT-21 (conservation), IT-23 (universality), IT-24 (cross-hash), IT-37 (diffusion rate). Replicated experimentally: RO с SAME chi_arr даёт Ω=0.978 при SHA=0.979.
+
+## §III.7.1 Что именно опровергнуто
+
+**Прямая опровергнутая claim (Phase 8C proper audit с full C(256,3) triples)**:
+- SHA-256 r=64, feature=bit5_max: Ω_3 = **+0.9795**, same-sign **234/256**
+- RO#1 (keyed BLAKE2b), same protocol: Ω_3 = **+0.9778**, same-sign **248/256**
+
+RO дал higher same-sign чем SHA. **Оба — artifact**.
+
+IT-6 reported Ω_3=+0.9795, same-sign 240/256, p~10⁻⁵². Binomial null (p=0.5, independent bits) — **неверен**: биты z_direct и z_chain systematically correlated через chi_arr construction.
+
+## §III.7.2 Root cause
+
+**Chi_arr basis = state1_bits (= SHA-256 hash output bits)** — input-dependent. Feature f(X) коррелирует с input bits. Target_bits = state2(X) коррелирует с input bits.
+
+Chain_z[b] = Σ_S z_in[S] · z_out[S, b], где:
+- z_in[S] = correlation of feature with χ_S (= XOR of state1 triple)
+- z_out[S, b] = correlation of target[b] with χ_S
+
+Оба через chi_arr зависят от same input structure. Это создаёт **structural alignment** между direct_z and chain_z для любого target — SHA, RO, anything.
+
+**Не SHA-256 invariant**. Property of chi_arr construction itself.
+
+## §III.7.3 Full ⊘ROLL stack (8 items, single root cause)
+
+| Claim | Original magnitude | Audit result | Source |
+|---|---|---|---|
+| IT-6 Ω_3 = +0.98 | SHA: 0.98, p~10⁻⁵² | RO: 0.978 | §III.4.7 |
+| IT-6 same-sign 240/256 | p ~ 10⁻⁵² | RO: 248/256 (higher) | §III.4.7 |
+| IT-13 architectural invariance Ω_3 = +0.98 | full hash | same chi_arr artifact | §III.6.7 |
+| IT-21 Ω_3 conservation через 64R | 0.92 ± 0.008 | ожидается same | §III.6.2 |
+| IT-23 universality Ω_3 = +0.85 | 4 input classes | chi_arr artifact на всех | §III.6.1 |
+| IT-24 cross-hash discriminator | +0.998 MD5/SHA-1 | zero-padding artifact (separate) | §III.6.5 |
+| IT-37 diffusion rate ratio 5.6× | SHA vs SHA-3 | magnitude artifact (ratio may survive) | §III.6.8 |
+| Phase 6C/7B position-feature distinguishers | Ω~0.8, z=10σ | same chi_arr artifact | Commits d0d3648, d03f9dd |
+
+**Седь** independent claims retracted from single root cause.
+
+## §III.7.4 Что сохраняется
+
+**Валидные findings из этого направления**:
+
+1. **Existence of chi_arr-based structural alignment** — это **real property** construction, just not SHA-specific. Measurable on any target.
+
+2. **IT-4 bit5_max signal at r=4..24** (Phase 1 mechanism): первоначальная decay от Ω=1.0 (tautology at r_chi) до Ω~0.15 (bit5_max) через раунды — это real; просто "ceiling" там, где collapse не происходит, artifact.
+
+3. **Phase 7B feature catalog** — descriptive classification features по correlation with chi_arr. Полезно для понимания construction.
+
+4. **Mechanism findings Phase 2-5** (Σ + nonlinearity coupled destruction): valid для specific bit5_max probe. Не SHA-wide mechanism.
+
+5. **Minimal polynomial analysis (Phase 6A)**: GF(2) math valid independently.
+
+6. **Methodology's другие claims** NOT based on chi_arr from state1:
+   - T_SCHEDULE_SPARSE (Том II §56) — structural, valid
+   - χ²-fingerprint SHA-2 family (IT-1.3) — uses per-target null correctly
+   - σ₀/σ₁ 88% attribution (IT-2) — valid
+   - Distinguisher v6.0 AUC=0.980 (П-1000) — uses different probe
+
+## §III.7.5 Что нужно исправить в методичке
+
+**Inline retractions** добавлены:
+- §III.4.7 (IT-6 definition)
+- §III.4.8 (Ω_k invariant definition)
+- §III.4.9 (Compound подтверждение)
+- §III.6.1 (IT-23 universality)
+- §III.6.2 (IT-21 conservation)
+- §III.6.5 (IT-24 retraction — expanded scope)
+- §III.6.8 (IT-37 diffusion rate)
+- key_numbers Том III rows
+- program_status ДОКАЗАНО list item 30
+
+**Не исправлено** (требует отдельных аудитов):
+- Cross-references в bridges section (Мост 6 upоминает IT-6)
+- Chronology (Линия C)
+- Index files
+
+## §III.7.6 Rule going forward
+
+**Для любого Walsh-chain probe**:
+
+1. **Per-target RO null** обязателен — не binomial, не per-bit, не single-value.
+2. Null targets должны использовать **SAME chi_arr** как SHA target.
+3. Сравнение SHA vs RO **для one feature** (fair), не one feature vs pool (unfair).
+4. Magnitudes |Ω| ≫ 0.3 для chi_arr-based probe = suspect. Без RO baseline — undefined.
+
+## §III.7.7 Open vs closed after corrigendum
+
+**Закрыто** (⊘ROLL):
+- Ω_k probe через chi_arr from state1 — **dead end** для distinguishing
+- ?OPEN-A (Ω_k для SHA-3/BLAKE на input→hash) — uninformative
+
+**По-прежнему открыто**:
+- Backward shortcut beyond ANF early-verify 7.6× [§132]
+- MITM O(2⁸⁰) implementation [П-210]
+- Q∩T solver <2¹²⁸
+- Structural SHA-2 fingerprint через **другой** probe
+
+**Новое наблюдение от corrigendum**: methodology's ранее "breakthrough" IT-6 result был ~5 месяцев undetected artifact. **Any future claim** с magnitude >5σ нуждается в replication с explicit RO baseline перед включением в methodology.
 
 # Мосты между томами
 
@@ -4480,17 +4591,16 @@ Spread across 4 classes: **0.054** (sampling noise, stride=8).
 
 **Единый вывод**: backward shortcut существует ТОЛЬКО через ANF early-verify (подтверждён). Все остальные кандидаты NULL либо marginal. Это сужает пространство атак.
 
-## Мост 6: Chain-test vs max|z| distinguishers
+## Мост 6: Chain-test vs max|z| distinguishers ⚠ частично ⊘ROLL
 
 **Контекст**: что лучше работает против SHA.
 
-- **Том II П-1000-1035**: Distinguisher v6.0 нейросеть, AUC=**0.980** (лучший на тот момент)
-- **Том III IT-5G**: **max\|z\| линейный = недостаточен** для распределённых сигналов ✗NEG
-- **Том III IT-5G**: **directional chain-test = NP-optimal** для distributed (Parseval)
-- **Том III IT-4.Q7D**: chain-3 z=-3.87 на R=50 — невидим для max\|z\|
-- **Том III IT-6**: **ρ(direct, chain_3)=+0.98** — chain-3 ПРЯМО видит то, что max\|z\| размазывает
+- **Том II П-1000-1035**: Distinguisher v6.0 нейросеть, AUC=**0.980** (лучший на тот момент) — валидно
+- **Том III IT-5G**: NP-optimality теория chain-test — valid as framework
+- **Том III IT-4.Q7D**: chain-3 z=-3.87 на R=50 — ⚠ требует re-audit c per-target null
+- **Том III IT-6**: ~~ρ(direct, chain_3)=+0.98~~ ⊘ROLL [§III.7 Phase 8C audit] — chi_arr artifact
 
-**Единый вывод**: нейросеть (Том II) и chain-test (Том III) — комплементарные инструменты. Chain-test даёт теоретическую гарантию (NP-оптимальность), нейросеть — эмпирический максимум. Комбинация может дать новый фронтир.
+**Единый вывод (updated)**: нейросеть (Том II v6.0) остаётся реальным distinguisher. Chain-test framework валиден, но **IT-6 magnitude claims (Ω_k ~ 0.98)** — artifact. Перед использованием chain-test для детекции нужен proper per-target RO null.
 
 ## Мост 7: Plurality и Task-Specificity
 
@@ -4654,10 +4764,8 @@ Any AI session продолжая работу должна помнить: пе
   - Барьер = T_BARRIER_EQUALS_SCHEDULE (schedule barrier + 1)
   - Sol_17 плотность neutral bits: точно ≥ 2⁹⁶, но стоимость обхода неизвестна [П-101]
 
-### Ω_k cross-hash
-- **?OPEN** Применение Ω_k инварианта к SHA-3/BLAKE/Keccak [IT-6]
-  - IT-6 показал ρ(direct, chain_3) = +0.98 для SHA-256
-  - Нужно: такой же скан для других семей, выделить SHA-специфичный vs общий fingerprint
+### ~~Ω_k cross-hash~~ ⊘ROLL направление [§III.7]
+- ~~?OPEN Применение Ω_k инварианта к SHA-3/BLAKE/Keccak [IT-6]~~ — закрыто как dead end после Phase 8C audit. IT-6 claim — chi_arr artifact; cross-hash тоже дал бы artifact. Направление требует новой probe, не Ω_k.
 
 ## ПРИОРИТЕТ 2 — среднесрочные
 
@@ -4955,10 +5063,10 @@ Any AI session продолжая работу должна помнить: пе
 ### IT-5S — Round×Order evolution
 - chain_3 затухает медленнее chain_1
 
-### IT-6 — Full-output map
-- **ρ(direct, chain_3) = +0.98** ⭐⭐⭐
-- Same-sign 240/256 (p~10⁻⁵²)
-- **Ω_k инвариант** по output битам
+### IT-6 — Full-output map ⊘ROLL
+- ~~ρ(direct, chain_3) = +0.98~~ ⊘ROLL [§III.7]: RO=0.978 (same protocol)
+- ~~Same-sign 240/256~~ ⊘ROLL: RO=248/256
+- ~~Ω_k инвариант~~ ⊘ROLL: chi_arr-basis artifact, не invariant
 
 ## Ключевые кросс-томные моменты
 
@@ -4974,7 +5082,7 @@ Any AI session продолжая работу должна помнить: пе
 | П-26/П-92 | T_WANG_CHAIN P=1.0 | Центральный Том II |
 | П-97 | Пара W0=c97624c6 | Практическая реализация |
 | IT-4.Q7D | Chain-3 z=-3.87 | Центральная Том III |
-| IT-6 | ρ=0.98, Ω_k | Новый инструмент |
+| ~~IT-6~~ ⊘ROLL [§III.7] | ~~ρ=0.98, Ω_k~~ chi_arr artifact | Framework concept survives, magnitude claims retracted |
 
 ---
 
@@ -5079,7 +5187,7 @@ Any AI session продолжая работу должна помнить: пе
 - `sharp_results.json` (24KB): **χ²-fingerprint всех 7 хэшей**
 - `it4_walsh.json` (49KB): **64-feature Walsh scan**
 - `it4_q7d_r500_results.json` (24KB): **Q7D amplified R=500 p=0.002 Bonferroni**
-- `it6_full_output_map.json` (25KB): **Ω_k + ρ=+0.98 данные**
+- `it6_full_output_map.json` (25KB): Ω_k + ρ=+0.98 данные ⊘ROLL [§III.7]: chi_arr artifact
 - `it3_results.json` (87KB): **Δ_χ² / Δ_I full**
 - `chimera_results.json`: Mixed hash families
 - `it7_cumulative_output.csv`: Cumulative distinguisher trace
