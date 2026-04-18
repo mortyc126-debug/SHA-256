@@ -4510,6 +4510,78 @@ Chain_z[b] = Σ_S z_in[S] · z_out[S, b], где:
 
 ## §III.7.7 Open vs closed after corrigendum
 
+## §III.7.8 Разграничение: valid chain-tests vs biased Pearson aggregation
+
+После детального анализа выяснено что **не все chain-based результаты artifact**. Ключевое различие:
+
+**Valid** (survive scrutiny) — chain-tests с target-level RO null:
+- **IT-4.Q7D chain_3 z=−3.87** (p=0.002 Bonferroni) ⚡VER:
+  - Single chain_sum(f, t) где f=bit5_max, t=state2[bit10]
+  - RO null: вариация TARGET (BLAKE2b output), chi_arr фиксирована
+  - SHA target корректно коррелирует с chi через SHA round function
+  - RO target независим от chi → chain_sum ~ 0
+  - Это **bona fide distinguisher** detection protocol
+
+- **IT-4.Q7f chain-4 z=−6.40** ⚡VER: аналогичная structure, valid
+- **IT-5S chain_k magnitudes evolution** ⚡VER (likely): single values per (f, t, r)
+
+**⊘ROLL** (artifact) — **Pearson aggregation across output bits**:
+- IT-6 Ω_3 = Pearson(direct_z[b=1..256], chain_z[b=1..256])
+- Correlation between direct_z and chain_z vectors EMERGES из chi_arr structure
+- Оба вектора зависят от chi_arr → systematic alignment regardless of target
+- Same issue в IT-13, IT-21, IT-23, IT-37, Phase 1, Phase 6C, Phase 7B
+
+**Краткое правило**:
+- Single chain_sum per (f, t) with target-varied RO null → **safe**
+- Σ over output bits of some function, then Pearson with another sum → **unsafe**
+
+## §III.7.9 Итог — updated ⊘ROLL stack
+
+После §III.7.8 анализа, уточнённый retraction list:
+
+**Определённо ⊘ROLL** (Pearson-over-bits aggregation):
+- IT-6 Ω_3 = +0.98
+- IT-13 architectural invariance 0.98
+- IT-21 conservation 0.92
+- IT-23 universality 0.85
+- IT-37 diffusion rate ratio
+- Phase 1 Ω_k phase transition (probe uses Pearson)
+- Phase 6C/7B "distinguishers"
+
+**Likely VALID** (single-value chain_sum с target RO null):
+- IT-4.Q7D chain_3 z=-3.87 (p=0.002)
+- IT-4.Q7f chain_4 z=-6.40
+- IT-5S chain_k magnitudes evolution (если использует single values)
+
+**Требует explicit audit** (не проверено):
+- IT-5G theoretical framework (abstract, вероятно OK)
+- Phase 2-5 mechanism findings (использовали Pearson → likely ⊘ROLL)
+- IT-6b Ω_k spectrum — Pearson variants, likely ⊘ROLL
+- IT-6c cross-feature — depends on metric used
+
+**Правило for future**: Pearson(direct_z, chain_z) over output bits с chi_arr from input-derived data **always** produces inflated correlation. For detection, use per-target chain_sum with RO variance baseline.
+
+## §III.7.10 Impact на Phase 2-5 mechanism findings
+
+Phase 2-5 нашли что "Σ-rotations + carry/Ch/Maj together" разрушают Ω_3 at r=17-20. Под Ω_3 была Pearson aggregation artifact.
+
+**Однако** mechanism findings не полностью ⊘ROLL:
+- Observation "Σ в no_Sigma variant → no collapse" **реально**:
+  Даже с artifactual metric, разница между V0 (Σ active) и V1 (no Σ) реальна
+- Конкретное число (0.82 vs 0.74 etc.) искусственное, но DIFFERENCE между variants real
+- Interpretation: Σ-rotations меняют HOW chi_arr projects on target
+- Это reveal реальное structural property: Σ является primary bit-mixer
+
+**Retained value**: Phase 3A variant comparison показывает Ch/Maj/K не влияют на bit-mixing dynamics, а Σ/carry влияют. Это качественное findings о SHA architecture, независимо от Ω absolute magnitudes.
+
+## §III.7.11 IT-4.S2 round decay finding — likely VALID
+
+IT-4.S2 reported max|z| decay exp(-0.25r) for bit5_max signal through rounds 4-20.
+
+Это **не** Pearson-over-bits metric. Это max|z| across 256 output bits, где z = classical Walsh coefficient (1st-order). Single-order metric, no cross-bit aggregation via chi_arr.
+
+**VALID**: IT-4.S2 finding (SHA-256 bit5_max signal decays exponentially with rate 0.25/round) остаётся ⚡VER. Не artifact.
+
 **Закрыто** (⊘ROLL):
 - Ω_k probe через chi_arr from state1 — **dead end** для distinguishing
 - ?OPEN-A (Ω_k для SHA-3/BLAKE на input→hash) — uninformative
