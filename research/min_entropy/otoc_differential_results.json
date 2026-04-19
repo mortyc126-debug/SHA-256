@@ -1,0 +1,21 @@
+{
+  "rounds_analyzed": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    8
+  ],
+  "T_DOM_DIFF_verification": {
+    "methodology_P": 0.773,
+    "otoc_P": 1.0,
+    "match": false
+  },
+  "best_W0_to_e1_r1": {
+    "bit_W0": 0,
+    "bit_e1": 0,
+    "probability": 1.0
+  },
+  "runtime_sec": 3.0608434677124023
+}
