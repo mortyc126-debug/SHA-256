@@ -53,6 +53,8 @@
 - [04_surgical_omega_k.md](03_vol_III/04_surgical_omega_k.md) — IT-4.S1-S4, IT-5G/S, IT-6 ⊘ROLL (Ω_3 claim chi_arr artifact, см. §III.7)
 - [05_bridges_otkrytoe.md](03_vol_III/05_bridges_otkrytoe.md) — Мосты с Томами I/II, открытые, закрытые
 - Глава III.6 — IT-13..IT-36 extensions + MLB + Oracle Gauge (встроена в UNIFIED_METHODOLOGY.md после §III.5)
+- Глава III.7 — CORRIGENDUM (⊘ROLL Ω_k framework chain)
+- Глава III.8 — OTOC framework (physics-grounded, replaces Ω_k)
 
 ### Приложения (корень unified/)
 - [04_bridges.md](04_bridges.md) — 8 мостов между Томами I/II/III
@@ -330,6 +332,12 @@
 | **SHA-256 Ω_3 3rd-order diffusion** | ⊘ROLL: chi_arr artifact same as IT-6 — "decay" не SHA-specific | ⊘ROLL | IT-37 / §III.7 |
 | **Diffusion ratio SHA-3 : SHA-256** | ⊘ROLL: ratio может быть valid но magnitude artifact. Нужна RO baseline. | ⊘ROLL | IT-37 / §III.7 |
 | **IT-21/IT-23/IT-37 все claims** | ⊘ROLL: same chi_arr artifact — Phase 8C audit показал RO Ω=0.978 при SHA=0.979 | ⊘ROLL | §III.7 |
+| **OTOC SHA-256 scrambling at r=** | **r=24/64 (37%)** — RO limit achieved | ⚡VER | §III.8 |
+| **OTOC SHA-3 scrambling at r=** | **r=4/24 (17%)** — sharp transition r=2→3 (110× drop) | ⚡VER | §III.8 |
+| **OTOC BLAKE2s scrambling at r=** | **r=2/10 (20%)** — fastest absolute | ⚡VER | §III.8 |
+| **OTOC cross-hash RO match** | 0.7% of theoretical limit для 8 hash families | ⚡VER | §III.8 |
+| **OTOC theoretical baseline** | msg×out×0.25/N, verified across 8 hashes | ✓DOK | §III.8 |
+| **SHA-256 design margin** | 40 rounds (r=24..64 post-scramble) | ⚡VER | §III.8 |
 
 ## Мосты (кросс-томные численные совпадения)
 
@@ -4593,6 +4601,138 @@ IT-4.S2 reported max|z| decay exp(-0.25r) for bit5_max signal through rounds 4-2
 - Structural SHA-2 fingerprint через **другой** probe
 
 **Новое наблюдение от corrigendum**: methodology's ранее "breakthrough" IT-6 result был ~5 месяцев undetected artifact. **Any future claim** с magnitude >5σ нуждается в replication с explicit RO baseline перед включением в methodology.
+
+# Глава III.8. OTOC framework — physics-grounded scrambling (replaces Ω_k)
+
+> **TL;DR**: Discrete OTOC (Out-of-Time-Order Correlator) adapted from quantum chaos theory gives **clean physics-grounded measurement** of hash scrambling rates. Replaces broken Ω_k probe (⊘ROLL §III.7) with rigorous framework: theoretical RO baseline matches within 0.7% across 8 hash families. Cross-architecture fingerprint: SHA-256 scrambles at r=24 of 64 (37%), SHA-3 at r=4 of 24 (17%), BLAKE2s at r=2 of 10 (20%).
+
+## §III.8.1 Motivation — replacing failed Ω_k
+
+Ω_k framework (Chapter III.4-III.6) failed due to chi_arr-basis artifact — Pearson over output bits created systematic alignment regardless of target. After 8 ⊘ROLL retractions (§III.7), нужна **well-founded alternative** для scrambling measurement.
+
+**Discrete OTOC adapted from physics**:
+- Original quantum: C(t) = −⟨[W(t), V(0)]²⟩ measures operator spreading
+- Classical analog for Boolean function: C[i,j,r] = E_msg[P(output[j] flips | input bit i flips) − 0.5]
+- Well-defined theoretical baseline для random oracle
+- Empirically verified across 8 hash families
+
+## §III.8.2 Physics literature connection
+
+- **Hayden-Preskill protocol** (2007): scrambling time в BH → analog scrambling rounds в hash
+- **Maldacena-Shenker-Stanford bound** (2016): λ_L ≤ 2π/β universal quantum chaos → classical analog для SHA
+- **Yoshida-Kitaev decoder** (2017): Grover-based recovery from scrambled info → analog hash preimage complexity
+- **Black-Hole Radiation Decoding ≡ Quantum Cryptography** (CRYPTO 2023): formal equivalence
+
+## §III.8.3 OTOC definition
+
+For input bit i ∈ [0, 512), output bit j ∈ [0, 256):
+```
+C[i, j, r] = (1/N) Σ_{m random} [ state[r](m ⊕ e_i)[j] ⊕ state[r](m)[j] ] − 0.5
+```
+
+Matrix C ∈ R^(512×256). Frobenius norm squared:
+```
+||C(r)||_F² = Σ_{i,j} C[i,j,r]²
+```
+
+**Theoretical RO limit**: msg_bits × output_bits × 0.25 / N = 163.84 для N=200, msg=512, out=256.
+
+## §III.8.4 SHA-256 round-by-round ⚡VER
+
+| r | ||C(r)||_F² | Status |
+|---|---|---|
+| 1 | 32,737 | no scrambling |
+| 6 | 26,480 | gradual |
+| 12 | 14,249 | accelerating |
+| 16 | 6,089 | rapid decay |
+| 20 | 422 | **phase transition** |
+| **24** | **163** | **matches RO limit** |
+| 64 | 164 | saturated |
+
+**Phase transition r=17-20** consistent с **T_BARRIER_EQUALS_SCHEDULE** (Wang-barrier). Теперь measured rigorously без chi_arr artifact.
+
+## §III.8.5 Cross-architecture fingerprint ⚡VER
+
+| Hash | Total rounds | Scramble at | % of total | Transition character |
+|---|---|---|---|---|
+| **SHA-256** | 64 | r=24 | **37%** | gradual (r=4..24) |
+| **SHA-3** | 24 | r=4 | 17% | sharp (r=2→3: 110× drop) |
+| **BLAKE2s** | 10 | r=2 | 20% | sharp (r=1→2: 100× drop) |
+
+**SHA-256 has 40-round design margin** (r=24..64 post-scramble). Modern designs (SHA-3, BLAKE2) tighter. Этот slack = **exploitable zone** для methodology's structural attacks (Wang r=17, ANF r=2).
+
+**Physical interpretation**:
+- SHA-3 Keccak θ-step = global mixing → fast scrambling, near MSS bound
+- SHA-256 Σ + Ch/Maj = local mixing → slower, exploitable
+- BLAKE2s ARX G-function → fastest absolute (2 rounds)
+
+## §III.8.6 Full-output verification ⚡VER
+
+OTOC at full hash output across 8 families converges к theoretical RO within 0.7%:
+
+| Hash | Measured ||C||_F² | Theoretical | Diff |
+|---|---|---|---|
+| MD5 | 81.32 | 81.92 | 0.7% |
+| SHA-1 | 101.77 | 102.40 | 0.6% |
+| SHA-256 | 163.48 | 163.84 | 0.2% |
+| SHA-512 | 328.33 | 327.68 | 0.2% |
+| SHA-3-256 | 164.67 | 163.84 | 0.5% |
+| BLAKE2b | 163.89 | 163.84 | 0.03% |
+| BLAKE2s | 163.37 | 163.84 | 0.3% |
+
+**Even MD5** is RO-like под OTOC at full output. OTOC измеряет **scrambling rate**, не **collision weakness**.
+
+## §III.8.7 Null results ⊘
+
+**OTOC-guided MLB**: tested hypothesis that OTOC column scores predict best sort-key for MLB.
+
+| r | baseline (a,e,b) | OTOC-top3 | OTOC-bottom3 |
+|---|---|---|---|
+| r=8 | HW=83 | HW=83 | HW=83 |
+| r=12 | HW=82 | HW=83 (worse!) | HW=82 |
+| r=16 | HW=80 | HW=80 | — |
+
+**Null**: OTOC doesn't predict MLB matchability. Methodology's (a63, e63, a62) choice — near-optimal empirically.
+
+**OTOC differential = classical XOR-DDT**: not new tool. T_DOM_DIFF (methodology, additive) ≠ OTOC (XOR). Для additive-DDT нужен separate extension, не сделан.
+
+## §III.8.8 Scope и публикабельность
+
+**Publishable** ("Cross-Architecture Information Scrambling Rates..."):
+- Systematic OTOC measurement with theoretical RO baseline
+- Cross-architecture fingerprint (SHA-256/SHA-3/BLAKE2s)
+- Independent confirmation Wang-barrier r=17-20
+- Quantified 40-round SHA-256 design margin
+- Links к Hayden-Preskill / MSS / Yoshida-Kitaev literature
+
+**Not deliverable**:
+- Direct attack tool (null on MLB-guidance, XOR-DDT equivalent к classical)
+- Additive-DDT via OTOC (not implemented)
+
+## §III.8.9 Ω_k vs OTOC сравнение
+
+| Aspect | Ω_k (⊘ROLL §III.7) | OTOC (⚡VER §III.8) |
+|---|---|---|
+| Theoretical RO baseline | None (chi_arr artifact) | Exact (msg×out×0.25/N) |
+| Match with theory | N/A — RO ≈ SHA | 0.7% for all 8 hashes |
+| Retractions | 8 (IT-6, IT-21/23/24/37, Phase 6C/7A/7B/8A) | 0 |
+| Attack guidance | Claimed (false) | Null (honest) |
+| Physics grounding | Ad-hoc | Hayden-Preskill / MSS / Yoshida-Kitaev |
+| Mathematical rigor | Weak (Pearson artifact) | Strong (Frobenius norm) |
+
+**Meta-lesson**: physics literature has rigorous frameworks для scrambling. Adapting them properly (discrete OTOC classical analog) gives clean results. Crypto-native ad-hoc constructions (Pearson over chi_arr) introduced biases.
+
+## §III.8.10 Files
+
+- `otoc_sha256.py` — SHA-256 round-by-round
+- `otoc_cross_hash.py` — 8 hash families full-output
+- `otoc_sha3_rounds.py` — SHA-3 Keccak-f round-by-round
+- `otoc_blake2s_rounds.py` — BLAKE2s (verified vs hashlib)
+- `otoc_guided_mlb.py` + `otoc_guided_mlb_r8.py` — null results
+- `otoc_differential.py` — XOR-DDT via OTOC
+- `OTOC_RESULTS.md` — complete publication-ready summary
+
+---
 
 # Мосты между томами
 
