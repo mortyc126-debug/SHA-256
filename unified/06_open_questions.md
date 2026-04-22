@@ -19,10 +19,11 @@
   - Барьер = T_BARRIER_EQUALS_SCHEDULE (schedule barrier + 1)
   - Sol_17 плотность neutral bits: точно ≥ 2⁹⁶, но стоимость обхода неизвестна [П-101]
 
-### Ω_k cross-hash
-- **?OPEN** Применение Ω_k инварианта к SHA-3/BLAKE/Keccak [IT-6]
-  - IT-6 показал ρ(direct, chain_3) = +0.98 для SHA-256
-  - Нужно: такой же скан для других семей, выделить SHA-специфичный vs общий fingerprint
+### ~~Ω_k cross-hash~~ ⊘ROLL [UNIFIED §III.7]
+- ~~?OPEN Применение Ω_k инварианта к SHA-3/BLAKE/Keccak [IT-6]~~
+- Phase 8C audit (2026-04) показал IT-6 claim — chi_arr artifact
+  (RO same protocol даёт Ω=0.978 vs SHA 0.979). Направление закрыто как
+  dead-end. Любая cross-hash extension воспроизведёт artifact.
 
 ## ПРИОРИТЕТ 2 — среднесрочные
 

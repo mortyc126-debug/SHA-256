@@ -38,7 +38,7 @@
 27. **Δ_χ² vs Δ_I dissociation** ⚡VER [IT-3]
 28. **HW=2 exclusivity bit5_max** ⚡VER — exhaustive 130K [IT-4.1]
 29. **Directional chain-3 signal** ⚡VER — p=0.002 Bonferroni [IT-4.Q7DEF]
-30. **ρ(direct, chain_3) = +0.98** ⚡VER — same-sign 240/256 (one-sided binomial p~10⁻⁵²) [IT-6]
+30. ~~**ρ(direct, chain_3) = +0.98** ⚡VER — same-sign 240/256 (one-sided binomial p~10⁻⁵²) [IT-6]~~ ⊘ROLL [Phase 8C audit 2026-04, UNIFIED_METHODOLOGY §III.7]: RO дает Ω=0.978 under same protocol; chi_arr-basis artifact
 
 ## ЗАКРЫТО (не повторять)
 
@@ -90,7 +90,7 @@
 - **Конечная верхняя граница осей при усилении аксиом** ?OPEN [§30]
 
 ### Info-Theory
-- **Ω_k для других хэшей** ?OPEN — применить к SHA-3, BLAKE [IT-6]
+- ~~**Ω_k для других хэшей** ?OPEN — применить к SHA-3, BLAKE [IT-6]~~ ⊘ROLL: IT-6 claim artifact, направление dead-end [§III.7]
 - **Signal amplification у block-2** ?OPEN — механизм изучен, можно использовать [IT-4.S4]
 - **Chain-test против quantum distinguishers** ?OPEN
 

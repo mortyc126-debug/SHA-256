@@ -43,7 +43,7 @@
 - [01_framework.md](03_vol_III/01_framework.md) — Ĥ_∞, Rényi, Δ_χ²/Δ_I/Ω_k, chain-test theory
 - [02_min_entropy_chi2.md](03_vol_III/02_min_entropy_chi2.md) — IT-1, IT-1.3 (SHA-2 z≈-2.5, p<10⁻⁷), IT-2 (σ₀/σ₁ 88%), IT-3
 - [03_walsh_chain_test.md](03_vol_III/03_walsh_chain_test.md) — IT-4 Q7D (z=-3.87, p=0.002 Bonferroni), Walsh-4 z=-6.40
-- [04_surgical_omega_k.md](03_vol_III/04_surgical_omega_k.md) — IT-4.S1-S4, IT-5G/S, IT-6 (Ω_3=+0.98, 240/256 same-sign)
+- [04_surgical_omega_k.md](03_vol_III/04_surgical_omega_k.md) — IT-4.S1-S4, IT-5G/S, ~~IT-6 (Ω_3=+0.98)~~ ⊘ROLL [UNIFIED §III.7]
 - [05_bridges_otkrytoe.md](03_vol_III/05_bridges_otkrytoe.md) — Мосты с Томами I/II, открытые, закрытые
 
 ### Приложения (корень unified/)

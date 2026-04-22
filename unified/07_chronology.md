@@ -212,10 +212,11 @@
 ### IT-5S — Round×Order evolution
 - chain_3 затухает медленнее chain_1
 
-### IT-6 — Full-output map
-- **ρ(direct, chain_3) = +0.98** ⭐⭐⭐
-- Same-sign 240/256 (one-sided binomial p~10⁻⁵²)
-- **Ω_k инвариант** по output битам
+### IT-6 — Full-output map ⊘ROLL [Phase 8C audit 2026-04]
+- ~~ρ(direct, chain_3) = +0.98~~ ⊘ROLL: RO=0.978 (same protocol)
+- ~~Same-sign 240/256~~ ⊘ROLL: RO=248/256 (higher than SHA's 234)
+- ~~Ω_k инвариант~~ ⊘ROLL: chi_arr-basis artifact, не invariant
+- См. UNIFIED_METHODOLOGY.md §III.7 для полной ретракции
 
 ## Ключевые кросс-томные моменты
 
@@ -231,4 +232,4 @@
 | П-26/П-92 | T_WANG_CHAIN P=1.0 | Центральный Том II |
 | П-97 | Пара W0=c97624c6 | Практическая реализация |
 | IT-4.Q7D | Chain-3 z=-3.87 | Центральная Том III |
-| IT-6 | ρ=0.98, Ω_k | Новый инструмент |
+| ~~IT-6~~ ⊘ROLL | ~~ρ=0.98, Ω_k~~ chi_arr artifact [UNIFIED §III.7] | Framework concept survives |

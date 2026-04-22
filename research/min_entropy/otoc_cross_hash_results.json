@@ -1,0 +1,71 @@
+{
+  "N_messages": 200,
+  "msg_bits": 512,
+  "results": {
+    "md5": {
+      "output_bits": 128,
+      "frobenius_sq": 81.32265000000004,
+      "mean_abs": 0.028078155517578134,
+      "theoretical_RO": 81.92,
+      "rel_diff": 0.007291870117187051,
+      "time": 0.25998806953430176
+    },
+    "sha1": {
+      "output_bits": 160,
+      "frobenius_sq": 101.77127500000003,
+      "mean_abs": 0.02811236572265626,
+      "theoretical_RO": 102.4,
+      "rel_diff": 0.00613989257812475,
+      "time": 0.23667025566101074
+    },
+    "sha256": {
+      "output_bits": 256,
+      "frobenius_sq": 163.48187500000006,
+      "mean_abs": 0.02814128875732423,
+      "theoretical_RO": 163.84,
+      "rel_diff": 0.002185821533202785,
+      "time": 0.23846817016601562
+    },
+    "sha512": {
+      "output_bits": 512,
+      "frobenius_sq": 328.32577500000014,
+      "mean_abs": 0.02821138381958009,
+      "theoretical_RO": 327.68,
+      "rel_diff": 0.001970748901367579,
+      "time": 0.28643274307250977
+    },
+    "sha3_256": {
+      "output_bits": 256,
+      "frobenius_sq": 164.67487500000004,
+      "mean_abs": 0.028242835998535165,
+      "theoretical_RO": 163.84,
+      "rel_diff": 0.005095672607422115,
+      "time": 0.2963855266571045
+    },
+    "sha3_512": {
+      "output_bits": 512,
+      "frobenius_sq": 326.8665750000001,
+      "mean_abs": 0.028134288787841806,
+      "theoretical_RO": 327.68,
+      "rel_diff": 0.002482376098632451,
+      "time": 0.3109159469604492
+    },
+    "blake2b": {
+      "output_bits": 256,
+      "frobenius_sq": 163.88730000000004,
+      "mean_abs": 0.02816368103027345,
+      "theoretical_RO": 163.84,
+      "rel_diff": 0.0002886962890627162,
+      "time": 0.22466206550598145
+    },
+    "blake2s": {
+      "output_bits": 256,
+      "frobenius_sq": 163.37272500000006,
+      "mean_abs": 0.028155860900878918,
+      "theoretical_RO": 163.84,
+      "rel_diff": 0.0028520202636715328,
+      "time": 0.20494341850280762
+    }
+  },
+  "runtime_sec": 2.05945086479187
+}

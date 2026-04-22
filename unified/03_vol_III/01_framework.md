@@ -1,7 +1,7 @@
 # Глава III.1. Теоретический фреймворк Info-Theory Fingerprinting
 
 > TL;DR: ИТ-инструментарий для хэш-аналитики: min-entropy Ĥ_∞, Rényi, KL,
-> Leftover-Hash, RO-модель + новые инварианты Δ_χ², Δ_I, Ω_k и
+> Leftover-Hash, RO-модель + инварианты Δ_χ², Δ_I (Ω_k ⊘ROLL as detection tool, см. §III.7) и
 > directional chain-test Chain_k. Chain_k — NP-оптимальный детектор
 > распределённых сигналов, классический max|z| оптимален только в
 > sparse-режиме.
@@ -56,12 +56,14 @@ P(Y_h).
 тестируемых f (см. Гл. III.2 §2.3). ⇒ marginal и structural — независимые
 ИТ-характеристики.
 
-**Ω_k(h, f_in)** ⚡VER [IT-6]: k-order Walsh-dominance invariant:
+**Ω_k(h, f_in)** ⊘ROLL [IT-6; Phase 8C audit 2026-04]: заявленный k-order
+Walsh-dominance invariant. Определение:
 ```
 Ω_k = corr_b∈[output_bits] (direct_z(b), chain_k(b))
 ```
-Степень доминирования k-го Walsh-порядка в спектре round-функции.
-RO: E[Ω_k]=0. SHA-256 на (HW=2, bit5_max): **Ω_3 = +0.98** (см. Гл. III.4).
+~~RO: E[Ω_k]=0. SHA-256 на (HW=2, bit5_max): Ω_3 = +0.98~~ ⊘ROLL: RO с same
+chi_arr-basis protocol даёт Ω ~ SHA (0.978 vs 0.979). Не invariant.
+См. UNIFIED_METHODOLOGY.md §III.7.
 
 ## §III.1.4 Directional chain-test Chain_k
 

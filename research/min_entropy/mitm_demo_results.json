@@ -1,0 +1,12 @@
+{
+  "target_prefix": "0xcafebabe",
+  "r": 24,
+  "N": 131072,
+  "brute_force_time_s": 20.434306144714355,
+  "brute_force_found": 0,
+  "mitm_full_matches": 0,
+  "mitm_prefix32_matches": 1,
+  "mitm_first_match": null,
+  "theoretical_prefix32_matches": 4.0,
+  "runtime_sec": 44.985798597335815
+}

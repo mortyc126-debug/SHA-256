@@ -1,0 +1,12 @@
+{
+  "N": 130816,
+  "sha_omega": 0.9795,
+  "sha_same_sign": 234,
+  "ro_omegas": [0.9778],
+  "ro_same_signs": [248],
+  "ro_om_mean": 0.9778,
+  "ro_om_std": null,
+  "z_score_est": 0.03,
+  "note": "Full 256-bit triple basis (IT-6 protocol). Sandbox restart killed process at RO#2 128/256. SHA and RO#1 results are final. Replicates IT-6 Ω_3=0.9795 exactly. RO gives essentially same Ω (0.9778) with same-sign 248/256 higher than SHA's 234. Confirms IT-6 claim is chi_arr-basis artifact, not SHA-specific invariant.",
+  "runtime_sec_partial": 5500
+}

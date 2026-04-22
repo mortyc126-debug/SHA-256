@@ -1,5 +1,13 @@
 # Журнал верификации
 
+> **⚠ SUPERSEDED IN PART (Phase 8C audit 2026-04)**: Все ✓MATCH проверки
+> IT-6 / IT-13 / IT-21 / IT-23 numerical claims **⊘ROLL** как chi_arr
+> artifacts. JSON files reproduce same numbers (consistency ✓), but
+> numbers themselves are protocol artifacts.
+> Path D "independent RO replication" (17 апреля 2026) использовал тот же
+> biased protocol — его success был artifact того же root cause.
+> См. UNIFIED_METHODOLOGY.md §III.7.
+
 > Лог фактических проверок против артефактов на диске. Каждая запись —
 > claim из `unified/` vs число из JSON. Формат: **✓MATCH** / **✗MISMATCH** /
 > **≈DRIFT** (смысл тот же, цифра отличается).
