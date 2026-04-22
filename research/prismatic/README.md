@@ -24,10 +24,11 @@
 | 2 | δ-structure на W_n(F_2), SHA-op compatibility | ✓ Done 2026-04 | `SESSION_2.md` |
 | 3 | Formalize "δ-ring with AND" / λ-ring connection | ✓ Done 2026-04 | `SESSION_3.md` |
 | 4 | Prove ANF degree 2(k+1) bound | ✓ Done 2026-04 | `SESSION_4.md` |
-| 5 | Formal theorem + ROTR in enhanced δ-ring | Planned | - |
-| 6 | Prism formalization | Planned | - |
-| 7 | Prismatic cohomology of Bool ring (exact computation) | Planned | - |
-| 8 | Extension to SHA round function | Planned | - |
+| 5 | Literature verification + framework correction | ✓ Done 2026-04 | `SESSION_5.md` |
+| 6 | Rewrite in truncation framework + prism exploration | Planned | - |
+| 7 | Prism formalization | Planned | - |
+| 8 | Prismatic cohomology of Bool ring (exact computation) | Planned | - |
+| 9 | Extension to SHA round function | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -87,4 +88,16 @@ Via carry cascade analysis: bit k of δ(z) mod 2^{n-1} has ANF degree **k+1** in
 
 **Proposed structure**: "Enhanced δ-ring" (A, δ, β) где β is idempotent bilinear (AND). Compatibility: δ∘β has bounded ANF per bit.
 
-**Next step**: Session 5 — formal proof + ROTR analysis в этом framework.
+## Session 5 summary (literature check)
+
+Claude выступил math-expert, проверил findings против literature.
+
+**Confirmed**: δ-ring axioms, formula δ(x+y) = δ(x)+δ(y)−xy, W(F_p) ≅ Z_p.
+
+**Critical correction** (Kedlaya Lemma 2.2.6): Z/p^n cannot be δ-ring as endomap. Our Session 2 "verification" was actually verifying truncation map δ: Z/2^n → Z/2^{n-1}. Framework reformulated properly.
+
+**Novel candidates**: XOR formula derivation, AND ANF degree pattern 2(k+1), "enhanced δ-ring" structure.
+
+**Virgin territory confirmed**: no literature applying prismatic cohomology to hash functions / SHA.
+
+**Next step**: Session 6 — rewrite in truncation framework + start prism exploration.
