@@ -21,10 +21,11 @@
 | Session | Цель | Status | Файл |
 |---|---|---|---|
 | 1 | δ-ring foundations | ✓ Done 2026-04 | `SESSION_1.md` |
-| 2 | δ-structure на W_n(F_2), SHA-op compatibility | Planned | `SESSION_2.md` |
-| 3 | Prism formalization | Planned | - |
-| 4 | Prismatic cohomology of Bool ring (exact computation) | Planned | - |
-| 5 | Extension to SHA round function | Planned | - |
+| 2 | δ-structure на W_n(F_2), SHA-op compatibility | ✓ Done 2026-04 | `SESSION_2.md` |
+| 3 | Formalize "δ-ring with AND" / λ-ring connection | Planned | - |
+| 4 | Prism formalization | Planned | - |
+| 5 | Prismatic cohomology of Bool ring (exact computation) | Planned | - |
+| 6 | Extension to SHA round function | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -54,4 +55,18 @@ Expected timeline: десятки sessions spread по месяцам/годам
 
 Следствие для SHA: нельзя просто объявить SHA на Bool_256 и применять prismatic — всё тривиально. Нужна Witt-reformulation SHA.
 
-**Next step**: Session 2 — δ-compatibility SHA operations на W_n(F_2).
+## Session 2 summary
+
+Результаты:
+- ✓ Z/2^n (= W_n(F_2)) — nontrivial δ-ring (for n=4,6,8 axioms hold fully)
+- ✓ ADD is fully δ-compatible (by axiom D2)
+- **✓ NEW RESULT**: XOR discrepancy has EXACT formula:
+  ```
+  δ(x⊕y) = δ(x) + δ(y) - xy + 2z(x+y) - 2δ(z) - 3z²,  z = x ∧ y
+  ```
+- AND is a PRIMITIVE operation — no clean δ-formula. Needs extension axiom.
+- ROTR — no clean formula. Same obstruction as Witt-filtration from earlier scoping.
+
+**Core picture**: SHA = ADD (free) + AND (extension) + ROTR (obstruction).
+
+**Next step**: Session 3 — formalize "δ-ring with AND" / check λ-ring connection.
