@@ -22,10 +22,12 @@
 |---|---|---|---|
 | 1 | δ-ring foundations | ✓ Done 2026-04 | `SESSION_1.md` |
 | 2 | δ-structure на W_n(F_2), SHA-op compatibility | ✓ Done 2026-04 | `SESSION_2.md` |
-| 3 | Formalize "δ-ring with AND" / λ-ring connection | Planned | - |
-| 4 | Prism formalization | Planned | - |
-| 5 | Prismatic cohomology of Bool ring (exact computation) | Planned | - |
-| 6 | Extension to SHA round function | Planned | - |
+| 3 | Formalize "δ-ring with AND" / λ-ring connection | ✓ Done 2026-04 | `SESSION_3.md` |
+| 4 | Prove ANF degree 2(k+1) bound | ✓ Done 2026-04 | `SESSION_4.md` |
+| 5 | Formal theorem + ROTR in enhanced δ-ring | Planned | - |
+| 6 | Prism formalization | Planned | - |
+| 7 | Prismatic cohomology of Bool ring (exact computation) | Planned | - |
+| 8 | Extension to SHA round function | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -69,4 +71,20 @@ Expected timeline: десятки sessions spread по месяцам/годам
 
 **Core picture**: SHA = ADD (free) + AND (extension) + ROTR (obstruction).
 
-**Next step**: Session 3 — formalize "δ-ring with AND" / check λ-ring connection.
+## Session 3 summary
+
+Результаты:
+- ✗ δ(x AND y) НЕ является low-degree polynomial in (x, y, δ(x), δ(y))
+- ✓ **НО**: bit-level ANF структурен — output bit k имеет max degree **2(k+1)**, только чётные степени
+- Число ANF terms растёт медленно (1, 3, 5, 9 для битов 0..3)
+- Conclusion: AND — genuine primitive, но с CONTROLLED complexity
+
+## Session 4 summary
+
+**Theorem (informal)**: δ(z) = Σ_{i≥1} 2^{i-1}(1-2^i) z_i − Σ_{i<j} 2^{i+j} z_i z_j **over Z**. Quadratic polynomial in z-bits. Verified exact.
+
+Via carry cascade analysis: bit k of δ(z) mod 2^{n-1} has ANF degree **k+1** in z-bits. In (x, y) vars via z_i = x_i y_i: degree **2(k+1)**. Matches Session 3 observation.
+
+**Proposed structure**: "Enhanced δ-ring" (A, δ, β) где β is idempotent bilinear (AND). Compatibility: δ∘β has bounded ANF per bit.
+
+**Next step**: Session 5 — formal proof + ROTR analysis в этом framework.
