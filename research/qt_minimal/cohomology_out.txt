@@ -1,0 +1,165 @@
+=== Carry structure probe (mini-SHA) ===
+
+-- n=4 R=1 --
+  total_carry_bits =    28  input_bits =    4
+  affine_rank(global) =     6  unique vectors = 8
+  deficit_vs_total =   22   deficit_vs_input =   -2
+  jacobian_rank mean = 3.0  min=3 max=3
+  time = 0.0s
+
+-- n=4 R=2 --
+  total_carry_bits =    56  input_bits =    8
+  affine_rank(global) =    22  unique vectors = 88
+  deficit_vs_total =   34   deficit_vs_input =  -14
+  jacobian_rank mean = 6.6  min=5 max=7
+  time = 0.0s
+
+-- n=4 R=3 --
+  total_carry_bits =    84  input_bits =   12
+  affine_rank(global) =    37  unique vectors = 1462
+  deficit_vs_total =   47   deficit_vs_input =  -25
+  jacobian_rank mean = 10.6  min=9 max=11
+  time = 0.3s
+
+-- n=4 R=4 --
+  total_carry_bits =   112  input_bits =   16
+  affine_rank(global) =    54  unique vectors = 3560
+  deficit_vs_total =   58   deficit_vs_input =  -38
+  jacobian_rank mean = 14.2  min=12 max=15
+  time = 0.4s
+
+-- n=4 R=6 --
+  total_carry_bits =   168  input_bits =   24
+  affine_rank(global) =    96  unique vectors = 3999
+  deficit_vs_total =   72   deficit_vs_input =  -72
+  jacobian_rank mean = 22.6  min=22 max=23
+  time = 0.7s
+
+-- n=8 R=1 --
+  total_carry_bits =    56  input_bits =    8
+  affine_rank(global) =    16  unique vectors = 59
+  deficit_vs_total =   40   deficit_vs_input =   -8
+  jacobian_rank mean = 6.0  min=5 max=7
+  time = 0.0s
+
+-- n=8 R=2 --
+  total_carry_bits =   112  input_bits =   16
+  affine_rank(global) =    60  unique vectors = 3531
+  deficit_vs_total =   52   deficit_vs_input =  -44
+  jacobian_rank mean = 14.3  min=13 max=15
+  time = 0.3s
+
+-- n=8 R=3 --
+  total_carry_bits =   168  input_bits =   24
+  affine_rank(global) =   105  unique vectors = 3997
+  deficit_vs_total =   63   deficit_vs_input =  -81
+  jacobian_rank mean = 22.2  min=20 max=23
+  time = 0.6s
+
+-- n=8 R=4 --
+  total_carry_bits =   224  input_bits =   32
+  affine_rank(global) =   154  unique vectors = 4000
+  deficit_vs_total =   70   deficit_vs_input = -122
+  jacobian_rank mean = 30.2  min=29 max=31
+  time = 0.9s
+
+-- n=8 R=6 --
+  total_carry_bits =   336  input_bits =   48
+  affine_rank(global) =   248  unique vectors = 4000
+  deficit_vs_total =   88   deficit_vs_input = -200
+  jacobian_rank mean = 46.3  min=43 max=47
+  time = 1.4s
+
+-- n=12 R=1 --
+  total_carry_bits =    84  input_bits =   12
+  affine_rank(global) =    28  unique vectors = 1375
+  deficit_vs_total =   56   deficit_vs_input =  -16
+  jacobian_rank mean = 10.5  min=10 max=11
+  time = 0.2s
+
+-- n=12 R=2 --
+  total_carry_bits =   168  input_bits =   24
+  affine_rank(global) =   102  unique vectors = 3997
+  deficit_vs_total =   66   deficit_vs_input =  -78
+  jacobian_rank mean = 21.8  min=18 max=23
+  time = 0.6s
+
+-- n=12 R=3 --
+  total_carry_bits =   252  input_bits =   36
+  affine_rank(global) =   176  unique vectors = 4000
+  deficit_vs_total =   76   deficit_vs_input = -140
+  jacobian_rank mean = 33.5  min=31 max=35
+  time = 0.9s
+
+-- n=12 R=4 --
+  total_carry_bits =   336  input_bits =   48
+  affine_rank(global) =   247  unique vectors = 4000
+  deficit_vs_total =   89   deficit_vs_input = -199
+  jacobian_rank mean = 45.6  min=43 max=47
+  time = 1.4s
+
+-- n=12 R=6 --
+  total_carry_bits =   504  input_bits =   72
+  affine_rank(global) =   399  unique vectors = 4000
+  deficit_vs_total =  105   deficit_vs_input = -327
+  jacobian_rank mean = 69.5  min=66 max=71
+  time = 2.3s
+
+-- n=16 R=1 --
+  total_carry_bits =   112  input_bits =   16
+  affine_rank(global) =    40  unique vectors = 3047
+  deficit_vs_total =   72   deficit_vs_input =  -24
+  jacobian_rank mean = 12.9  min=10 max=15
+  time = 0.3s
+
+-- n=16 R=2 --
+  total_carry_bits =   224  input_bits =   32
+  affine_rank(global) =   144  unique vectors = 4000
+  deficit_vs_total =   80   deficit_vs_input = -112
+  jacobian_rank mean = 29.1  min=26 max=31
+  time = 0.8s
+
+-- n=16 R=3 --
+  total_carry_bits =   336  input_bits =   48
+  affine_rank(global) =   245  unique vectors = 4000
+  deficit_vs_total =   91   deficit_vs_input = -197
+  jacobian_rank mean = 45.4  min=42 max=47
+  time = 1.3s
+
+-- n=16 R=4 --
+  total_carry_bits =   448  input_bits =   64
+  affine_rank(global) =   348  unique vectors = 4000
+  deficit_vs_total =  100   deficit_vs_input = -284
+  jacobian_rank mean = 61.3  min=58 max=63
+  time = 1.9s
+
+-- n=16 R=6 --
+  total_carry_bits =   672  input_bits =   96
+  affine_rank(global) =   558  unique vectors = 4000
+  deficit_vs_total =  114   deficit_vs_input = -462
+  jacobian_rank mean = 93.1  min=91 max=95
+  time = 3.4s
+
+
+=== Summary ===
+  n   R  carry  input  gl_rank  gl_def  jac_mean
+  4   1     28      4        6      22       3.0
+  4   2     56      8       22      34       6.6
+  4   3     84     12       37      47      10.6
+  4   4    112     16       54      58      14.2
+  4   6    168     24       96      72      22.6
+  8   1     56      8       16      40       6.0
+  8   2    112     16       60      52      14.3
+  8   3    168     24      105      63      22.2
+  8   4    224     32      154      70      30.2
+  8   6    336     48      248      88      46.3
+ 12   1     84     12       28      56      10.5
+ 12   2    168     24      102      66      21.8
+ 12   3    252     36      176      76      33.5
+ 12   4    336     48      247      89      45.6
+ 12   6    504     72      399     105      69.5
+ 16   1    112     16       40      72      12.9
+ 16   2    224     32      144      80      29.1
+ 16   3    336     48      245      91      45.4
+ 16   4    448     64      348     100      61.3
+ 16   6    672     96      558     114      93.1
