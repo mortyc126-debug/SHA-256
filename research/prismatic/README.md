@@ -28,9 +28,10 @@
 | 6 | Rewrite in truncation framework + prism exploration | ✓ Done 2026-04 | `SESSION_6.md` |
 | 7 | q-Witt prism exploration (rotations as q-twists?) | ✓ Done 2026-04 | `SESSION_7.md` |
 | 8 | δ on ramified Z_2[i] — **OBSTRUCTION proved** | ✓ Done 2026-04 | `SESSION_8.md` |
-| 9 | Prismatic cohomology of F_2[ε]/(ε²) (dual numbers) | Planned | - |
-| 10 | Multi-variable F_2[ε_1,...,ε_n] extension | Planned | - |
-| 11+ | Connect to SHA structure | Planned | - |
+| 9 | de Rham cohomology of F_2[ε]/(ε²) — **H¹ = F_2** | ✓ Done 2026-04 | `SESSION_9.md` |
+| 10 | Verify conjecture H¹(F_2[s]/(s^d)) = Z/d | Planned | - |
+| 11 | Multi-variable F_2[s_1,...,s_n]/(s_i^{d_i}) | Planned | - |
+| 12+ | Integration with AND/XOR/ADD ops | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -129,4 +130,19 @@ Claude выступил math-expert, проверил findings против lite
 
 **Crucial observation**: F_2[i]/(i²+1) = F_2[ε]/(ε²) (dual numbers, with ε = i+1). So ramified rotation structure ↔ dual numbers — connecting point с standard alg geom.
 
-**Next step**: Session 9 — compute prismatic cohomology of F_2[ε]/(ε²).
+## Session 9 summary
+
+**FIRST CONCRETE COHOMOLOGICAL COMPUTATION**:
+
+- Z_2[ε]/(ε²) verified as δ-ring with φ(ε) = 0 (axioms D1-D3 hold)
+- Kähler differentials Ω¹ ≅ Z_2 ⊕ F_2
+- **de Rham cohomology**: H⁰ = Z_2, H¹ = F_2, H^≥2 = 0
+
+**Connection to SHA** (corrected from Session 8):
+For n-bit register с n = 2^k, rotation ring = F_2[s]/(s^{n/2}).
+- n=4: F_2[s]/(s²) = dual numbers — наша computation
+- n=32: F_2[s]/(s^16) — для SHA-256
+
+**Conjecture**: H¹(F_2[s]/(s^{2^j})) = Z/2^j. Для SHA-256 (n=32, j=4): H¹ = Z/16 per register.
+
+**Next step**: Session 10 — verify conjecture for d=4, 8.
