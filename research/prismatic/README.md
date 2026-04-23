@@ -39,7 +39,8 @@
 | 17 | AND integration — **obstruction confirmed** | ✓ Done 2026-04 | `SESSION_17.md` |
 | 18 | **NEW FRAMEWORK**: SHA Lie algebra, ROTR abelian + SHR non-abelian | ✓ Done 2026-04 | `SESSION_18.md` |
 | 19 | **Conjecture 18.3 REFUTED**: L_SHA NOT nilpotent (σ's not nilpotent) | ✓ Done 2026-04 | `SESSION_19.md` |
-| 20+ | Solvability test / structure decomposition | Planned | - |
+| 20 | **Theorem 20.1**: L_SHA NOT solvable (perfect sub-algebra dim 264) | ✓ Done 2026-04 | `SESSION_20.md` |
+| 21+ | Identify L_SHA perfect part OR declare completion | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -317,3 +318,21 @@ Structural reason: SHR (in σ_0, σ_1) is lower-triangular in x-basis. Combined 
 **Cryptanalytic interpretation**: non-nilpotency of σ operators reflects deliberate "lossy" design of SHA message schedule — SHR physically destroys bits, unlike pure ROTR mixing.
 
 **Next step**: Session 20 — test solvability.
+
+## Session 20 summary
+
+**Theorem 20.1**: L_SHA is NOT solvable.
+
+Derived series: dim D^k = 4, 5, 10, 43, 264, 264. Stabilized at D^4 = D^5 = 264.
+
+Since D^5 = D^4 ≠ 0, L_SHA contains **perfect sub-algebra** (= [L', L'] = L') of dimension 264. Perfect ≠ 0 → not solvable.
+
+**Structural picture after 20 sessions**:
+- L_rot (Σ only): abelian, nilpotent
+- Adding σ (with SHR): breaks all nice structure
+- L_SHA: non-abelian (18.2), non-nilpotent (19.1), **non-solvable (20.1)**
+- Contains perfect sub-algebra dim 264 — candidate for simple Lie algebra over F_2
+
+**Cryptanalytic interpretation**: SHA's linear layer has "wild" Lie-theoretic structure — opposite of what cryptanalysis prefers. Structurally supports SHA's security.
+
+**Next step**: Session 21+ — identify perfect sub-algebra OR consolidate and declare.
