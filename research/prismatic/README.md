@@ -38,7 +38,8 @@
 | 16 | Consolidation write-up → PRISMATIC_PROGRAM.md | ✓ Done 2026-04 | `PRISMATIC_PROGRAM.md` |
 | 17 | AND integration — **obstruction confirmed** | ✓ Done 2026-04 | `SESSION_17.md` |
 | 18 | **NEW FRAMEWORK**: SHA Lie algebra, ROTR abelian + SHR non-abelian | ✓ Done 2026-04 | `SESSION_18.md` |
-| 19 | Formal proof L_SHA nilpotent via Engel's theorem | Planned | - |
+| 19 | **Conjecture 18.3 REFUTED**: L_SHA NOT nilpotent (σ's not nilpotent) | ✓ Done 2026-04 | `SESSION_19.md` |
+| 20+ | Solvability test / structure decomposition | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -296,3 +297,23 @@ These dualize via F_2-Fourier transform (bialgebra structure). Integration requi
 **First genuinely non-abelian structure** captured. Connects SHA to classical Lie theory.
 
 **Next step**: Session 19 — formal proof of nilpotency.
+
+## Session 19 summary
+
+**Conjecture 18.3 REFUTED**.
+
+Theorem 19.1 (negative): L_SHA is **NOT nilpotent**.
+
+Empirical evidence:
+- N_Σ_0^{32} = 0 ✓ (nilpotent, order ≤ 32)
+- N_Σ_1^{11} = 0 ✓ (nilpotent, order ≤ 11)
+- N_σ_0 **not nilpotent** within 32 steps
+- N_σ_1 **not nilpotent** within 32 steps
+
+Structural reason: SHR (in σ_0, σ_1) is lower-triangular in x-basis. Combined with upper-triangular ROTR parts, gives operator that's neither triangular → may have non-zero eigenvalues → not nilpotent.
+
+**Conjecture 19.3**: L_SHA = rad ⊕ semisimple, where rad ⊇ L_rot (abelian nilpotent).
+
+**Cryptanalytic interpretation**: non-nilpotency of σ operators reflects deliberate "lossy" design of SHA message schedule — SHR physically destroys bits, unlike pure ROTR mixing.
+
+**Next step**: Session 20 — test solvability.
