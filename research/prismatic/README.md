@@ -31,8 +31,9 @@
 | 9 | de Rham cohomology of F_2[ε]/(ε²) — **H¹ = F_2** | ✓ Done 2026-04 | `SESSION_9.md` |
 | 10 | **THEOREM**: H¹(F_2[s]/(s^d)) structure, \|H¹\|=2^{d-1} for d=2^j | ✓ Done 2026-04 | `SESSION_10.md` |
 | 11 | Künneth for 8 registers: H¹ = 2^120 | ✓ Done 2026-04 | `SESSION_11.md` |
-| 12 | Integrate XOR via Session 2 formula | Planned | - |
-| 13+ | Integrate AND + ADD, full SHA round | Planned | - |
+| 12 | CORRECTION rotation ring + XOR setup | ✓ Done 2026-04 | `SESSION_12.md` |
+| 13 | R_full = R_rot ⊗ R_bool, compute H* | Planned | - |
+| 14+ | ADD integration, full SHA round | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -173,3 +174,17 @@ Higher H^k for k ≥ 2 — derived exterior products, not independent info.
 **Honest comparison**: 2^120 < 2^128 birthday (shortfall 2^8 = 256×). Rotation cohomology alone NOT enough. Need XOR/AND/ADD integration.
 
 **Next step**: Session 12 — integrate XOR via Session 2 formula δ(x⊕y) = δ(x)+δ(y)-xy+2z(x+y)-2δ(z)-3z².
+
+## Session 12 summary
+
+**Correction found**: Session 9-11 used F_2[s]/(s^{n/2}) (field extension F_2[ζ_n]). Correct choice for ROTR action: **F_2[s]/(s^n) = F_2[x]/(x^n - 1)** (full group algebra).
+
+**Recomputed with d=32**:
+- H¹(F_2[s]/(s^{32})) = 2^31 (16 cyclic factors)
+- 8 registers via Künneth: **2^248** (exceeds 2^128 birthday by 2^120)
+
+**Identified tension**: rotation ring captures ROTR but not bit-wise XOR/AND. These require DIFFERENT ring structures (convolution vs Hadamard product на F_2^n).
+
+**Three resolution paths**: tensor product, derived functor, separate invariants.
+
+**Next step**: Session 13 — build R_full = R_rot ⊗ R_bool and compute its H*.
