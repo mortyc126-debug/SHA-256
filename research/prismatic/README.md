@@ -34,8 +34,9 @@
 | 12 | CORRECTION rotation ring + XOR setup | ✓ Done 2026-04 | `SESSION_12.md` |
 | 13 | **Theorem**: ROTR_1 = id on H¹; r ≥ 2 non-trivial | ✓ Done 2026-04 | `SESSION_13.md` |
 | 14 | **Σ_0 matrix** on H¹: upper triangular unipotent, order 16 | ✓ Done 2026-04 | `SESSION_14.md` |
-| 15 | Joint kernel of Σ_0, Σ_1 (common invariants) | Planned | - |
-| 16+ | AND/ADD integration, full SHA round | Planned | - |
+| 15 | **Joint invariants**: kernel(Σ_0-I) ∩ kernel(Σ_1-I) = 2-dim | ✓ Done 2026-04 | `SESSION_15.md` |
+| 16 | Consolidate write-up OR integrate SHR | Planned | - |
+| 17+ | Full SHA round composition analysis | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -222,3 +223,15 @@ Even-shift positions relevant для H¹: `{0, 6, 8, 12, 16, 18, 20, 22}`.
 **First concrete matrix in program**: SHA's Σ_0 acts on cohomology as specific 16×16 unipotent matrix. Publishable-level detail.
 
 **Next step**: Session 15 — joint kernel of Σ_0 - I and Σ_1 - I (common invariants).
+
+## Session 15 summary
+
+**Joint invariants computed**: Ker(Σ_0 - I) ∩ Ker(Σ_1 - I) = **2-dim over F_2**.
+
+Generators: [s^{29}·ds] (Z/2) and [s^{31}·ds] (Z/32). Total joint invariant group: Z/2 ⊕ Z/32, order 64.
+
+Structural reason: min shifts Σ_0 = 6, Σ_1 = 4. Positions k ≥ 28 beyond shift reach of both → fixed points.
+
+**Limitation identified**: SHA's σ_0, σ_1 use **SHR** (shift right without wrap), not rotation. Doesn't fit cyclic group algebra F_2[x]/(x^n - 1). Message schedule requires different framework.
+
+**Next step**: Session 16 — consolidate write-up of 15 sessions OR integrate SHR operation.
