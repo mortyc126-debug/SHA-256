@@ -26,9 +26,10 @@
 | 4 | Prove ANF degree 2(k+1) bound | ✓ Done 2026-04 | `SESSION_4.md` |
 | 5 | Literature verification + framework correction | ✓ Done 2026-04 | `SESSION_5.md` |
 | 6 | Rewrite in truncation framework + prism exploration | ✓ Done 2026-04 | `SESSION_6.md` |
-| 7 | q-Witt prism exploration (rotations as q-twists?) | Planned | - |
-| 8 | Prismatic cohomology of Bool ring (exact computation) | Planned | - |
-| 9 | Extension to SHA round function | Planned | - |
+| 7 | q-Witt prism exploration (rotations as q-twists?) | ✓ Done 2026-04 | `SESSION_7.md` |
+| 8 | δ-structure on ramified extension Z_2[T]/(T²+1) | Planned | - |
+| 9 | Connect rotations with q-action via cyclotomic | Planned | - |
+| 10 | Extension to SHA round function | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -113,4 +114,10 @@ Claude выступил math-expert, проверил findings против lite
 
 **Critical insight**: φ = identity on Z_2 → no non-trivial Frobenius action on standard prism. Need **larger δ-ring** for interesting prismatic structure.
 
-**Next step**: Session 7 — try q-Witt prism (Z_p[[q-1]], ([p]_q)) where rotations might naturally appear as q-twists.
+## Session 7 summary
+
+**q-de Rham prism (Z_2[[q-1]], (1+q)) verified valid** — second working prism после crystalline. Non-trivial Frobenius φ(q) = q².
+
+**Path to rotations identified**: ROTR_n on n-bit register = multiplication by ζ_n. Need ramified cyclotomic extension Z_2[ζ_32] = Z_2[T]/(T^16+1) (степень 16). Technically heavy.
+
+**Next step**: Session 8 — start with smallest ramified case Z_2[T]/(T²+1) = Z_2[i], verify δ-structure.
