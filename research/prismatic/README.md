@@ -25,8 +25,8 @@
 | 3 | Formalize "δ-ring with AND" / λ-ring connection | ✓ Done 2026-04 | `SESSION_3.md` |
 | 4 | Prove ANF degree 2(k+1) bound | ✓ Done 2026-04 | `SESSION_4.md` |
 | 5 | Literature verification + framework correction | ✓ Done 2026-04 | `SESSION_5.md` |
-| 6 | Rewrite in truncation framework + prism exploration | Planned | - |
-| 7 | Prism formalization | Planned | - |
+| 6 | Rewrite in truncation framework + prism exploration | ✓ Done 2026-04 | `SESSION_6.md` |
+| 7 | q-Witt prism exploration (rotations as q-twists?) | Planned | - |
 | 8 | Prismatic cohomology of Bool ring (exact computation) | Planned | - |
 | 9 | Extension to SHA round function | Planned | - |
 | ... | ... |  | |
@@ -100,4 +100,17 @@ Claude выступил math-expert, проверил findings против lite
 
 **Virgin territory confirmed**: no literature applying prismatic cohomology to hash functions / SHA.
 
-**Next step**: Session 6 — rewrite in truncation framework + start prism exploration.
+## Session 6 summary
+
+**Truncation framework** properly formalized:
+- δ on Z_2 (standard); descends to truncation map Z/2^n → Z/2^{n-1}
+- δ-descent verified empirically для n = 4, 8, 16, 32
+- Sessions 2-4 findings restated correctly in this framing
+
+**Crystalline prism (Z_2, (2)) verified**:
+- δ(2) = -1 ∈ Z_2× (distinguished condition)
+- This is the standard "p=2 crystalline prism"
+
+**Critical insight**: φ = identity on Z_2 → no non-trivial Frobenius action on standard prism. Need **larger δ-ring** for interesting prismatic structure.
+
+**Next step**: Session 7 — try q-Witt prism (Z_p[[q-1]], ([p]_q)) where rotations might naturally appear as q-twists.
