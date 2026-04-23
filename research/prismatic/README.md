@@ -35,8 +35,8 @@
 | 13 | **Theorem**: ROTR_1 = id on H¹; r ≥ 2 non-trivial | ✓ Done 2026-04 | `SESSION_13.md` |
 | 14 | **Σ_0 matrix** on H¹: upper triangular unipotent, order 16 | ✓ Done 2026-04 | `SESSION_14.md` |
 | 15 | **Joint invariants**: kernel(Σ_0-I) ∩ kernel(Σ_1-I) = 2-dim | ✓ Done 2026-04 | `SESSION_15.md` |
-| 16 | Consolidate write-up OR integrate SHR | Planned | - |
-| 17+ | Full SHA round composition analysis | Planned | - |
+| 16 | Consolidation write-up → PRISMATIC_PROGRAM.md | ✓ Done 2026-04 | `PRISMATIC_PROGRAM.md` |
+| 17+ | Pick direction: SHR integration / full round / etc | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -235,3 +235,22 @@ Structural reason: min shifts Σ_0 = 6, Σ_1 = 4. Positions k ≥ 28 beyond shif
 **Limitation identified**: SHA's σ_0, σ_1 use **SHR** (shift right without wrap), not rotation. Doesn't fit cyclic group algebra F_2[x]/(x^n - 1). Message schedule requires different framework.
 
 **Next step**: Session 16 — consolidate write-up of 15 sessions OR integrate SHR operation.
+
+## Session 16 summary — CONSOLIDATION
+
+Compiled all 15 sessions of work into formal document **PRISMATIC_PROGRAM.md**.
+
+Structure:
+- Abstract (high-level claims)
+- Part I: Foundations (δ-rings, truncation, Kedlaya lemma)
+- Part II: δ-structure computations (δ(z) formula, XOR formula, AND structure)
+- Part III: Prisms (crystalline, q-de Rham, obstruction theorem)
+- Part IV: Cohomology (dual numbers, main H¹ theorem)
+- Part V: SHA-specific (correct ring, ROTR_1 theorem, Σ_0/Σ_1 matrices, joint invariants)
+- Limitations (honest assessment)
+- References
+- Artifacts
+
+Document is ~600 lines, suitable as paper draft. Makes 15 sessions of work durable and specialist-readable.
+
+**Next step**: Session 17 — pick direction (recommend: integrate AND via multi-variable ring, as that's the primary missing SHA operation).
