@@ -32,8 +32,9 @@
 | 10 | **THEOREM**: H¹(F_2[s]/(s^d)) structure, \|H¹\|=2^{d-1} for d=2^j | ✓ Done 2026-04 | `SESSION_10.md` |
 | 11 | Künneth for 8 registers: H¹ = 2^120 | ✓ Done 2026-04 | `SESSION_11.md` |
 | 12 | CORRECTION rotation ring + XOR setup | ✓ Done 2026-04 | `SESSION_12.md` |
-| 13 | R_full = R_rot ⊗ R_bool, compute H* | Planned | - |
-| 14+ | ADD integration, full SHA round | Planned | - |
+| 13 | **Theorem**: ROTR_1 = id on H¹; r ≥ 2 non-trivial | ✓ Done 2026-04 | `SESSION_13.md` |
+| 14 | Compute Σ_0 matrix on H¹ (16×16 over Z_2) | Planned | - |
+| 15+ | AND/ADD integration, full SHA round | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -188,3 +189,17 @@ Higher H^k for k ≥ 2 — derived exterior products, not independent info.
 **Three resolution paths**: tensor product, derived functor, separate invariants.
 
 **Next step**: Session 13 — build R_full = R_rot ⊗ R_bool and compute its H*.
+
+## Session 13 summary
+
+**THEOREM**: For R = F_2[s]/(s^n), n = 2^k:
+- Multiplication by (1+s) = ROTR_1 acts as **IDENTITY** on H¹_dR(R)
+- ROTR_r acts non-trivially for r ≥ 2 (proved via Lucas's theorem)
+
+**Proof**: (1+s)·[s^k·ds] = [s^k·ds] + [s^{k+1}·ds]; for k odd, k+1 even gives [s^{k+1}·ds] = 0 in H¹.
+
+**Generalized**: (1+s)^r expansion via Lucas gives identity iff r = 1.
+
+**SHA implication**: All SHA rotations use r ≥ 2 (namely {2,6,7,11,13,17,18,19,22,25}) — all act non-trivially on H¹. ROTR_1 is SHA's "blind spot" in cohomology.
+
+**Next step**: Session 14 — compute Σ_0 = XOR of three ROTR action as 16×16 matrix on H¹.
