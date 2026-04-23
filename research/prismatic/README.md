@@ -36,7 +36,8 @@
 | 14 | **Σ_0 matrix** on H¹: upper triangular unipotent, order 16 | ✓ Done 2026-04 | `SESSION_14.md` |
 | 15 | **Joint invariants**: kernel(Σ_0-I) ∩ kernel(Σ_1-I) = 2-dim | ✓ Done 2026-04 | `SESSION_15.md` |
 | 16 | Consolidation write-up → PRISMATIC_PROGRAM.md | ✓ Done 2026-04 | `PRISMATIC_PROGRAM.md` |
-| 17+ | Pick direction: SHR integration / full round / etc | Planned | - |
+| 17 | AND integration — **obstruction confirmed** | ✓ Done 2026-04 | `SESSION_17.md` |
+| 18+ | Continue rotation composition OR declare completion | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -253,4 +254,27 @@ Structure:
 
 Document is ~600 lines, suitable as paper draft. Makes 15 sessions of work durable and specialist-readable.
 
-**Next step**: Session 17 — pick direction (recommend: integrate AND via multi-variable ring, as that's the primary missing SHA operation).
+**Next step**: Session 17 — pick direction (recommend: integrate AND via multi-variable ring).
+
+## Session 17 summary
+
+Explored AND integration. **Obstruction confirmed**:
+
+- AND is bilinear, NOT a ring automorphism on rotation ring
+- AND-with-fixed-y matrices are rank-deficient (projections, not isomorphisms)
+- Contrast with ROTR: upper triangular unipotent (automorphism)
+- Ch, Maj = (fixed term) XOR (AND with XOR of other args) — both require AND
+
+**Structural fact**: ROTR preserves H¹ structure, AND collapses it.
+
+**Two rings on same F_2^n**:
+- Convolution (rotation ring) — non-trivial H¹
+- Pointwise (boolean product) — trivial higher cohomology
+
+These dualize via F_2-Fourier transform (bialgebra structure). Integration requires either:
+- Bialgebra framework (substantial new math)
+- Derived (∞-categorical) absolute prismatic site (specialist territory)
+
+**Limitation accepted**: session-level work can only build rotation cohomology. Full SHA analysis requires specialist framework or further substantial development.
+
+**Next step**: Session 18 — continue concrete work OR declare programme complete at current stage.
