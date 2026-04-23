@@ -29,9 +29,9 @@
 | 7 | q-Witt prism exploration (rotations as q-twists?) | ✓ Done 2026-04 | `SESSION_7.md` |
 | 8 | δ on ramified Z_2[i] — **OBSTRUCTION proved** | ✓ Done 2026-04 | `SESSION_8.md` |
 | 9 | de Rham cohomology of F_2[ε]/(ε²) — **H¹ = F_2** | ✓ Done 2026-04 | `SESSION_9.md` |
-| 10 | Verify conjecture H¹(F_2[s]/(s^d)) = Z/d | Planned | - |
-| 11 | Multi-variable F_2[s_1,...,s_n]/(s_i^{d_i}) | Planned | - |
-| 12+ | Integration with AND/XOR/ADD ops | Planned | - |
+| 10 | **THEOREM**: H¹(F_2[s]/(s^d)) structure, \|H¹\|=2^{d-1} for d=2^j | ✓ Done 2026-04 | `SESSION_10.md` |
+| 11 | Multi-variable F_2[s_1,...,s_8] (full SHA state) | Planned | - |
+| 12+ | Integrate AND/XOR/ADD with rotation cohomology | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -145,4 +145,20 @@ For n-bit register с n = 2^k, rotation ring = F_2[s]/(s^{n/2}).
 
 **Conjecture**: H¹(F_2[s]/(s^{2^j})) = Z/2^j. Для SHA-256 (n=32, j=4): H¹ = Z/16 per register.
 
-**Next step**: Session 10 — verify conjecture for d=4, 8.
+## Session 10 summary
+
+**FIRST THEOREM IN PROGRAM** — clean provable result:
+
+For R_d = F_2[s]/(s^d) over Z_2:
+$$H^1_{dR}(R_d) = \bigoplus_{k=1,3,5,\ldots,d-1} \mathbb{Z}/2^{v_2(k+1)}$$
+
+For d = 2^j: **|H¹| = 2^{d-1}**.
+
+Verified для d = 2, 4, 8, 16, 32 (all ✓).
+
+**SHA-256 instance** (d=16):
+H¹ = Z/2 ⊕ Z/4 ⊕ Z/2 ⊕ Z/8 ⊕ Z/2 ⊕ Z/4 ⊕ Z/2 ⊕ Z/16 (order 2^15, 8 factors)
+
+**Full state** (8 registers): total rotation cohomology ≈ 2^120. Less than 2^128 birthday, so не enough alone. Need integration с AND/XOR.
+
+**Next step**: Session 11 — multi-variable + op integration.
