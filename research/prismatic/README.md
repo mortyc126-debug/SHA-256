@@ -40,7 +40,8 @@
 | 18 | **NEW FRAMEWORK**: SHA Lie algebra, ROTR abelian + SHR non-abelian | ✓ Done 2026-04 | `SESSION_18.md` |
 | 19 | **Conjecture 18.3 REFUTED**: L_SHA NOT nilpotent (σ's not nilpotent) | ✓ Done 2026-04 | `SESSION_19.md` |
 | 20 | **Theorem 20.1**: L_SHA NOT solvable (perfect sub-algebra dim 264) | ✓ Done 2026-04 | `SESSION_20.md` |
-| 21+ | Identify L_SHA perfect part OR declare completion | Planned | - |
+| 21 | L_SHA^perfect structural: Z=0, ⊆ sl_32, module reducible | ✓ Done 2026-04 | `SESSION_21.md` |
+| 22+ | Update PRISMATIC_PROGRAM.md or deeper classification | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -335,4 +336,18 @@ Since D^5 = D^4 ≠ 0, L_SHA contains **perfect sub-algebra** (= [L', L'] = L') 
 
 **Cryptanalytic interpretation**: SHA's linear layer has "wild" Lie-theoretic structure — opposite of what cryptanalysis prefers. Structurally supports SHA's security.
 
-**Next step**: Session 21+ — identify perfect sub-algebra OR consolidate and declare.
+**Next step**: Session 21 — identify perfect sub-algebra OR consolidate.
+
+## Session 21 summary
+
+**L_SHA^perfect characterization** (dim 264):
+- Trivial center: Z(D^4) = 0
+- D^4 ⊆ sl_32(F_2) — all elements zero trace
+- F_2^{32} reducible as D^4-module (submodules dim 3, 8, 8, 22, 21)
+- 264 doesn't match classical simple Lie algebras
+
+**Conjecture 21.1**: D^4 is semisimple over F_2, decomposing as direct sum of simple ideals acting on respective irreducible summands of F_2^{32}.
+
+**Honest status**: full structural decomposition requires specialist Lie algebra classification over F_2 in char 2 — beyond session-level scope.
+
+**Next step**: consolidate findings in PRISMATIC_PROGRAM.md OR continue classification.
