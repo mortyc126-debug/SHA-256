@@ -33,8 +33,9 @@
 | 11 | Künneth for 8 registers: H¹ = 2^120 | ✓ Done 2026-04 | `SESSION_11.md` |
 | 12 | CORRECTION rotation ring + XOR setup | ✓ Done 2026-04 | `SESSION_12.md` |
 | 13 | **Theorem**: ROTR_1 = id on H¹; r ≥ 2 non-trivial | ✓ Done 2026-04 | `SESSION_13.md` |
-| 14 | Compute Σ_0 matrix on H¹ (16×16 over Z_2) | Planned | - |
-| 15+ | AND/ADD integration, full SHA round | Planned | - |
+| 14 | **Σ_0 matrix** on H¹: upper triangular unipotent, order 16 | ✓ Done 2026-04 | `SESSION_14.md` |
+| 15 | Joint kernel of Σ_0, Σ_1 (common invariants) | Planned | - |
+| 16+ | AND/ADD integration, full SHA round | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -202,4 +203,22 @@ Higher H^k for k ≥ 2 — derived exterior products, not independent info.
 
 **SHA implication**: All SHA rotations use r ≥ 2 (namely {2,6,7,11,13,17,18,19,22,25}) — all act non-trivially on H¹. ROTR_1 is SHA's "blind spot" in cohomology.
 
-**Next step**: Session 14 — compute Σ_0 = XOR of three ROTR action as 16×16 matrix on H¹.
+**Next step**: Session 14 — compute Σ_0 matrix.
+
+## Session 14 summary
+
+Computed **Σ_0 action as 16×16 matrix over F_2** on H¹(F_2[s]/(s^32)).
+
+Σ_0 polynomial: `1 + s + s^5 + s^6 + s^8 + s^9 + s^{12} + s^{13} + s^{16} + s^{18} + s^{20} + s^{22}` (via Lucas's theorem).
+
+Even-shift positions relevant для H¹: `{0, 6, 8, 12, 16, 18, 20, 22}`.
+
+**Matrix properties**:
+- Upper triangular unipotent (I + strictly upper N)
+- Full rank 16/16 (injective, no kernel)
+- Order 16 over F_2 (N^{16} = 0 by dimension)
+- No non-trivial H¹ invariants
+
+**First concrete matrix in program**: SHA's Σ_0 acts on cohomology as specific 16×16 unipotent matrix. Publishable-level detail.
+
+**Next step**: Session 15 — joint kernel of Σ_0 - I and Σ_1 - I (common invariants).
