@@ -30,8 +30,9 @@
 | 8 | δ on ramified Z_2[i] — **OBSTRUCTION proved** | ✓ Done 2026-04 | `SESSION_8.md` |
 | 9 | de Rham cohomology of F_2[ε]/(ε²) — **H¹ = F_2** | ✓ Done 2026-04 | `SESSION_9.md` |
 | 10 | **THEOREM**: H¹(F_2[s]/(s^d)) structure, \|H¹\|=2^{d-1} for d=2^j | ✓ Done 2026-04 | `SESSION_10.md` |
-| 11 | Multi-variable F_2[s_1,...,s_8] (full SHA state) | Planned | - |
-| 12+ | Integrate AND/XOR/ADD with rotation cohomology | Planned | - |
+| 11 | Künneth for 8 registers: H¹ = 2^120 | ✓ Done 2026-04 | `SESSION_11.md` |
+| 12 | Integrate XOR via Session 2 formula | Planned | - |
+| 13+ | Integrate AND + ADD, full SHA round | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -162,3 +163,13 @@ H¹ = Z/2 ⊕ Z/4 ⊕ Z/2 ⊕ Z/8 ⊕ Z/2 ⊕ Z/4 ⊕ Z/2 ⊕ Z/16 (order 2^15, 
 **Full state** (8 registers): total rotation cohomology ≈ 2^120. Less than 2^128 birthday, so не enough alone. Need integration с AND/XOR.
 
 **Next step**: Session 11 — multi-variable + op integration.
+
+## Session 11 summary
+
+Applied Künneth formula для 8 registers: **H¹(R^⊗8) = 2^120** (principal rotation invariant).
+
+Higher H^k for k ≥ 2 — derived exterior products, not independent info.
+
+**Honest comparison**: 2^120 < 2^128 birthday (shortfall 2^8 = 256×). Rotation cohomology alone NOT enough. Need XOR/AND/ADD integration.
+
+**Next step**: Session 12 — integrate XOR via Session 2 formula δ(x⊕y) = δ(x)+δ(y)-xy+2z(x+y)-2δ(z)-3z².
