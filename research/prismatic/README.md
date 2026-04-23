@@ -27,9 +27,10 @@
 | 5 | Literature verification + framework correction | ✓ Done 2026-04 | `SESSION_5.md` |
 | 6 | Rewrite in truncation framework + prism exploration | ✓ Done 2026-04 | `SESSION_6.md` |
 | 7 | q-Witt prism exploration (rotations as q-twists?) | ✓ Done 2026-04 | `SESSION_7.md` |
-| 8 | δ-structure on ramified extension Z_2[T]/(T²+1) | Planned | - |
-| 9 | Connect rotations with q-action via cyclotomic | Planned | - |
-| 10 | Extension to SHA round function | Planned | - |
+| 8 | δ on ramified Z_2[i] — **OBSTRUCTION proved** | ✓ Done 2026-04 | `SESSION_8.md` |
+| 9 | Prismatic cohomology of F_2[ε]/(ε²) (dual numbers) | Planned | - |
+| 10 | Multi-variable F_2[ε_1,...,ε_n] extension | Planned | - |
+| 11+ | Connect to SHA structure | Planned | - |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -120,4 +121,12 @@ Claude выступил math-expert, проверил findings против lite
 
 **Path to rotations identified**: ROTR_n on n-bit register = multiplication by ζ_n. Need ramified cyclotomic extension Z_2[ζ_32] = Z_2[T]/(T^16+1) (степень 16). Technically heavy.
 
-**Next step**: Session 8 — start with smallest ramified case Z_2[T]/(T²+1) = Z_2[i], verify δ-structure.
+## Session 8 summary
+
+**Theorem**: **Z_2[i] не admits δ-structure** lifting Frobenius from F_2[i] = Z_2[i]/(2). Proof constructive: оба candidates φ(i) = ±i дают δ(i) = (1±i)/2 ∉ Z_2[i] (ramification: 2 = -i·(1+i)², element (1±i) divisible by π=(1+i) только один раз).
+
+**Implication**: direct path "rotations as q-twists in cyclotomic" closed. Need либо perfectoid extension (Z_2[ζ_{2^∞}]) либо absolute prismatic site (Bhatt-Scholze framework для arbitrary rings).
+
+**Crucial observation**: F_2[i]/(i²+1) = F_2[ε]/(ε²) (dual numbers, with ε = i+1). So ramified rotation structure ↔ dual numbers — connecting point с standard alg geom.
+
+**Next step**: Session 9 — compute prismatic cohomology of F_2[ε]/(ε²).
