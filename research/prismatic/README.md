@@ -41,7 +41,7 @@
 | 19 | **Conjecture 18.3 REFUTED**: L_SHA NOT nilpotent (σ's not nilpotent) | ✓ Done 2026-04 | `SESSION_19.md` |
 | 20 | **Theorem 20.1**: L_SHA NOT solvable (perfect sub-algebra dim 264) | ✓ Done 2026-04 | `SESSION_20.md` |
 | 21 | L_SHA^perfect structural: Z=0, ⊆ sl_32, module reducible | ✓ Done 2026-04 | `SESSION_21.md` |
-| 22+ | Update PRISMATIC_PROGRAM.md or deeper classification | Planned | - |
+| 22 | **Consolidation**: PRISMATIC_PROGRAM.md with Part VI + 16 theorems | ✓ Done 2026-04 | `PRISMATIC_PROGRAM.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
@@ -351,3 +351,19 @@ Since D^5 = D^4 ≠ 0, L_SHA contains **perfect sub-algebra** (= [L', L'] = L') 
 **Honest status**: full structural decomposition requires specialist Lie algebra classification over F_2 in char 2 — beyond session-level scope.
 
 **Next step**: consolidate findings in PRISMATIC_PROGRAM.md OR continue classification.
+
+## Session 22 summary — FULL CONSOLIDATION
+
+PRISMATIC_PROGRAM.md updated with complete Sessions 1-21 content:
+- Part VI added: SHA Lie algebra (Sessions 18-21)
+- Abstract updated: 21 sessions, 16 theorems, 1 conjecture
+- Limitations revised to reflect current state
+- Summary of theorems section: all 16 theorems listed in one place
+- Artifacts list extended with Sessions 17-21 files
+
+The document is now a coherent **~500-line paper draft** suitable for:
+- Handover to specialist mathematician
+- Future session pickup
+- Reference for anyone continuing the programme
+
+**Programme status**: stable plateau at session-level capability. Further progress requires specialist expertise (absolute prismatic, char-2 Lie algebra classification, bialgebra).
