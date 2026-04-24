@@ -43,6 +43,7 @@
 | 21 | L_SHA^perfect structural: Z=0, ⊆ sl_32, module reducible | ✓ Done 2026-04 | `SESSION_21.md` |
 | 22 | **Consolidation**: PRISMATIC_PROGRAM.md with Part VI + 16 theorems | ✓ Done 2026-04 | `PRISMATIC_PROGRAM.md` |
 | 23 | **Theorem 23.1**: SHA operator orders (Σ_1 has order 16!) | ✓ Done 2026-04 | `SESSION_23.md` |
+| 24 | **Theorem 24.1**: Lucas-XOR nilpotency ⌈n/d⌉ — explains Σ_1 deg 11 | ✓ Done 2026-04 | `SESSION_24.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
