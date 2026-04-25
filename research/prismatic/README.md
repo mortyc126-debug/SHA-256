@@ -62,6 +62,10 @@
 | 40 | **Theorem 40.1**: SHA does NOT lift to Z_2 — formally closes prismatic direction | ✓ Done 2026-04 | `SESSION_40.md` |
 | 41 | **Theorem 41.1 (CORRECTION)**: actual R has order ≫ 5000; Theorem 25.1 was for R_lin only | ✓ Done 2026-04 | `SESSION_41.md` |
 | 42 | **Theorem 42.1 + Conj 42.2**: avalanche shape A(d); near-complement invariance A(256)≈224 | ✓ Done 2026-04 | `SESSION_42.md` |
+| 43 | **Theorem 43.1**: complement correction concentrates in a', e' (32/32 each) | ✓ Done 2026-04 | `SESSION_43.md` |
+| 44 | Approximate symmetries (BUG IN ORIGINAL — see Session 46 retraction) | ✓ Done 2026-04 | `SESSION_44.md` |
+| 45 | DDT structure (qualitative — quantitative re-verified in 46) | ✓ Done 2026-04 | `SESSION_45.md` |
+| 46 | **BUG POSTMORTEM + corrected re-runs**: most findings survive, SHL_1 result retracted | ✓ Done 2026-04 | `SESSION_46.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
