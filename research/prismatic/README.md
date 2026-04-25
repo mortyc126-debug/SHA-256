@@ -69,6 +69,9 @@
 | 47 | **Theorem 47.1**: orbit gzip ratio ≈ 0.328 (= register-shift redundancy bound) | ✓ Done 2026-04 | `SESSION_47.md` |
 | 48 | **Theorems 48.1-2**: discrete Lyapunov λ ≈ 1.42; saturation T ≈ 8 - log₂(d_0) | ✓ Done 2026-04 | `SESSION_48.md` |
 | 49 | **Theorems 49.1-2**: J_v always rank 256; quadratic noise floor 1.08% per state | ✓ Done 2026-04 | `SESSION_49.md` |
+| 50 | **Theorem 50.1**: digest cloud Hamming dist matches Binomial(256, 0.5) (χ² passes) | ✓ Done 2026-04 | `SESSION_50.md` |
+| 51 | **Theorem 51.1**: SHA bijectivity is FRAGILE — 4-register variant non-bijective | ✓ Done 2026-04 | `SESSION_51.md` |
+| 52 | **Theorem 52.1**: J_v char poly factor profile matches random GL_256(F_2) | ✓ Done 2026-04 | `SESSION_52.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
