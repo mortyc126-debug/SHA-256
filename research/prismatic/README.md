@@ -72,6 +72,9 @@
 | 50 | **Theorem 50.1**: digest cloud Hamming dist matches Binomial(256, 0.5) (χ² passes) | ✓ Done 2026-04 | `SESSION_50.md` |
 | 51 | **Theorem 51.1**: SHA bijectivity is FRAGILE — 4-register variant non-bijective | ✓ Done 2026-04 | `SESSION_51.md` |
 | 52 | **Theorem 52.1**: J_v char poly factor profile matches random GL_256(F_2) | ✓ Done 2026-04 | `SESSION_52.md` |
+| 53 | **Theorem 53.1**: per-round AI = 1 (linear) or 2 (quadratic); composition amplifies | ✓ Done 2026-04 | `SESSION_53.md` |
+| 54 | **Theorem 54.1**: noisy-SHA mixing acceleration α(p) ≈ 1/(2pn), up to 6000× | ✓ Done 2026-04 | `SESSION_54.md` |
+| 55 | **Theorem 55.1**: mini-SHA cloud has trivial persistent homology | ✓ Done 2026-04 | `SESSION_55.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
