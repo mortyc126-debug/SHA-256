@@ -53,6 +53,9 @@
 | 31 | **Theorem 31.1**: density-saturation 0.5156 is structural invariant; T_sat = nilp(Σ_1) REFUTED | ✓ Done 2026-04 | `SESSION_31.md` |
 | 32 | **Theorem 32.1**: K_t pass standard randomness tests (cube-root construction clean) | ✓ Done 2026-04 | `SESSION_32.md` |
 | 33 | **Theorem 33.1**: ADD carry degree law deg((x+y)_i) = i+1, |ANF| = 2^i+1 | ✓ Done 2026-04 | `SESSION_33.md` |
+| 34 | **Theorem 34.1**: Walsh spectrum biases {1, 1/2, 1/4} per round-bit class | ✓ Done 2026-04 | `SESSION_34.md` |
+| 35 | **Theorem 35.1 (neg)**: no simple bit-permutation symmetries — round is rigid | ✓ Done 2026-04 | `SESSION_35.md` |
+| 37 | **Theorem 37.1 (emp)**: sensitivity ≈ i+4, tracks carry degree (Theorem 33.1) | ✓ Done 2026-04 | `SESSION_37.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
