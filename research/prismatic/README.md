@@ -78,6 +78,7 @@
 | 56-60 | **5 attack frameworks tested — ALL FAIL**: z3, boomerang, rebound, LLL, multi-block | ✓ Done 2026-04 | `SESSION_56_60_attacks.md` |
 | 61-63 | **Inverse cryptanalysis: weak states, invariants, free-start** — borderline anomaly mod 257 | ✓ Done 2026-04 | `SESSION_61_63_inverse.md` |
 | 64-66 | **Indirect II: subspace asymmetry, structured Δ — REAL findings (c/d slow, e fast)** | ✓ Done 2026-04 | `SESSION_64_66_indirect.md` |
+| 67-69 | **DEEPENING: Theorem 67.1 — DETERMINISTIC MSB transitions (d_31, h_31)** | ✓ Done 2026-04 | `SESSION_67_69_deepening.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
