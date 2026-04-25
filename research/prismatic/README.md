@@ -59,6 +59,9 @@
 | 37 | **Theorem 37.1 (emp)**: sensitivity ≈ i+4, tracks carry degree (Theorem 33.1) | ✓ Done 2026-04 | `SESSION_37.md` |
 | 38 | **Theorem 38.1 (emp)**: per-round avalanche = 5.06 ± 5.45 of 256 (vs ideal 128) | ✓ Done 2026-04 | `SESSION_38.md` |
 | 39 | **Theorem 39.1**: 256 round-bit polynomials linearly independent in deg-≤2 ring | ✓ Done 2026-04 | `SESSION_39.md` |
+| 40 | **Theorem 40.1**: SHA does NOT lift to Z_2 — formally closes prismatic direction | ✓ Done 2026-04 | `SESSION_40.md` |
+| 41 | **Theorem 41.1 (CORRECTION)**: actual R has order ≫ 5000; Theorem 25.1 was for R_lin only | ✓ Done 2026-04 | `SESSION_41.md` |
+| 42 | **Theorem 42.1 + Conj 42.2**: avalanche shape A(d); near-complement invariance A(256)≈224 | ✓ Done 2026-04 | `SESSION_42.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
