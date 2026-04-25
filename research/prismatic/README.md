@@ -66,6 +66,9 @@
 | 44 | Approximate symmetries (BUG IN ORIGINAL — see Session 46 retraction) | ✓ Done 2026-04 | `SESSION_44.md` |
 | 45 | DDT structure (qualitative — quantitative re-verified in 46) | ✓ Done 2026-04 | `SESSION_45.md` |
 | 46 | **BUG POSTMORTEM + corrected re-runs**: most findings survive, SHL_1 result retracted | ✓ Done 2026-04 | `SESSION_46.md` |
+| 47 | **Theorem 47.1**: orbit gzip ratio ≈ 0.328 (= register-shift redundancy bound) | ✓ Done 2026-04 | `SESSION_47.md` |
+| 48 | **Theorems 48.1-2**: discrete Lyapunov λ ≈ 1.42; saturation T ≈ 8 - log₂(d_0) | ✓ Done 2026-04 | `SESSION_48.md` |
+| 49 | **Theorems 49.1-2**: J_v always rank 256; quadratic noise floor 1.08% per state | ✓ Done 2026-04 | `SESSION_49.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
