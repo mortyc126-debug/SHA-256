@@ -49,6 +49,7 @@
 | 27 | **Theorems 27.1, 27.2**: quadratic diagonal-index span dim 64; deg growth ≤ 2^T | ✓ Done 2026-04 | `SESSION_27.md` |
 | 28 | **Theorem 28.1**: diffusion saturates at T=11, density 0.5156 (not full!) | ✓ Done 2026-04 | `SESSION_28.md` |
 | 29 | **Theorem 29.1**: bare round has only trivial fixed point (M_fix = I + N₁N₀) | ✓ Done 2026-04 | `SESSION_29.md` |
+| 30 | **Theorem 30.1**: schedule cyclic dim 512, factor (z⁶+z⁵+1)·g₅₀₆, diffusion T=36 | ✓ Done 2026-04 | `SESSION_30.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
