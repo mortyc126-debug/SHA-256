@@ -76,6 +76,7 @@
 | 54 | **Theorem 54.1**: noisy-SHA mixing acceleration α(p) ≈ 1/(2pn), up to 6000× | ✓ Done 2026-04 | `SESSION_54.md` |
 | 55 | **Theorem 55.1**: mini-SHA cloud has trivial persistent homology | ✓ Done 2026-04 | `SESSION_55.md` |
 | 56-60 | **5 attack frameworks tested — ALL FAIL**: z3, boomerang, rebound, LLL, multi-block | ✓ Done 2026-04 | `SESSION_56_60_attacks.md` |
+| 61-63 | **Inverse cryptanalysis: weak states, invariants, free-start** — borderline anomaly mod 257 | ✓ Done 2026-04 | `SESSION_61_63_inverse.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
