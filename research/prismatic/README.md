@@ -51,6 +51,8 @@
 | 29 | **Theorem 29.1**: bare round has only trivial fixed point (M_fix = I + N₁N₀) | ✓ Done 2026-04 | `SESSION_29.md` |
 | 30 | **Theorem 30.1**: schedule cyclic dim 512, factor (z⁶+z⁵+1)·g₅₀₆, diffusion T=36 | ✓ Done 2026-04 | `SESSION_30.md` |
 | 31 | **Theorem 31.1**: density-saturation 0.5156 is structural invariant; T_sat = nilp(Σ_1) REFUTED | ✓ Done 2026-04 | `SESSION_31.md` |
+| 32 | **Theorem 32.1**: K_t pass standard randomness tests (cube-root construction clean) | ✓ Done 2026-04 | `SESSION_32.md` |
+| 33 | **Theorem 33.1**: ADD carry degree law deg((x+y)_i) = i+1, |ANF| = 2^i+1 | ✓ Done 2026-04 | `SESSION_33.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
