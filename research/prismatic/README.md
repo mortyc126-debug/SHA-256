@@ -55,7 +55,10 @@
 | 33 | **Theorem 33.1**: ADD carry degree law deg((x+y)_i) = i+1, |ANF| = 2^i+1 | ✓ Done 2026-04 | `SESSION_33.md` |
 | 34 | **Theorem 34.1**: Walsh spectrum biases {1, 1/2, 1/4} per round-bit class | ✓ Done 2026-04 | `SESSION_34.md` |
 | 35 | **Theorem 35.1 (neg)**: no simple bit-permutation symmetries — round is rigid | ✓ Done 2026-04 | `SESSION_35.md` |
+| 36 | **Theorem 36.1 (emp)**: per-bit MI bottleneck ~ 0.02 bits per nonlinear output | ✓ Done 2026-04 | `SESSION_36.md` |
 | 37 | **Theorem 37.1 (emp)**: sensitivity ≈ i+4, tracks carry degree (Theorem 33.1) | ✓ Done 2026-04 | `SESSION_37.md` |
+| 38 | **Theorem 38.1 (emp)**: per-round avalanche = 5.06 ± 5.45 of 256 (vs ideal 128) | ✓ Done 2026-04 | `SESSION_38.md` |
+| 39 | **Theorem 39.1**: 256 round-bit polynomials linearly independent in deg-≤2 ring | ✓ Done 2026-04 | `SESSION_39.md` |
 | ... | ... |  | |
 
 Expected timeline: десятки sessions spread по месяцам/годам. Каждая session commitable standalone.
