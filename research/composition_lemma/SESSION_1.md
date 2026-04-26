@@ -49,6 +49,8 @@
 
 ### 2.2 Composition Lemma — формулировка
 
+> **Update Session 2** (2026-04-26): эта формулировка нуждается в split'е по типу атаки (distinguishing/pre-image/collision). Φ-manifold вскрыл что CL-D тривиально нарушена для SHA-256 (любой fingerprint), поэтому "настоящая" CL — только CL-P и CL-C. См. [SESSION_2.md §4](SESSION_2.md).
+
 **Conjecture (Composition Lemma)**:
 Для любого классического attack-метода M, нацеленного на T-раундовую SHA-2-подобную ARX hash, существует константа c_M > 0 (зависящая от M, но не от T) такая что:
 
@@ -128,7 +130,9 @@ log_2(Cost_M(T)) ≤ T^α + O(1)
 
 **Plausibility**: средняя. Hopf-algebra методы дают classification results (что классы существуют), редко дают attack speedups напрямую.
 
-### 4.2 Φ-manifold 6D (Том II §II.9.1)
+### 4.2 Φ-manifold 6D (Том II §II.9.1) ⊘SCOPED [Session 2]
+
+> **Closure Session 2**: ⊘SCOPED для CL-P и CL-C. MI(W; Φ) ≈ 0.00003 (П-367 T_PHI_INPUT_DECOUPLED) — Φ декуплировано от входа, нет handle для control. Тривиально нарушает CL-D, но distinguishing — не цель программы. См. [SESSION_2.md §3](SESSION_2.md).
 
 **Идея**: 6 свободных раундов {1, 4, 9, 10, 19, 21} образуют 6D подпространство свободы в Φ-координатах [П-362, T_PHI_MANIFOLD_6D ⚡VER].
 

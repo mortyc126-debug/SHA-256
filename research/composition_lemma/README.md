@@ -9,14 +9,21 @@
 ## Sessions
 
 - [SESSION_1.md](SESSION_1.md) (2026-04-26) — Формализация: precise statement Composition Lemma, operational definition "break", catalog of 5 кандидатов, methodological pitfalls.
+- [SESSION_2.md](SESSION_2.md) (2026-04-26) — Φ-manifold candidate ⊘SCOPED: blocked by MI(W;Φ)≈0 для pre/coll. Refinement CL: split на CL-D/CL-P/CL-C; CL-D тривиально нарушена (не цель), CL-P/CL-C — настоящий target.
 
-## Кандидаты (упорядочены по plausibility/cost)
+## Кандидаты (после Session 2)
 
-1. **Φ-manifold 6D** (Том II §II.9.1) — 6 свободных раундов как координаты; самый прямой. **→ Session 2 target**.
-2. **Path-bit / Hopf algebra** (Том I §80-84) — non-abelian composition signature space.
-3. **OTOC higher-order** (§III.8) — 4-point/6-point measurements в 40-round margin (r=24..64).
-4. **Resonance / cycle structure** — низкая plausibility (Sessions 41, 62 уже закрыли).
-5. **Witt / prismatic** (D-6) — long-horizon (5-10 сессий), отдельная линия research/prismatic/.
+| Кандидат | CL-D | CL-P | CL-C | Status |
+|---|---|---|---|---|
+| Path-bit / Hopf algebra (Том I §80-84) | likely break | unknown | unknown | open |
+| ~~Φ-manifold 6D (§II.9.1)~~ | break (trivial) | blocked (MI≈0) | blocked (MI≈0) | **⊘SCOPED** |
+| OTOC higher-order (§III.8) | likely break | unknown | unknown | **→ Session 3 target** |
+| Resonance / cycle structure | unknown | unknown | unknown | unlikely (Sessions 41, 62) |
+| Witt / prismatic (D-6) | unknown | open | open | open (5-10 сессий) |
+
+## Refined target
+
+Ищем break **CL-P или CL-C** (не CL-D — distinguishing нарушается тривиально и не считается атакой). Критерий первого фильтра: есть ли у кандидата handle для **управления** intermediate структурой из входа? Если MI(input; structure) ≈ 0 — кандидат ⊘SCOPED для pre/coll за одну сессию.
 
 ## Stopping criterion
 
