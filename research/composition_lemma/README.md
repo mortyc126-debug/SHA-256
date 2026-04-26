@@ -14,6 +14,20 @@
 - [SESSION_4.md](SESSION_4.md) (2026-04-26) — Path-bit / Hopf algebra ⊘SCOPED: T_max(path-bit) = **2 раунда** (§94.5 ✗NEG conservation refuted at R=2). Самый быстро-затухающий кандидат каталога. Triangulation с Prismatic Program (69 sessions) — same conclusion, different path.
 - [SESSION_5.md](SESSION_5.md) (2026-04-26) — META-audit: расширенный каталог ~31 classical direction, structural filter применён, 30 ⊘SCOPED либо prior closure. Single open: Witt/prismatic (long-horizon, отдельная линия `research/prismatic/`). Initial phase Composition-Lemma program complete; transition to **maintenance mode**. [⚠ corrected by Session 6]
 - [SESSION_6.md](SESSION_6.md) (2026-04-26) — Корректировка Session 5: research/prismatic/ **уже** на plateau (Sessions 1-21 specialist, 22-69 empirical exhaustion). Honest acknowledgment: три research lines конвергируют на same plateau. Maintenance mode уточнён до **B-lateral** (допускает 1-3 сессии для structural completeness, e.g., Theorem 67.1 chain analysis).
+- [SESSION_7.md](SESSION_7.md) (2026-04-26) — **Conjecture 21.1 attack plan**: D^4 = L_SHA^perfect dim 264 — semisimple over F_2? Выбран как session-level resolvable specialist question. План 4-5 sessions (Killing form computation, minimal ideals, restricted structure, cryptanalytic translation). Honest probability estimates: structural resolution ~70%, direct attack <5%.
+
+## Active line: Conjecture 21.1 (Sessions 7-11 planned)
+
+**Target**: разрешить Conjecture 21.1 (D^4 semisimple over F_2?) через computational attack.
+
+| Session | Subgoal | Status |
+|---|---|---|
+| 8 | Setup + Killing form computation (rank K?) | next |
+| 9 | Minimal ideals enumeration | planned |
+| 10 | [2]-power closure + Block-Wilson matching | planned |
+| 11 | Cryptanalytic translation (V_i bit-pattern decomposition) | planned |
+
+Pivot из maintenance mode B-lateral в **active research** на specialist target. Ожидаемое время — 4-5 sessions. Even null cryptanalytic outcome value сохраняет (structural infrastructure completion).
 
 ## Финальный каталог (после Session 5)
 
