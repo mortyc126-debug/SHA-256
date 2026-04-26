@@ -10,16 +10,17 @@
 
 - [SESSION_1.md](SESSION_1.md) (2026-04-26) — Формализация: precise statement Composition Lemma, operational definition "break", catalog of 5 кандидатов, methodological pitfalls.
 - [SESSION_2.md](SESSION_2.md) (2026-04-26) — Φ-manifold candidate ⊘SCOPED: blocked by MI(W;Φ)≈0 для pre/coll. Refinement CL: split на CL-D/CL-P/CL-C; CL-D тривиально нарушена (не цель), CL-P/CL-C — настоящий target.
+- [SESSION_3.md](SESSION_3.md) (2026-04-26) — OTOC higher-order ⊘SCOPED: T_max(k) bounded by mixing time для всех k. Identity OTOC^(k) ≡ Walsh chain-k → уже измерено в IT-5S, chain_3 saturates by r=20. SHA's 40-round design margin ≫ T_max,∞.
 
-## Кандидаты (после Session 2)
+## Кандидаты (после Session 3)
 
 | Кандидат | CL-D | CL-P | CL-C | Status |
 |---|---|---|---|---|
-| Path-bit / Hopf algebra (Том I §80-84) | likely break | unknown | unknown | open |
-| ~~Φ-manifold 6D (§II.9.1)~~ | break (trivial) | blocked (MI≈0) | blocked (MI≈0) | **⊘SCOPED** |
-| OTOC higher-order (§III.8) | likely break | unknown | unknown | **→ Session 3 target** |
-| Resonance / cycle structure | unknown | unknown | unknown | unlikely (Sessions 41, 62) |
-| Witt / prismatic (D-6) | unknown | open | open | open (5-10 сессий) |
+| Path-bit / Hopf algebra (Том I §80-84) | unknown | open | open | **→ Session 4 target** |
+| ~~Φ-manifold 6D (§II.9.1)~~ | break (trivial) | blocked (MI≈0) | blocked | ⊘SCOPED [Session 2] |
+| ~~OTOC higher-order (§III.8)~~ | break | bounded T_max(k) | bounded | ⊘SCOPED [Session 3] |
+| Resonance / cycle structure | unknown | unlikely | unlikely | postpone (Sessions 41, 62) |
+| Witt / prismatic (D-6) | unknown | open | open | open (5-10 сессий, отдельная линия) |
 
 ## Refined target
 

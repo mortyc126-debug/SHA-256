@@ -168,7 +168,9 @@ log_2(Cost_M(T)) ≤ T^α + O(1)
 
 **Plausibility**: низкая. Уже плотно проверено в Sessions 41, 62.
 
-### 4.5 OTOC / scrambling-based (§III.8)
+### 4.5 OTOC / scrambling-based (§III.8) ⊘SCOPED [Session 3]
+
+> **Closure Session 3**: ⊘SCOPED для CL-P/CL-C. T_max(k) bounded for all k через mixing time round function (~24 rounds). OTOC^(k) ≡ classical Walsh chain-k (≡ k-th order differential, Knudsen 1994), already measured в IT-5S — chain_3 saturates by r=20. SHA's 40-round design margin ≫ T_max,∞. См. [SESSION_3.md §4](SESSION_3.md).
 
 **Идея**: OTOC показал (а) Σ драйвит 97% scrambling, (б) SHA-2 sequential cascade с 40-round design margin (r=24..64 post-scramble). Margin = exploitable zone.
 
