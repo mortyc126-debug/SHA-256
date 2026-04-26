@@ -1,0 +1,27 @@
+
+=== n=4, R=2  search 2^8  birthday 2^4 ===
+  brute:    not found in 160 iters (1ms)
+  sat_bv:   UNSAT? (12ms)
+
+=== n=4, R=3  search 2^12  birthday 2^6 ===
+  brute:    not found in 640 iters (7ms)
+  sat_bv:   UNSAT? (4ms)
+
+=== n=4, R=4  search 2^16  birthday 2^8 ===
+  brute:    not found in 2560 iters (33ms)
+  sat_bv:   UNSAT? (5ms)
+
+=== n=8, R=2  search 2^16  birthday 2^8 ===
+  brute:    not found in 2560 iters (20ms)
+  sat_bv:   UNSAT? (3ms)
+
+=== n=8, R=3  search 2^24  birthday 2^12 ===
+  brute:    not found in 40960 iters (423ms)
+  sat_bv:   UNSAT? (5ms)
+
+=== n=8, R=4  search 2^32  birthday 2^16 ===
+  brute:    not found in 655360 iters (9376ms)
+  sat_bv:   UNSAT? (7ms)
+
+=== n=8, R=6  search 2^48  birthday 2^24 ===
+  brute:    skipped (birthday 2^24 too large)
