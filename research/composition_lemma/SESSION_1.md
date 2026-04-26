@@ -118,7 +118,9 @@ log_2(Cost_M(T)) ≤ T^α + O(1)
 
 Операции / структуры, потенциально дающие super-linear composition. Каждой — оценка plausibility и того, как probe выглядит.
 
-### 4.1 Path-bit / Hopf algebra (Том I §80-84)
+### 4.1 Path-bit / Hopf algebra (Том I §80-84) ⊘SCOPED [Session 4]
+
+> **Closure Session 4**: ⊘SCOPED для CL-P/CL-C. T_max(path-bit) = **2 раунда** (§94.5 ✗NEG: pair-distribution conservation refuted at R=2). Per-round avalanche destroys local trajectory structure быстрее всех других кандидатов в каталоге. Hopf algebra infinite-dim ambient не помогает — finite information content конечного state space ограничивает signature signal. См. [SESSION_4.md §3-4](SESSION_4.md).
 
 **Идея**: bit как iterated integral (Chen). Composition путей в Hopf algebra даёт shuffle product + coproduct + antipode. Free Lie algebra на образующих = phase Hamiltonian (§83).
 
