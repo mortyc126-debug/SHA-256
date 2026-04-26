@@ -12,22 +12,29 @@
 - [SESSION_2.md](SESSION_2.md) (2026-04-26) — Φ-manifold candidate ⊘SCOPED: blocked by MI(W;Φ)≈0 для pre/coll. Refinement CL: split на CL-D/CL-P/CL-C; CL-D тривиально нарушена (не цель), CL-P/CL-C — настоящий target.
 - [SESSION_3.md](SESSION_3.md) (2026-04-26) — OTOC higher-order ⊘SCOPED: T_max(k) bounded by mixing time для всех k. Identity OTOC^(k) ≡ Walsh chain-k → уже измерено в IT-5S, chain_3 saturates by r=20. SHA's 40-round design margin ≫ T_max,∞.
 - [SESSION_4.md](SESSION_4.md) (2026-04-26) — Path-bit / Hopf algebra ⊘SCOPED: T_max(path-bit) = **2 раунда** (§94.5 ✗NEG conservation refuted at R=2). Самый быстро-затухающий кандидат каталога. Triangulation с Prismatic Program (69 sessions) — same conclusion, different path.
+- [SESSION_5.md](SESSION_5.md) (2026-04-26) — META-audit: расширенный каталог ~31 classical direction, structural filter применён, 30 ⊘SCOPED либо prior closure. Single open: Witt/prismatic (long-horizon, отдельная линия `research/prismatic/`). Initial phase Composition-Lemma program complete; transition to **maintenance mode**.
 
-## Кандидаты (после Session 4)
+## Финальный каталог (после Session 5)
 
-| Кандидат | CL-D | CL-P | CL-C | Status |
+**Полный audit ~31 classical direction** в SESSION_5 §2. Все ⊘SCOPED либо prior closure, кроме Witt/prismatic.
+
+Ключевые ⊘SCOPED через structural filter (наша программа):
+
+| Кандидат | CL-D | CL-P | CL-C | Closure |
 |---|---|---|---|---|
-| ~~Path-bit / Hopf algebra (Том I §80-84)~~ | break | T_max=2 | T_max=2 | ⊘SCOPED [Session 4] |
-| ~~Φ-manifold 6D (§II.9.1)~~ | break (trivial) | blocked (MI≈0) | blocked | ⊘SCOPED [Session 2] |
-| ~~OTOC higher-order (§III.8)~~ | break | bounded T_max(k) | bounded | ⊘SCOPED [Session 3] |
-| Resonance / cycle structure | unknown | unlikely | unlikely | postpone (Sessions 41, 62 уже закрыли) |
-| Witt / prismatic (D-6) | unknown | open | open | open (5-10 сессий, отдельная линия `research/prismatic/`) |
+| ~~Path-bit / Hopf algebra~~ | break | T_max=2 | T_max=2 | Session 4 |
+| ~~Φ-manifold 6D~~ | break | blocked (MI≈0) | blocked | Session 2 |
+| ~~OTOC higher-order~~ | break | bounded T_max(k) | bounded | Session 3 |
 
-**3 из 5 кандидатов закрыты** structurally за 3 analytic сессии. Triangulation с Prismatic Program 69 sessions — convergence на тот же вывод "SHA unbreakable классически" через структурный фильтр вместо empirical exhaustion.
+Остальные 27 направлений — prior closure (Prismatic Program / Том II §II.8 / scoping 2026-04).
 
-## Session 5 target — META-audit
+**Open**: только Witt/prismatic (#32 в audit) — separate research line `research/prismatic/`, 5-10 sessions horizon.
 
-Не закрытие конкретного кандидата, а review каталога и decision о transition в Witt/prismatic линию.
+## Status: initial phase complete
+
+Triangulation Composition-Lemma structural filter (4 analytic sessions) с Prismatic Program (69 empirical sessions) — same conclusion "SHA unbreakable классически" через independent paths.
+
+**Maintenance mode**: новые сессии — только при появлении нового candidate-направления из литературы или Witt/prismatic breakthrough.
 
 ## Refined target
 
