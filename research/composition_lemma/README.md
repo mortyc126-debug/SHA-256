@@ -22,10 +22,11 @@
 
 | Session | Subgoal | Status |
 |---|---|---|
-| 8 | Setup + Killing form computation (rank K?) | next |
-| 9 | Minimal ideals enumeration | planned |
-| 10 | [2]-power closure + Block-Wilson matching | planned |
-| 11 | Cryptanalytic translation (V_i bit-pattern decomposition) | planned |
+| 8 | Setup + Killing form computation (rank K?) | ✓ Done — K ≡ 0 char-2 pathology |
+| 9 | Minimal ideals enumeration | ✓ Done — D^4 NOT simple, 22 distinct proper ideals |
+| 10 | [2]-power closure + Block-Wilson matching | ✓ Done — decomposition extracted, dims 45/55/65/75 |
+| 11 | Cryptanalytic translation (V_i bit-pattern decomposition) | ✓ Done — R dim 145, D^4/R dim 119; Conjecture 21.1 REFUTED |
+| 12 | Levi splitting + bit support | ✓ Done — Levi fails char-2; D^4/R perfect; **NO bit subspace alignment** → cryptanalytically blocked |
 
 Pivot из maintenance mode B-lateral в **active research** на specialist target. Ожидаемое время — 4-5 sessions. Even null cryptanalytic outcome value сохраняет (structural infrastructure completion).
 
