@@ -402,7 +402,7 @@
 
 - **Всего теорем** (именованных): ~60+ (~40 ✓DOK, ~15 ⚡VER, ~10 ✗NEG, ~5 ⊘ROLL)
 - **Всего экспериментов**: П-1..П-1300+ (Том II), ~130 §§ (Том I), 6 итераций (Том III)
-- **Ключевые моменты**: Wang-pair найдена; Distinguisher AUC=0.980; ρ(direct,chain_3)=0.98; axioms D1-D5 (20/20 осей pass)
+- **Ключевые моменты**: Wang-pair найдена (W0=c97624c6); Distinguisher AUC=0.980; OTOC SHA-256 scramble at r=24/64 (margin 40 раундов); axioms D1-D5 (20/20 осей pass); Prismatic Program 69 sessions = full closure (Composition Lemma + Calibration Principle); ~~ρ(direct,chain_3)=0.98~~ ⊘ROLL (chi_arr artifact, см. §III.7)
 
 # Статус программы (снимок)
 
@@ -3009,7 +3009,7 @@ research/prismatic/
 | **T_G62_PREDICTS_H 18-bit** | П-1101..П-1190 (original) | Magnitude артефакт; реальный diff=−9.09 bit, z=−80.8σ (partially validated). См. §III.6 |
 | **IT-24 cross-hash discriminator** | IT-24 | Zero-padding artifact Oracle Gauge v1.0 (MD5 128 bits + 128 нулей → false Ω_3=+0.998). После v1.1 fix: MD5 Ω_3=−0.056 ≈ RO-like. См. §III.6 |
 
-## §II.8.4 Барьеры — сводная таблица
+## §II.8.5 Барьеры — сводная таблица
 
 | Барьер | Стоимость | Источник |
 |--------|-----------|----------|
@@ -3024,7 +3024,7 @@ research/prismatic/
 | MILP наивный | ~2^144 | §II.6 |
 | T_BARRIER_EQUALS_SCHEDULE | r=17=schedule_barrier+1 | П-114 |
 
-## §II.8.5 Финальная позиция
+## §II.8.6 Финальная позиция
 
 **Доказано (НЕОПРОВЕРЖИМО):**
 1. SHA-256 = арифметическое перемешивание; сигнал кодируется в ~128 бит.
@@ -3034,7 +3034,11 @@ research/prismatic/
 5. SHA-256 при фикс. carry = квадратичная (degree 2). M-мир vs c-мир.
 6. **Birthday = 2^128 оптимален** для всех проверенных подходов. Формально через GPK-язык L_col.
 
-**Единственное перспективное направление:** **Q∩T Алгебра** (§II.7, Раздел 216). Глобальный Q∩T-решатель < 2^128.
+**Перспективные направления (после scoping-сессии 2026-04, см. §II.8.3 и Prismatic Program итог):**
+- ~~Q∩T Алгебра как отдельный решатель~~ ⊘SCOPED — z3 BitVec SMT уже реализует Q∩T нативно через bit-vector theory; phase transition на R=8 (full-hash TIMEOUT 120с). Ручная "своя алгебра" не даёт ускорения.
+- **Wang extension за r=17** — единственный остающийся технический кандидат (T_BARRIER_EQUALS_SCHEDULE подтверждён 9 независимыми методами, §II.9.5).
+- **Block-2 signal amplification** [Том III IT-4.S4] — механизм изучен, можно использовать.
+- **Operations violating Composition Lemma** — открытая теоретическая проблема (см. Prismatic Program ИТОГ).
 
 **Мировой рекорд (наш):**
 - Аддитивных нулей De: 14 за O(1), 15-й за 2^32 (П-84)
@@ -4769,6 +4773,25 @@ Chain_z[b] = Σ_S z_in[S] · z_out[S, b], где:
 
 ## §III.7.7 Open vs closed after corrigendum
 
+**Закрыто (⊘ROLL — chi_arr Pearson aggregation artifact)**:
+- Ω_k probe через chi_arr from state1 как detection tool (см. §III.7.3 full stack: IT-6, IT-13, IT-21, IT-23, IT-24, IT-37, Phase 6C/7B).
+- ?OPEN-A (Ω_k для SHA-3/BLAKE на input→hash) — uninformative по той же причине.
+- Любой "structural" claim, основанный на корреляции direct_z и chain_z по output битам через input-derived chi_arr.
+
+**Сохраняется** (см. §III.7.4 и §III.7.8):
+- Single-value chain-tests с per-target RO null: IT-4.Q7D z=−3.87 (p=0.002), IT-4.Q7f z=−6.40.
+- IT-4.S2 round decay exp(−0.25r) — single-order metric, не Pearson aggregate.
+- IT-1/IT-2/IT-3 (χ²-fingerprint, σ₀/σ₁ 88% attribution, Δ_χ² vs Δ_I dissociation) — отдельные probe, не chi_arr-based.
+- Distinguisher v6.0 AUC=0.980 (Том II П-1000) — independent neural classifier.
+
+**Замена для scrambling-измерений**: OTOC framework (§III.8) — physics-grounded, theoretical RO baseline, 0 retraction'ов.
+
+**Открыто (требует новых probe)**:
+- Backward shortcut beyond ANF early-verify 7.6× [§132].
+- Wang extension за r=17 [П-101, T_BARRIER_EQUALS_SCHEDULE].
+- Structural SHA-2 fingerprint через **другой** (не chi_arr Pearson) probe.
+- Аналитический механизм почему OTOC выдаёт Σ=97% attribution.
+
 ## §III.7.8 Разграничение: valid chain-tests vs biased Pearson aggregation
 
 После детального анализа выяснено что **не все chain-based результаты artifact**. Ключевое различие:
@@ -5699,6 +5722,16 @@ Any AI session продолжая работу должна помнить: пе
 - Fundamental ceiling: `speedup ≈ V / L`. Для real SHA-256 (V≈100): ceiling ≈ 13×
 - **Вывод**: методичка §133 сама уже зафиксировала ~9× потолок; наши данные подтверждают; алгоритмического прорыва тут не будет (ограничение sequential carry architecture).
 
+### D-5: Exploration — persistent kernel / structural invariants
+Разворачивая R-инвариантность deficit (D-2), искали whether carry kernel даёт persistent / structural invariants round function.
+
+- **Persistent kernel across rounds**: intersection per-round ker(J_r) = 1-3 dim, но содержимое = trivial MSB + state-dependent extras (Wang territory). Не global invariant.
+- **Kernel dim distribution**: per-round pattern `kernel_dim(r, R_total) = n·(R_total - r - 1) + intrinsic_const` — просто каузальность (future-W bits don't affect past-round carries).
+- **Total invariants** (flip ∈ ker(J_carry) И ∈ ker(J_output)): **0 найдено** ни в одном тесте. Хорошо для SHA security.
+- **Linear invariant test** (ключевое открытие): shared kernel vectors across anchors производят **state-INDEPENDENT** output change — 100% across all tests. Паттерн: `flip W_last[bit k] → output XOR {(reg 0, bit k), (reg 4, bit k)}`. Это прямое следствие `a' = T1+T2`, `e' = d+T1`.
+
+**Вывод**: мы переформулировали известные явления (T_DCH_EXACT + Wang-chain + T_STATE17_STRUCTURE) в ЕДИНУЮ линейно-алгебраическую формулу. Не новый attack, но чёткое объяснение **почему r=17 — точная граница**: carry kernel исчерпан там, где schedule перестаёт давать свежие W. [EXPLORATION_FINDINGS.md, persistent_kernel.py, linear_invariant.py]
+
 ### D-6: Cross-pollination attempt — Witt-vectors + filtration analysis
 Попытка применить алгебро-геометрический язык (Witt vectors, prismatic) к SHA.
 
@@ -5710,18 +5743,6 @@ Any AI session продолжая работу должна помнить: пе
 **Центральное напряжение SHA security**: incompatibility между F_2-boolean world (простые AND/XOR) и Z_2-adic world (diagonalizable rotations). Никакого basis не делает всё одновременно простым.
 
 **Вывод**: session-level работа локализовала точный target для future new math. Не решила, но формализовала задачу в языке позволяющем точно формулировать вопрос. [CROSS_POLLINATION.md]
-
----
-
-### D-5: Exploration — persistent kernel / structural invariants
-Разворачивая R-инвариантность deficit (D-2), искали whether carry kernel даёт persistent / structural invariants round function.
-
-- **Persistent kernel across rounds**: intersection per-round ker(J_r) = 1-3 dim, но содержимое = trivial MSB + state-dependent extras (Wang territory). Не global invariant.
-- **Kernel dim distribution**: per-round pattern `kernel_dim(r, R_total) = n·(R_total - r - 1) + intrinsic_const` — просто каузальность (future-W bits don't affect past-round carries).
-- **Total invariants** (flip ∈ ker(J_carry) И ∈ ker(J_output)): **0 найдено** ни в одном тесте. Хорошо для SHA security.
-- **Linear invariant test** (ключевое открытие): shared kernel vectors across anchors производят **state-INDEPENDENT** output change — 100% across all tests. Паттерн: `flip W_last[bit k] → output XOR {(reg 0, bit k), (reg 4, bit k)}`. Это прямое следствие `a' = T1+T2`, `e' = d+T1`.
-
-**Вывод**: мы переформулировали известные явления (T_DCH_EXACT + Wang-chain + T_STATE17_STRUCTURE) в ЕДИНУЮ линейно-алгебраическую формулу. Не новый attack, но чёткое объяснение **почему r=17 — точная граница**: carry kernel исчерпан там, где schedule перестаёт давать свежие W. [EXPLORATION_FINDINGS.md, persistent_kernel.py, linear_invariant.py]
 
 ### Новые artifacts (готовы к повторному использованию)
 - `research/qt_minimal/mini_sha.py` — параметризованная mini-SHA (n ∈ {4,8,12,16,20,24,28,32})
