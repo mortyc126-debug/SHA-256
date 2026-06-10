@@ -86,13 +86,37 @@ Robustness: **6/8 random frames** yield a gold-verified 17-zero pair at only
   so the deterministic control still ends at 16 e-zeros. The full-collision
   bound (2^128, `T_COLLISION_LOWER_BOUND_128`) is untouched.
 
-## Honest open question this raises
+## Does it compose? — TESTED, NO (`compose_test.py`)
 
-Does the same disjoint-influence MITM apply one step further —
-`δe18 = Da14 + ΔW17` — and can the two MITM layers be *chained* (meet at
-state[16], as the unverified "MITM through state[16] = 2^80" gestured at)?
-П-27C also dismissed this via the wrong pair. Re-testing `δe18` separability
-over a disjoint-influence split is the concrete next probe. If two layers
-compose, the cost question past r=17 genuinely reopens. If they don't (the
-shared-word coupling at W0,W1,W9 likely blocks composition), the barrier
-holds and we have, at minimum, corrected the record.
+The single-barrier crack only threatens the global bound if it composes: a
+2D meet-in-the-middle would need ONE bipartition `(A|B)` making BOTH
+`δe17` and `δe18` additively separable, which would drop the 18-zero cost
+from `T_BARRIER_16 = 2^64` to ~`2^32`.
+
+Measured the joint mixed second-difference of `(δe17, δe18)` over five
+bipartitions (including the working r17 split and several extensions), with
+an RO control:
+
+```
+bipartition                          de17_sep  de18_sep
+(W10,W11 | W14)        [r17 split]     1.000     0.000
+(W10,W11 | W14,W15)                    1.000     0.000
+(W10,W11,W12,W13 | W14,W15)            1.000     0.000
+(W2,W10 | W14,W15)                     0.000     0.000
+(W3..W11 | W14,W15)                    0.000     0.000
+RO control                             0.000     0.000
+```
+
+`δe18` is **not separable across any bipartition that separates `δe17`** —
+its per-bit max|z| sits at RO noise (~2.2 vs RO ~2.5). The reason is
+structural: `δe18 = Da14 + ΔW17` with `ΔW17 = sig1(W15)+W10+sig0(W2)+W1`,
+a *different* word set than r17's, and the round-16 schedule word couples
+the registers so that no single split serves both barriers.
+
+**Conclusion: the MITM does NOT compose. T_BARRIER_16 = 2^64 stands.** The
+r=17 result is a genuine but strictly *local* correction (one barrier
+crosses at 2^16 not 2^32, П-97's pair-search was unnecessary); the wall
+reasserts itself one step later. The global collision bound (2^128) is
+untouched. This is a clean example of the methodology working as intended:
+a wrongly-closed sub-direction reopened and corrected, and the next wall
+honestly mapped.
