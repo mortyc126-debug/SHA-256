@@ -135,3 +135,39 @@ carry boundary.** Either a derived-prismatic object does it -- the new
 language, the way past -- or the CRT-orthogonality is provably rigid, which is
 itself the strongest possible structural security theorem for SHA-256. Both
 outcomes are real results; neither is mysticism.
+
+## The no-go, measured: ramification at 2 (`ramification_nogo.py`)
+
+We measured the strength of the Frobenius-lift obstruction (prismatic
+Thm 3.3 analog) rigorously. Rotation lives in the cyclic group C_n, whose
+group algebra over F_2 is F_2[x]/(x^n - 1). A delta-structure (Frobenius
+lift) exists cleanly iff this is **separable (etale) at 2**, i.e. iff
+x^n - 1 is squarefree over F_2. The ramification index is e_2(n) = 2^{v_2(n)}
+(verified by repeated square-roots: x^n-1 = (x^m-1)^{2^v}, m odd, x^m-1
+squarefree).
+
+```
+   n        e=2^v     verdict
+   odd        1       ETALE: Frobenius lifts -> rotation+carry UNIFY
+   6,10,12    2..4    partially ramified
+   16        16       totally ramified
+   32        32       TOTALLY RAMIFIED   <== SHA-256 word size
+   64        64       TOTALLY RAMIFIED   <== SHA-512 word size
+```
+
+**SHA's word sizes are powers of two (32 = 2^5, 64 = 2^6), so the rotation
+group is MAXIMALLY ramified at the prime 2 -- exactly the prime where the
+carry lives.** This is the precise, measured reason the unifying delta-ring
+fails for SHA specifically: rotation (C_{2^k}) and carry (the 2-adic /
+delta structure) are forced onto the *same* prime at its point of *maximal*
+ramification. An odd word size, or a Mersenne (cyclic-carry) word, would be
+etale -> the two structures would unify (and the design would lose the very
+incompatibility that resists a single algebraic language).
+
+So the obstruction is now a number, e_2(n), maximized by SHA's power-of-two
+word size. The only conceivable "way past" is to *resolve* this ramification
+-- a base change / cover / derived prismatic site where Frobenius lifts over
+the ramified point. That resolution is genuine research-level prismatic
+geometry, beyond elementary computation, but it is now a concrete, named
+target rather than a mystery: **resolve the 2-ramification of C_{32} against
+the 2-adic carry.**
