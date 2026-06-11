@@ -85,3 +85,53 @@ delta-structure. The elementary obstruction is now measured (F2 optimal at
 2/3, carry irreducible) and matches a known prismatic no-go (Thm 3.3). A true
 unifier, if it exists, lives in the derived prismatic site -- a concrete,
 nameable open problem, not a leap beyond understanding.
+
+## The obstruction, measured and localized (`rotation_carry_obstruction.py`)
+
+We tested directly whether rotation is an automorphism of the addition
+(`ROTR(a+b) == ROTR(a)+ROTR(b)`):
+
+```
+                 distributes over +mod2^n   over +Mersenne(2^n-1)
+  n=16 ROTR_1          0.376                      1.000
+  n=16 ROTR_3          0.280                      1.000
+  n=16 ROTR_7          0.252                      1.000
+```
+
+- In the **Mersenne ring Z/(2^n-1), rotation + carry UNIFY perfectly**
+  (rotation = mult by the unit 2^(n-r), verified) -- a single ring in which
+  both are linear.
+- Under **mod-2^n they do not unify**, and the failure is **localized to the
+  dropped-carry boundary**: for n=16, ROTR_3 the discrepancy concentrates on
+  bits {0,1,2,3} and {13,14,15} (the boundary bit 0/top and its rotated
+  image), decaying 0.44 -> 0.22 -> 0.11 -- exactly the carry-chain reach
+  probability from the boundary.
+
+So the obstruction is one nameable feature: **the open top-bit boundary of
+mod-2^n addition.** SHA uses mod-2^n (not Mersenne) precisely to break the
+cyclic symmetry that would otherwise unify rotation and carry.
+
+## Final crystallization: a characteristic conflict (CRT-orthogonality)
+
+Each layer has a natural home ring:
+- **boolean + rotation** -> product ring **F2^n** (char 2): XOR = +, AND = x
+  (the ring product), ROTR = coordinate permutation. AND distributes over XOR
+  (`a&(b^c) = (a&b)^(a&c)`), NOT over integer addition.
+- **rotation + carry** -> **Mersenne ring Z/(2^n-1)** (ODD modulus, char
+  coprime to 2): rotation = mult by unit, carry = +.
+
+The two homes have **coprime characteristics (2 vs odd)** -- by CRT they are
+orthogonal and cannot be fused into one ordinary ring of a single structure.
+That is the precise, elementary form of the wall: not "three incompatible
+operations" but **two rings of coprime characteristic, bridged only by the
+mod-2^n carry boundary.** A genuine unifier must reconcile a char-2 structure
+with an odd-characteristic one -- which is exactly what derived/prismatic
+sites are built to do (glue across characteristics cohomologically), and
+exactly where prismatic Thm 3.3 says the naive gluing is obstructed.
+
+The search has therefore converted "something beyond understanding" into a
+sharp statement: **unify F2^n (char 2) with Z/(2^n-1) (odd) across the mod-2^n
+carry boundary.** Either a derived-prismatic object does it -- the new
+language, the way past -- or the CRT-orthogonality is provably rigid, which is
+itself the strongest possible structural security theorem for SHA-256. Both
+outcomes are real results; neither is mysticism.
